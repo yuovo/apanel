@@ -398,6 +398,9 @@ canvas{display:block;width:100%;}
 .mini-chart canvas{height:118px;}
 .idx-card .price{font-size:21px;}
 .idx-card .kv{margin-top:4px;gap:4px 10px;}
+/* ①A股大盘：当前正显示在下方分时图里的那个指数 */
+.idx-card.on{border-color:var(--gold);box-shadow:0 0 0 1px rgba(240,183,63,.45) inset;}
+.idx-card.on .card-title{color:var(--gold);}
 .flash-up{animation:fu .7s ease-out;}
 .flash-down{animation:fd .7s ease-out;}
 @keyframes fu{0%{background:rgba(255,77,94,.22);}100%{background:transparent;}}
@@ -602,15 +605,17 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
           <div class="list">
             <div class="li"><span class="dot gold"></span><span><b>搜标的（②）</b>：搜索框支持中文名（贵州茅台）、拼音首字母（gzmt）、代码片段（5103）、主题＋品种（白酒ETF / 券商ETF）；下拉里点一下就能出 K 线与买卖分析。</span></div>
             <div class="li"><span class="dot blue"></span><span><b>点表格行＝载入</b>：⑦排行榜、⑥热点龙虎榜、⑧连板梯队、⑫ETF 榜、⑪自选股，点任意一行都会把它载入②，并在③自动生成分析。</span></div>
+            <div class="li"><span class="dot gold"></span><span><b>①指数分时随点随换</b>：①A股大盘 的 8 张指数卡片，点任意一张就把下面那张分时图切成它（选中的卡片会亮起来，选择会记住），分时图带<b>十字线</b>与<b>量能（含量能MA5）</b>；右上角「<b>载入 K 线图分析</b>」会把当前这个指数送进 ② 做日线技术分析。</span></div>
             <div class="li"><span class="dot orange"></span><span><b>看图</b>：在 K 线主图上移动鼠标（手机按住拖动）会出现十字光标与浮层：日期、开高低收、涨跌幅、量额、MA5/10/20/60、MACD、KDJ、RSI、量比与当日综合评分。</span></div>
             <div class="li"><span class="dot gold"></span><span><b>自选</b>：② 图上方有「＋加入自选／－移出自选」；⑪ 自选页每行、每张卡片都能单独移除，并带当日分时图与今日点评。</span></div>
             <div class="li"><span class="dot blue"></span><span><b>亚太也能看图</b>：④全球市场 的「亚太市场 · 大盘情况」左侧是<b>专门的分时图</b>，点上面的指数标签即可切换（日经225 / 韩国KOSPI / 澳洲标普200 / 台湾加权 / 新加坡STI / 印度NIFTY50 / 新西兰NZ50 / 恒生系）；点右侧表格任意一行，或者点「看K线分析」，就会在 ② 载入它的 K 线并生成完整技术分析（日线 / 周线 / 月线都支持）。</span></div>
+            <div class="li"><span class="dot gold"></span><span><b>分时的三个附加指标</b>：② 切到「分时」后，主图自动标注 <span class="orange">分时顶 / 底</span>（局部极值点，出现背离时标「顶背离 / 底背离」），下面多出两块面板：<b>MACDFS（分时 MACD 12,26,9）</b>与<b>大单金额（每分钟净额）</b>——红柱＝大单+超大单净流入、绿柱＝净流出、蓝线＝主力当日累计净额；鼠标移动时三块图十字线同步。</span></div>
           </div>
         </div>
         <div class="card">
           <div class="card-head"><div class="card-title">数据源与口径</div><div class="card-sub">看到「已降级」时看这里</div></div>
           <div class="list">
-            <div class="li"><span class="dot blue"></span><span><b>数据源</b>：腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（龙虎榜 / 涨停池）、东财 push2 或 CNBC（亚太指数行情 / 分时 / K线）。顶部状态依次为<b>正常 / 待连接 / 已降级 / 异常</b>。</span></div>
+            <div class="li"><span class="dot blue"></span><span><b>数据源</b>：腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（龙虎榜 / 涨停池 / 每分钟大单资金流）、东财 push2 或 CNBC（亚太指数行情 / 分时 / K线）。顶部状态依次为<b>正常 / 待连接 / 已降级 / 异常</b>。</span></div>
             <div class="li"><span class="dot orange"></span><span><b>已降级</b>：可能出现在两个地方。①「东财·涨停池」——该域名在当前网络被拦截时，⑧ 连板股会自动改用「全市场快照＋日线」本地推算涨停与连板高度；②「亚太·指数」——东财 push2 与 CNBC 都不可达时，④ 亚太市场自动退回腾讯口径（港股指数 + 富时A50期货 + 日经225期货，此时没有日经 / 韩国 / 台湾的现货指数与分时K线）。两处都会明确标注当前口径。</span></div>
             <div class="li"><span class="dot gray"></span><span><b>美股也能看分时</b>：② 顶部周期切到「分时」即可看美股个股与美股指数的当日分时（腾讯 usMinute 接口，横轴为美股当地 09:30-16:00）；但公开接口不提供美股个股的历史K线，所以日线技术分析仍只对A股 / ETF / 港股 / 美股指数开放。</span></div>
             <div class="li"><span class="dot gold"></span><span><b>ETF 的 T+0 / T+1</b>：名称后的标签是交易规则备注——T+0＝当天买当天能卖（债券、货币、黄金/商品、跨境类 ETF）；T+1＝次日才能卖（境内股票型 ETF）。按代码段＋名称关键词推定，个别产品以券商与基金公告为准。</span></div>
@@ -626,7 +631,7 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
     <div class="panel-head">
       <h2><span class="num">①</span>A股大盘模块</h2>
       <span class="tag gold" id="marketTag">--</span>
-      <span class="tag blue">点击任意指数卡片 → 载入K线并自动分析</span>
+      <span class="tag blue">点指数卡片 → 在本模块切换分时；分时图右上角可载入K线分析</span>
       <div class="spacer"></div>
       <span class="hint" id="marketHint">全市场数据加载中…</span>
     </div>
@@ -635,10 +640,19 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
 
     <div class="card" style="margin-bottom:14px;">
       <div class="card-head">
-        <div class="card-title">上证指数 · 实时分时</div>
+        <div class="card-title" id="marketMinuteTitle">上证指数 · 实时分时</div>
         <div class="card-sub" id="minuteSub">--</div>
+        <div class="spacer"></div>
+        <button class="btn sm" id="btnMarketMinuteKline">载入 K 线图分析</button>
       </div>
-      <canvas id="chartIndexMinute" height="220"></canvas>
+      <div class="chart-wrap">
+        <canvas id="chartIndexMinute" height="220"></canvas>
+        <div class="tip" id="indexMinuteTip"></div>
+      </div>
+      <div class="chart-legend" id="indexMinuteLegend"></div>
+      <div class="ind-title"><b>成交量（含量能MA5）</b><span id="indexVolTag">--</span></div>
+      <canvas id="chartIndexVol" height="92"></canvas>
+      <div class="hint" id="indexMinuteHint" style="margin-top:6px;">点上面任意指数卡片即可切换这张分时图；图上移动鼠标（手机按住拖动）可看每一分钟的价格、涨跌、均价与量能。</div>
     </div>
 
     <div class="grid g2">
@@ -798,9 +812,19 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
         <div class="ind-title"><b>RSI（14）</b><span id="rsiTag">--</span></div>
         <canvas id="chartRsi" height="126"></canvas>
       </div>
+      <div id="indWrapMinMacd" style="display:none;">
+        <div class="ind-title"><b>MACDFS · 分时 MACD（12,26,9）</b><span id="minMacdTag">--</span></div>
+        <canvas id="chartMinMacd" height="130"></canvas>
+      </div>
+      <div id="indWrapMinFlow" style="display:none;">
+        <div class="ind-title"><b>大单金额（每分钟净额）</b><span id="minFlowTag">--</span></div>
+        <canvas id="chartMinFlow" height="120"></canvas>
+        <div class="hint" id="minFlowHint" style="margin-top:4px;">--</div>
+      </div>
     </div>
     <div class="hint" style="margin-top:8px;" id="klHint">--</div>
     <div class="hint" style="margin-top:4px;">在主图上移动鼠标（手机按住拖动）可看逐根的日期、开高低收、涨跌幅、量额、MA、MACD、KDJ、RSI、量比与当日综合评分。</div>
+    <div class="hint" style="margin-top:4px;">「分时」模式下：主图会标注 <b>顶 / 底</b> 极值点（出现背离时标出顶背离 / 底背离），下方两块面板分别是 <b>MACDFS</b>（分时 MACD）与 <b>大单金额</b>（每分钟大单+超大单净额，蓝线为主力累计）。</div>
   </section>
 
   <!-- ===================== ③ 个股买卖分析 ===================== -->
@@ -1337,6 +1361,8 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
       <li>突发消息、政策变化、地缘冲突、外围市场大幅波动，均可能直接打破既有技术形态。</li>
       <li>方向概率推演仅为技术模型的推演结果，<b>不能保证准确</b>，历史规律不代表未来表现。</li>
       <li>本页行情数据来自腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（涨停池 / 连板 / 龙虎榜）以及东方财富 push2 或 CNBC（亚太指数）的<b>公开行情接口</b>，为程序直接抓取，可能存在延迟、缺失或与交易所官方数据不一致的情况；免费接口也可能随时调整或不可用，请以券商交易软件为准。</li>
+      <li>「<b>大单金额</b>」为东方财富资金流口径（按单笔成交额分档的钱），每分钟净额由该分钟的<b>累计值做差</b>得到，与交易所逐笔成交口径、各券商软件的主力资金统计<b>会有差异</b>；该口径只覆盖 A股 / ETF / 北交所 / 指数，港股与美股、亚太指数没有对应数据（页面会退化为「每分钟成交额」并明确标注）。</li>
+      <li>「<b>分时顶底</b>」是按分时价格序列的局部极值规则标注的（前后若干分钟都不超过它），「顶 / 底背离」是用分时 MACD 的 DIF 与相邻两个极值点比较得出的，属于<b>规则化标注</b>，不是预测，也不代表后续一定反转。</li>
       <li>ETF / 场内基金与个股的规则不同（T+0 或 T+1、涨跌幅 ±10% 或 ±20%、有折溢价），本页已按品种自动套用相应口径，但<b>折溢价率、跟踪指数、成分股</b>仍需自行在基金页面核对。</li>
       <li>连板股 / 涨停梯队数据为<b>收盘口径</b>，盘中会随封板与开板实时变化；高连板个股波动剧烈，属于高风险品种，本页只做客观呈现，不构成追板建议。</li>
       <li>分时、日线等数据在非交易时段显示的是<b>最近一个交易日的收盘数据</b>，并非当前时点的实时成交。</li>
@@ -2411,6 +2437,8 @@ const API = {
   sinaBoard: 'https://vip.stock.finance.sina.com.cn/q/view/',
   /* 亚太指数：东财 push2（JSONP）→ CNBC（fetch）→ 腾讯（港股指数 + 期货，兜底） */
   emList: 'https://push2.eastmoney.com/api/qt/ulist.np/get',
+  /* 东财分钟级资金流（大单 / 超大单 / 中单 / 小单 每分钟净额） */
+  emFlow: 'https://push2.eastmoney.com/api/qt/stock/fflow/kline/get',
   cnbc: 'https://quote.cnbc.com/quote-html-webservice/restQuote/symbolType/symbol',
   /* CNBC 图表接口：路径里放起止时间（yyyyMMddHHmmss），symbol 走查询参数 */
   cnbcChart: 'https://ts-api.cnbc.com/harmony/app/charts/'
@@ -2420,6 +2448,8 @@ const API = {
 const SINA_NODE = { ashare: 'hs_a', etf: 'etf_hq_fund' };
 /** 东方财富涨停板行情接口的公开 ut 参数（与官网页面一致） */
 const ZT_UT = '7eea3edcaed734bea9cbfc24409ed989';
+/** 东方财富资金流接口的公开 ut 参数（与行情页一致） */
+const EM_FLOW_UT = 'fa5fd1943c7b386f172d6893dbfba10b';
 
 /** 全局数据仓库（只放真实抓取到的数据，抓不到就保持为空，绝不生成假数据） */
 const DATA = {
@@ -2427,6 +2457,7 @@ const DATA = {
   quoteAt: 0,
   klineCache: {},      // key -> { t, candles }
   minuteCache: {},     // code -> { t, data }
+  bigOrder: {},        // code -> { t, data } 每分钟大单资金流
   snapshot: null,      // { t, list, stats }
   boards: {},          // kind -> { t, list }
   src: {},             // 数据源健康状态
@@ -2442,6 +2473,7 @@ const SRC_LABEL = {
   list: '新浪·全市场',
   etf: '新浪·场内基金',
   zt: '东财·涨停池',
+  bigorder: '东财·大单资金',
   board: '新浪·板块',
   asia: '亚太·指数'
 };
@@ -2946,6 +2978,72 @@ async function getMinute(code, maxAgeMs) {
   return data;
 }
 
+/* ---------------- 每分钟大单资金流（东方财富） ----------------
+   口径：主力 / 超大单 / 大单 / 中单 / 小单 的**当日累计净额**，接口按分钟返回累计值，
+   画图时对相邻两点做差，得到「每分钟净额」。
+   A股 / ETF / 北交所 / 指数 / 港股有该口径；美股与亚太指数没有（调用方会退化成
+   分钟成交额并在面板上写清楚，绝不当成大单来展示）。 */
+
+/** 本页代码 -> 东财 secid：沪市 1.、深市/北交所 0.、港股 116. */
+function emSecid(code) {
+  let m = /^(sh|sz|bj)(\d{6})$/.exec(String(code || ''));
+  if (m) return (m[1] === 'sh' ? '1.' : '0.') + m[2];
+  m = /^hk(\d{5})$/.exec(String(code || ''));
+  if (m) return '116.' + m[1];
+  return '';
+}
+
+/** 该标的是否有大单资金流口径
+ *  只信任 A股 / ETF / 北交所 / 指数 的东财口径（与官网一致，量大且可核对）；
+ *  港股同一接口返回的数值量级明显不符（同一天会给出数百亿净额），因此不当作「大单」展示，
+ *  改为退到分钟成交额并写明原因 —— 宁可少给一个指标，也不给一个口径不明的大单数字。 */
+function bigOrderCapable(code) {
+  return /^(sh|sz|bj)\d{6}$/.test(String(code || ''));
+}
+
+async function fetchBigOrder(code) {
+  const secid = emSecid(code);
+  if (!secid) throw new Error('该市场没有大单资金流口径');
+  /* 两个主机轮着试：东财这两个域名在不同网络下可用性不一样，多试几次显著提高成功率 */
+  const hosts = [API.emFlow, 'https://push2his.eastmoney.com/api/qt/stock/fflow/kline/get'];
+  const tail = '?lmt=0&klt=1&secid=' + secid +
+    '&fields1=f1,f2,f3,f7&fields2=f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61&ut=' + EM_FLOW_UT;
+  let json = null;
+  for (let i = 0; i < 4 && !json; i++) {
+    try {
+      const r = await fetch(hosts[i % hosts.length] + tail + '&_=' + Date.now());
+      const j = await r.json();
+      if (j && j.data && j.data.klines && j.data.klines.length) json = j;
+    } catch (e) { /* 换一次再试 */ }
+    if (!json) await sleep(200 + i * 180);
+  }
+  if (!json) {
+    srcMark('bigorder', false, '大单资金流接口未返回数据');
+    throw new Error('大单接口未返回数据');
+  }
+  const rows = json.data.klines.map((s) => {
+    const p = String(s).split(',');
+    const t = String(p[0] || '');
+    return {
+      time: t.slice(-5).replace(':', ''),
+      main: toNum(p[1]), small: toNum(p[2]), mid: toNum(p[3]), big: toNum(p[4]), huge: toNum(p[5]),
+      mainPct: toNum(p[6])
+    };
+  });
+  if (!rows.length) throw new Error('大单资金流为空');
+  srcMark('bigorder', true, '大单资金流 ' + rows.length + ' 分钟（' + (json.data.name || code) + '）');
+  return { code: code, name: json.data.name || code, rows: rows, at: Date.now() };
+}
+
+async function getBigOrder(code, maxAgeMs) {
+  const hit = DATA.bigOrder[code];
+  const age = maxAgeMs == null ? 60000 : maxAgeMs;
+  if (hit && Date.now() - hit.t < age) return hit.data;
+  const data = await fetchBigOrder(code);
+  DATA.bigOrder[code] = { t: Date.now(), data: data };
+  return data;
+}
+
 /* ---------------- 全市场A股列表（新浪，分页抓取） ---------------- */
 
 function parseSinaRow(x) {
@@ -3182,6 +3280,10 @@ const UI = {
   asiaMinData: null,
   asiaMinName: '',
   asiaMinActive: null,    // 亚太分时图十字线当前指向的分钟点
+  marketIndex: 'sh000001', // ①A股大盘：分时图当前显示的指数
+  marketMinute: null,      // 该指数当天的分钟数据
+  marketInd: null,         // 由分钟数据合成的量能 / MACD 指标
+  marketActive: null,      // 十字线指向的分钟点
   refreshSec: 30,
   scanning: false,
   timers: {},
@@ -3288,16 +3390,19 @@ function tickClock() {
 function quoteCardHtml(code, opts) {
   const q = DATA.quotes[code];
   const o = opts || {};
+  /* o.market = true：①A股大盘模块 的指数卡片，点它是「切换本模块的分时图」，不是直接载入K线 */
+  const mk = o.market ? ' data-market="1"' : '';
+  const on = o.market && code === UI.marketIndex ? ' on' : '';
   if (!q) {
-    return '<div class="card idx-card clickable" data-code="' + esc(code) + '"><div class="card-head"><div class="card-title">' +
+    return '<div class="card idx-card clickable' + on + '" data-code="' + esc(code) + '"' + mk + '><div class="card-head"><div class="card-title">' +
       esc(o.title || code) + '</div><span class="tag gray">等待</span></div>' +
-      '<div class="err-box">行情接口暂未返回该标的（可点击尝试加载K线）</div></div>';
+      '<div class="err-box">行情接口暂未返回该标的（点一下可切换本模块的分时图）</div></div>';
   }
   const cls = pctCls(q.chgPct);
   const prev = DATA.history[code];
   const flash = prev != null && q.price !== prev ? (q.price > prev ? ' flash-up' : ' flash-down') : '';
   DATA.history[code] = q.price;
-  return '<div class="card idx-card clickable' + flash + '" data-code="' + esc(code) + '">' +
+  return '<div class="card idx-card clickable' + flash + on + '" data-code="' + esc(code) + '"' + mk + '>' +
     '<div class="card-head"><div class="card-title">' + esc(q.name) + '</div>' +
     '<span class="chg ' + cls + '">' + sign(q.chgPct) + '%</span></div>' +
     '<div class="quote-row"><span class="price ' + cls + '">' + fmtP(q.price) + '</span>' +
@@ -3316,7 +3421,7 @@ function renderIndexCards() {
     sh000001: '上证指数', sz399001: '深证成指', sz399006: '创业板指', sh000688: '科创50',
     sh000300: '沪深300', sh000905: '中证500', sh000852: '中证1000', sh000016: '上证50'
   };
-  el.innerHTML = INDEX_CARDS.map((c) => quoteCardHtml(c, { title: titles[c] })).join('');
+  el.innerHTML = INDEX_CARDS.map((c) => quoteCardHtml(c, { title: titles[c], market: true })).join('');
 }
 
 /* ---------------- 全球市场 ---------------- */
@@ -4050,19 +4155,128 @@ function shMacdInfo() {
   return { dif: dif, dea: dea, slope: dif - prev, ind: ind, candles: hit.candles };
 }
 
-async function renderIndexMinute() {
+/* ---------------- ①A股大盘 · 实时分时（可在指数卡片间切换） ---------------- */
+
+const MARKET_INDEX_KEY = 'apanel_market_index';
+
+/** 记住上次看的是哪个指数（存本机，不清缓存就不会丢） */
+function saveMarketIndex() {
+  try { localStorage.setItem(MARKET_INDEX_KEY, UI.marketIndex); } catch (e) { /* 忽略 */ }
+}
+
+/** 行情刷新后同步 ① 分时图的标题（指数中文名来自行情快照，比代码好看） */
+function syncMarketMinuteTitle() {
+  const el = $('marketMinuteTitle');
+  if (!el) return;
+  const q = DATA.quotes[UI.marketIndex];
+  const nm = (q && q.name) || codeName(UI.marketIndex) || instInfo(UI.marketIndex, '').type;
+  const txt = nm + ' · 实时分时';
+  if (el.textContent !== txt) el.textContent = txt;
+}
+function loadMarketIndex() {
+  try {
+    const v = localStorage.getItem(MARKET_INDEX_KEY);
+    const code = v ? normalizeCode(v) : '';
+    if (code && INDEX_CARDS.indexOf(code) >= 0) UI.marketIndex = code;
+  } catch (e) { /* 忽略 */ }
+}
+
+/** 切换 ①A股大盘 分时图显示的指数（点指数卡片触发） */
+function setMarketIndex(code) {
+  if (!code) return;
+  const changed = code !== UI.marketIndex;
+  UI.marketIndex = code;
+  UI.marketActive = null;
+  if (changed) {
+    saveMarketIndex();
+    renderIndexCards();                       /* 卡片高亮跟着走 */
+    const title = $('marketMinuteTitle');
+    if (title) title.textContent = (codeName(code) || instInfo(code, '').type) + ' · 实时分时';
+    renderIndexMinute(true);
+  }
+}
+
+/** 用缓存重画 ① 的分时图与量能（悬停 / 窗口变化时用，不再打接口） */
+function redrawMarketMinute() {
+  const m = UI.marketMinute, cv = $('chartIndexMinute');
+  if (!m || !cv || !m.points || !m.points.length) return;
+  drawMinute(cv, m, DATA.quotes[UI.marketIndex], { height: 220, active: UI.marketActive, marks: 'dots' });
+  const vcv = $('chartIndexVol');
+  if (vcv && UI.marketInd) drawVolume(vcv, minCandles(m.points), UI.marketInd, { height: 92, active: UI.marketActive });
+}
+
+/** ①A股大盘 · 实时分时：分时图 + 量能（含量能MA5），支持十字线查看每分钟 */
+async function renderIndexMinute(keepActive) {
+  const code = UI.marketIndex;
   const cv = $('chartIndexMinute');
   if (!cv) return;
+  if (!keepActive) UI.marketActive = null;
+  const nm = (DATA.quotes[code] && DATA.quotes[code].name) || codeName(code) || instInfo(code, '').type;
+  const title = $('marketMinuteTitle');
+  if (title) title.textContent = nm + ' · 实时分时';
   try {
-    const m = await getMinute('sh000001', 25000);
-    UI.minuteIndex = m;
-    const q = DATA.quotes['sh000001'];
-    drawMinute(cv, m, q, { height: 220 });
+    const m = await getMinute(code, 25000);
+    UI.marketMinute = m;
+    const ml = minCandles(m.points);
+    const mind = ml.length >= 5 ? calcAll(ml) : null;
+    UI.marketInd = mind;
+    const q = DATA.quotes[code];
+    const res = drawMinute(cv, m, q, { height: 220, active: UI.marketActive, marks: 'dots' });
+    /* 量能面板：与 ② 同款（含 5 均量线） */
+    const vcv = $('chartIndexVol');
+    if (vcv && mind) {
+      drawVolume(vcv, ml, mind, { height: 92, active: UI.marketActive });
+      const tag = $('indexVolTag');
+      if (tag) {
+        const lastV = ml[ml.length - 1].volume;
+        const unit = marketOf(code) === 'cn' ? 100 : 1;      /* A股上报「手」 */
+        const vr = lastV / (at(mind.volMa5) || lastV || 1);
+        tag.innerHTML = '最新 ' + fmtVol(lastV * unit) + ' · 5 分钟均量比 <b class="' +
+          (vr > 1.3 ? 'up' : vr < 0.8 ? 'down' : 'flat') + '">' + fmt(vr, 2) + '</b>';
+      }
+    }
     const sub = $('minuteSub');
     if (sub) sub.textContent = (m.date || lastTradeDateText()) + ' · 共 ' + m.points.length + ' 个分钟点 · 更新 ' + nowHms();
+    const lg = $('indexMinuteLegend');
+    if (lg) {
+      const base = q && Number.isFinite(q.prevClose) ? q.prevClose : (m.points[0] ? m.points[0].price : NaN);
+      lg.innerHTML = '<span><i style="background:#ff4d5e"></i>价格</span><span><i style="background:#f0b73f"></i>分时均价</span>' +
+        (Number.isFinite(base) ? '<span><i style="background:#8c9cb6"></i>昨收 ' + fmtP(base) + '</span>' : '');
+    }
+    const hint = $('indexMinuteHint');
+    if (hint) hint.innerHTML = '点上面任意指数卡片即可切换这张分时图 · ' + minuteExtremeText(res, m) +
+      ' · 图上移动鼠标（手机按住拖动）看每分钟价格 / 涨跌 / 均价 / 量能 · 更新 ' + nowHms();
   } catch (e) {
-    chartError(cv, '分时数据获取失败：' + e.message);
+    chartError(cv, nm + ' 分时数据获取失败：' + e.message);
   }
+}
+
+/** ①A股大盘分时图的十字线（鼠标 / 手指），手感与 ② 的分时一致 */
+function bindMarketMinuteHover() {
+  const cv = $('chartIndexMinute');
+  if (!cv) return;
+  const tip = $('indexMinuteTip');
+  const update = (clientX, clientY) => {
+    const m = UI.marketMinute;
+    if (!m || !m.points || !m.points.length) return;
+    const rect = cv.getBoundingClientRect();
+    const idx = minuteIndexAt(m, marketOf(UI.marketIndex), clientX - rect.left, rect.width);
+    if (idx < 0) return;
+    if (idx !== UI.marketActive) { UI.marketActive = idx; redrawMarketMinute(); }
+    showTip(minuteTipHtml(m, idx, UI.marketIndex), clientX, clientY, tip);
+  };
+  const clear = () => {
+    showTip(null, 0, 0, tip);
+    if (UI.marketActive != null) { UI.marketActive = null; redrawMarketMinute(); }
+  };
+  cv.addEventListener('mousemove', (ev) => update(ev.clientX, ev.clientY));
+  cv.addEventListener('mouseleave', clear);
+  let timer = null;
+  const later = () => { clearTimeout(timer); timer = setTimeout(clear, 4000); };
+  cv.addEventListener('touchstart', (ev) => { clearTimeout(timer); if (ev.touches && ev.touches[0]) update(ev.touches[0].clientX, ev.touches[0].clientY); }, { passive: true });
+  cv.addEventListener('touchmove', (ev) => { if (ev.touches && ev.touches[0]) update(ev.touches[0].clientX, ev.touches[0].clientY); }, { passive: true });
+  cv.addEventListener('touchend', later, { passive: true });
+  cv.addEventListener('touchcancel', later, { passive: true });
 }
 
 /* ---------------- 涨跌预测 ---------------- */
@@ -5658,6 +5872,165 @@ function minuteSlot(t, mkt) {
   return sp.slots;
 }
 
+/** 把分时的分钟点合成一根根「分钟K线」，用来算 MACD 等指标（开=上一分钟收盘，量=该分钟量） */
+function minCandles(points) {
+  const out = [];
+  (points || []).forEach((p, i) => {
+    if (!Number.isFinite(p.price) || p.price <= 0) return;
+    const open = i > 0 && Number.isFinite(points[i - 1].price) ? points[i - 1].price : p.price;
+    out.push({
+      date: p.time, open: open, close: p.price,
+      high: Math.max(open, p.price), low: Math.min(open, p.price),
+      volume: Number.isFinite(p.volume) ? p.volume : 0
+    });
+  });
+  return out;
+}
+
+/** 分时顶底：先找局部极值（前后 win 分钟都不超过它），再按「与相邻反向极值的幅度」挑最显著的几个；
+ *  同时用 MACD 的 DIF 判断最近两个顶（底）是否出现顶背离 / 底背离 */
+function minuteExtremes(points, dif) {
+  const out = { tops: [], bottoms: [], topDiv: false, bottomDiv: false, high: null, low: null };
+  const n = (points || []).length;
+  if (n < 15) return out;
+  const win = Math.max(3, Math.min(9, Math.round(n / 40)));
+  const raw = [];
+  for (let i = win; i < n - win; i++) {
+    const p = points[i].price;
+    if (!Number.isFinite(p)) continue;
+    let isTop = true, isBottom = true;
+    for (let j = i - win; j <= i + win; j++) {
+      if (j === i) continue;
+      const q = points[j].price;
+      if (!Number.isFinite(q)) continue;
+      if (q > p) isTop = false;
+      if (q < p) isBottom = false;
+    }
+    if (isTop) raw.push({ i: i, kind: 'top', price: p });
+    else if (isBottom) raw.push({ i: i, kind: 'bottom', price: p });
+  }
+  /* 同一段行情里只留最极端的那个 */
+  const thin = [];
+  raw.forEach((r) => {
+    const last = thin[thin.length - 1];
+    if (last && last.kind === r.kind && r.i - last.i <= win * 2) {
+      if ((r.kind === 'top' && r.price > last.price) || (r.kind === 'bottom' && r.price < last.price)) thin[thin.length - 1] = r;
+      return;
+    }
+    thin.push(r);
+  });
+  /* 显著性 = 与最近的反向极值比，幅度越大越重要 */
+  const scored = thin.map((r) => {
+    let amp = 0, best = Infinity;
+    thin.forEach((x) => {
+      if (x.kind === r.kind) return;
+      const d = Math.abs(x.i - r.i);
+      if (d < best) { best = d; amp = Math.abs(r.price - x.price) / (x.price || 1) * 100; }
+    });
+    return { i: r.i, kind: r.kind, price: r.price, time: points[r.i].time, amp: amp };
+  });
+  const pick = (kind) => scored.filter((x) => x.kind === kind).sort((a, b) => b.amp - a.amp).slice(0, 3).sort((a, b) => a.i - b.i);
+  out.tops = pick('top');
+  out.bottoms = pick('bottom');
+  const div = (arr, isTop) => {
+    if (!dif || arr.length < 2) return false;
+    const a = arr[arr.length - 2], b = arr[arr.length - 1];
+    const da = dif[a.i], db = dif[b.i];
+    if (!Number.isFinite(da) || !Number.isFinite(db)) return false;
+    return isTop ? (b.price > a.price && db < da) : (b.price < a.price && db > da);
+  };
+  out.topDiv = div(out.tops, true);
+  out.bottomDiv = div(out.bottoms, false);
+  let hi = null, lo = null;
+  points.forEach((p, i) => {
+    if (!Number.isFinite(p.price)) return;
+    if (!hi || p.price > hi.price) hi = { i: i, price: p.price, time: p.time };
+    if (!lo || p.price < lo.price) lo = { i: i, price: p.price, time: p.time };
+  });
+  out.high = hi;
+  out.low = lo;
+  return out;
+}
+
+/** 每分钟大单净额：接口给的是当日累计值，这里对相邻两点做差得到每分钟净额 */
+function bigOrderPerMinute(flow) {
+  const rows = (flow && flow.rows) || [];
+  const out = [];
+  let prevBig = 0, prevHuge = 0, prevMain = 0;
+  rows.forEach((r, i) => {
+    const big = Number.isFinite(r.big) ? r.big : 0;
+    const huge = Number.isFinite(r.huge) ? r.huge : 0;
+    const main = Number.isFinite(r.main) ? r.main : 0;
+    out.push({
+      time: r.time,
+      big: i === 0 ? big : big - prevBig,
+      huge: i === 0 ? huge : huge - prevHuge,
+      main: i === 0 ? main : main - prevMain
+    });
+    prevBig = big; prevHuge = huge; prevMain = main;
+  });
+  return out;
+}
+
+/** 大单金额面板：每分钟「大单 + 超大单」净额柱（红=净流入 / 绿=净流出），蓝线为主力当日累计净额 */
+function drawMinuteFlow(cv, perMin, flow, opt) {
+  const o = Object.assign({ height: 120, active: null, mode: 'big' }, opt || {});
+  const box = setupCanvas(cv, o.height);
+  const ctx = box.ctx, W = box.w, H = box.h;
+  const padL = 6, padR = 64, padT = 12, padB = 16;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const n = (perMin || []).length;
+  ctx.textAlign = 'left';
+  ctx.font = '12px "Microsoft YaHei",sans-serif';
+  ctx.fillStyle = '#8c9cb6';
+  if (!n) { ctx.fillText('暂无数据', padL + 8, padT + 16); return; }
+  const val = (x) => (o.mode === 'amount' ? (x.amount || 0) : ((x.big || 0) + (x.huge || 0)));
+  let mx = 1;
+  perMin.forEach((x) => { mx = Math.max(mx, Math.abs(val(x))); });
+  const half = plotH / 2;
+  const y0 = padT + half;
+  const yOf = (v) => y0 - (v / mx) * (half - 2);
+  const stepX = plotW / n;
+  const bw = Math.max(1, stepX * 0.68);
+  ctx.strokeStyle = 'rgba(140,156,182,.45)';
+  ctx.beginPath(); ctx.moveTo(padL, y0); ctx.lineTo(padL + plotW, y0); ctx.stroke();
+  ctx.font = '10.5px Consolas, Menlo, monospace';
+  ctx.fillStyle = CLR.text;
+  ctx.fillText(fmtAmt(mx), padL + plotW + 6, padT + 9);
+  ctx.fillText('0', padL + plotW + 6, y0 + 3.5);
+  ctx.fillText('-' + fmtAmt(mx), padL + plotW + 6, padT + plotH);
+  perMin.forEach((x, i) => {
+    const v = val(x);
+    const cx = padL + stepX * i + stepX / 2;
+    const top = yOf(Math.max(v, 0)), bot = yOf(Math.min(v, 0));
+    ctx.fillStyle = v >= 0 ? 'rgba(255,77,94,.75)' : 'rgba(18,196,106,.75)';
+    ctx.fillRect(cx - bw / 2, top, bw, Math.max(1, bot - top));
+  });
+  /* 主力当日累计净额（独立按自身最大值归一，只作趋势参考） */
+  if (o.mode === 'big' && flow && flow.rows && flow.rows.length === n) {
+    let mmax = 1;
+    flow.rows.forEach((r) => { mmax = Math.max(mmax, Math.abs(Number.isFinite(r.main) ? r.main : 0)); });
+    ctx.beginPath();
+    flow.rows.forEach((r, i) => {
+      const v = Number.isFinite(r.main) ? r.main : 0;
+      const cx = padL + stepX * i + stepX / 2;
+      const cy = y0 - (v / mmax) * (half - 2);
+      if (i === 0) ctx.moveTo(cx, cy); else ctx.lineTo(cx, cy);
+    });
+    ctx.strokeStyle = 'rgba(74,158,255,.85)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+  }
+  if (o.active != null && perMin[o.active]) {
+    const cx = padL + stepX * o.active + stepX / 2;
+    ctx.save();
+    ctx.setLineDash([3, 3]);
+    ctx.strokeStyle = CLR.cross;
+    ctx.beginPath(); ctx.moveTo(cx, padT); ctx.lineTo(cx, padT + plotH); ctx.stroke();
+    ctx.restore();
+  }
+}
+
 /** 分时图悬停：把画布内的 x 换算成分钟槽位，再取槽位最接近的那个分钟点
  *  （横轴总长按市场取 240 / 330 / 390 / 各亚太市场，不能写死 A股 的 240） */
 function minuteIndexAt(m, mkt, x, cssWidth) {
@@ -5795,6 +6168,47 @@ function drawMinute(cv, m, quote, opt) {
     ctx.fillText('量 ' + fmtVol(vmax), padL + plotW + 6, volTop + 12);
   }
 
+  /* 分时顶底标注：局部极值 + 顶/底背离 */
+  const marks = o.marks === undefined ? 'dots' : o.marks;
+  let ex = null;
+  if (marks !== 'none') {
+    ex = minuteExtremes(pts, o.dif);
+    const ptOf = (idx) => path.filter((x) => x.i === idx)[0] || null;
+    const dot = (x, y, color, label, isTop) => {
+      ctx.beginPath();
+      ctx.arc(x, y, 2.8, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(9,13,20,.9)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      if (!label) return;
+      ctx.font = 'bold 10.5px "Microsoft YaHei",sans-serif';
+      ctx.textAlign = 'center';
+      const ty = isTop ? y - 7 : y + 15;
+      const tw2 = ctx.measureText(label).width;
+      ctx.fillStyle = 'rgba(9,14,20,.78)';
+      ctx.fillRect(clamp(x - tw2 / 2 - 3, padL, padL + plotW), ty - 9, tw2 + 6, 12);
+      ctx.fillStyle = color;
+      ctx.fillText(label, clamp(x, padL + tw2 / 2 + 3, padL + plotW - tw2 / 2 - 3), ty);
+      ctx.textAlign = 'left';
+    };
+    ex.tops.forEach((t, k) => {
+      const p = ptOf(t.i);
+      if (!p) return;
+      const isLast = k === ex.tops.length - 1;
+      const label = (marks === 'full' && isLast && ex.topDiv) ? '顶背离' : (marks === 'full' ? '顶' : '');
+      dot(xOf(p.slot), yOf(p.price), CLR.red, label, true);
+    });
+    ex.bottoms.forEach((t, k) => {
+      const p = ptOf(t.i);
+      if (!p) return;
+      const isLast = k === ex.bottoms.length - 1;
+      const label = (marks === 'full' && isLast && ex.bottomDiv) ? '底背离' : (marks === 'full' ? '底' : '');
+      dot(xOf(p.slot), yOf(p.price), CLR.green, label, false);
+    });
+  }
+
   /* 最新价标签 */
   const lastP = path[path.length - 1];
   const ly = yOf(lastP.price);
@@ -5843,6 +6257,7 @@ function drawMinute(cv, m, quote, opt) {
     ctx.fillStyle = CLR.white;
     ctx.fillText(info, padL + 6, 13);
   }
+  return { extremes: ex, prevClose: prevClose, last: lastP.price };
 }
 
 function setIndVisible(show) {
@@ -5850,6 +6265,98 @@ function setIndVisible(show) {
     const el = $(id);
     if (el) el.style.display = show ? '' : 'none';
   });
+}
+
+/** 分时模式专属的两块面板：MACDFS 与大单金额（K线模式下隐藏） */
+function setMinIndVisible(show) {
+  ['indWrapMinMacd', 'indWrapMinFlow'].forEach((id) => {
+    const el = $(id);
+    if (el) el.style.display = show ? '' : 'none';
+  });
+}
+
+/** 分时顶底的一句话结论（写进 ② 的提示行） */
+function minuteExtremeText(res, m) {
+  const ex = res && res.extremes;
+  if (!ex || !ex.high || !ex.low) return '顶底：数据不足';
+  const hm = (t) => { const s = String(t || ''); return s.length >= 4 ? s.slice(0, 2) + ':' + s.slice(2, 4) : s; };
+  const parts = ['日内高 <b>' + fmtP(ex.high.price) + '</b>@' + hm(ex.high.time),
+    '日内低 <b>' + fmtP(ex.low.price) + '</b>@' + hm(ex.low.time)];
+  const pts = (m && m.points) || [];
+  const last = pts.length ? pts[pts.length - 1].price : NaN;
+  if (Number.isFinite(last) && ex.high.price > 0 && ex.low.price > 0) {
+    parts.push('距高点 ' + sign((last / ex.high.price - 1) * 100) + '%');
+    parts.push('距低点 ' + sign((last / ex.low.price - 1) * 100) + '%');
+  }
+  parts.push('已标注 ' + ex.tops.length + ' 顶 / ' + ex.bottoms.length + ' 底');
+  if (ex.topDiv || ex.bottomDiv) {
+    parts.push('<span class="orange">' + (ex.topDiv ? '顶背离' : '') + (ex.topDiv && ex.bottomDiv ? ' + ' : '') + (ex.bottomDiv ? '底背离' : '') + '</span>');
+  }
+  return '顶底：' + parts.join(' · ');
+}
+
+/** 没有大单口径时（美股 / 亚太）改看每分钟成交额 */
+function minuteAmounts(points, code) {
+  const mkt = marketOf(code);
+  const cum = (mkt === 'cn' || mkt === 'hk');       /* 腾讯分时的成交额是当日累计 */
+  let prev = 0;
+  return (points || []).map((p) => {
+    let a = Number.isFinite(p.amount) ? p.amount : 0;
+    if (!a && Number.isFinite(p.volume)) a = p.volume * p.price * (mkt === 'cn' ? 100 : 1);
+    const v = cum ? Math.max(0, a - prev) : a;
+    if (cum) prev = a;
+    return { time: p.time, amount: v };
+  });
+}
+
+/** 分时附加面板：MACDFS（分时 MACD）+ 大单金额（每分钟净额） */
+async function renderMinuteExtra(code, m, res, ml, mind) {
+  /* ① MACDFS：用分时点合成的分钟K线算标准 12,26,9 */
+  const mcv = $('chartMinMacd');
+  if (mcv && mind && ml && ml.length >= 5) {
+    drawMACD(mcv, ml, mind, { height: 130, active: UI.kline.active });
+    const tag = $('minMacdTag');
+    if (tag) {
+      const ms = macdState(mind);
+      tag.innerHTML = 'DIF <b>' + fmt(ms.dif, 3) + '</b> / DEA <b>' + fmt(ms.dea, 3) + '</b> · ' + esc(ms.title) +
+        (res && res.extremes && res.extremes.topDiv ? ' · <span class="down">顶背离</span>' : '') +
+        (res && res.extremes && res.extremes.bottomDiv ? ' · <span class="up">底背离</span>' : '');
+    }
+  }
+  /* ② 大单金额 */
+  const fcv = $('chartMinFlow');
+  if (!fcv) return;
+  const tag = $('minFlowTag'), hint = $('minFlowHint');
+  const signedAmt = (v) => (Number.isFinite(v) ? (v >= 0 ? '+' : '-') + fmtAmt(Math.abs(v)) : '--');
+  const clsOf = (v) => (Number.isFinite(v) ? (v >= 0 ? 'up' : 'down') : '');
+  if (bigOrderCapable(code)) {
+    try {
+      const flow = await getBigOrder(code, 45000);
+      const perMin = bigOrderPerMinute(flow);
+      drawMinuteFlow(fcv, perMin, flow, { height: 120, active: UI.kline.active, mode: 'big' });
+      const last = flow.rows[flow.rows.length - 1] || {};
+      if (tag) {
+        tag.innerHTML = '主力 <b class="' + clsOf(last.main) + '">' + signedAmt(last.main) + '</b>' +
+          ' · 超大单 <b class="' + clsOf(last.huge) + '">' + signedAmt(last.huge) + '</b>' +
+          ' · 大单 <b class="' + clsOf(last.big) + '">' + signedAmt(last.big) + '</b>' +
+          ' · 中单 <b class="' + clsOf(last.mid) + '">' + signedAmt(last.mid) + '</b>' +
+          ' · 小单 <b class="' + clsOf(last.small) + '">' + signedAmt(last.small) + '</b>' +
+          (Number.isFinite(last.mainPct) ? '（主力净占比 ' + fmt(last.mainPct, 2) + '%）' : '');
+      }
+      if (hint) {
+        hint.textContent = '口径：东财资金流（按单笔成交额分档）· 每分钟净额 = 该分钟累计值之差；' +
+          '红柱 = 大单+超大单净流入，绿柱 = 净流出，蓝线 = 主力当日累计净额 · 更新 ' + nowHms();
+      }
+      return;
+    } catch (e) { /* 落到下面的兜底 */ }
+  }
+  const perMin = minuteAmounts(m.points, code);
+  drawMinuteFlow(fcv, perMin, null, { height: 120, active: UI.kline.active, mode: 'amount' });
+  if (tag) tag.innerHTML = '<span class="dim">该市场没有大单口径，这里显示每分钟成交额</span>';
+  if (hint) {
+    hint.textContent = (bigOrderCapable(code) ? '大单资金流接口未返回数据（可能被网络拦截），已退化为分钟成交额。' : '美股 / 亚太指数没有大单资金流口径，改看每分钟成交额。') +
+      ' 每分钟成交额 = 该分钟成交金额（A股 / 港股为当日累计值之差）· 更新 ' + nowHms();
+  }
 }
 
 /** 同步周期/根数按钮的选中态；分时模式下隐藏K线根数选择 */
@@ -5875,6 +6382,7 @@ function syncSegs() {
 /** 标的没有K线时，把图表区变成一条清晰说明 */
 function setKlineUnavailable(msg) {
   setIndVisible(false);
+  setMinIndVisible(false);
   chartError($('chartPrice'), msg);
   ['chartVol', 'chartMacd', 'chartKdj', 'chartRsi'].forEach((id) => {
     const c = $(id);
@@ -5952,6 +6460,7 @@ async function renderKlinePanel(keepActive) {
   }
   if (period === 'min') {
     setIndVisible(false);
+    setMinIndVisible(true);
     try {
       const m = await getMinute(code, 25000);
       UI.minuteData = m;
@@ -5961,14 +6470,21 @@ async function renderKlinePanel(keepActive) {
         syncSegs();
         return renderKlinePanel(keepActive);
       }
-      drawMinute(cv, m, DATA.quotes[code], { height: 340, active: UI.kline.active });
+      /* 先用分时点合成「分钟K线」算出 MACDFS，再把 DIF 交给分时图用于顶底背离判断 */
+      const ml = minCandles(m.points);
+      const mind = ml.length >= 5 ? calcAll(ml) : null;
+      const res = drawMinute(cv, m, DATA.quotes[code], {
+        height: 340, active: UI.kline.active, marks: 'full', dif: mind ? mind.dif : null
+      });
+      renderMinuteExtra(code, m, res, ml, mind);
       const q = DATA.quotes[code];
       const base = q && Number.isFinite(q.prevClose) ? q.prevClose : (m.points[0] ? m.points[0].price : NaN);
       $('klLegend').innerHTML = '<span><i style="background:#ff4d5e"></i>价格</span><span><i style="background:#f0b73f"></i>分时均价</span>' +
         (Number.isFinite(base) ? '<span><i style="background:#8c9cb6"></i>昨收 ' + fmtP(base) + '</span>' : '');
-      $('klHint').textContent = '分时数据为每个分钟的成交价与累计成交量（' +
+      $('klHint').innerHTML = '分时数据为每个分钟的成交价与累计成交量（' +
         (asiaDefOf(code) ? 'CNBC，延迟 ≥15 分钟' : '腾讯财经') + '）· ' +
-        (m.date ? '交易日 ' + m.date : '') + ' · 共 ' + m.points.length + ' 点 · ' + sessionRangeText(code) + ' · 更新 ' + nowHms();
+        (m.date ? '交易日 ' + m.date : '') + ' · 共 ' + m.points.length + ' 点 · ' + esc(sessionRangeText(code)) + ' · ' +
+        minuteExtremeText(res, m) + ' · 更新 ' + nowHms();
     } catch (e) {
       chartError(cv, '分时数据获取失败：' + e.message);
       $('klLegend').innerHTML = '';
@@ -5977,6 +6493,7 @@ async function renderKlinePanel(keepActive) {
     return;
   }
   setIndVisible(true);
+  setMinIndVisible(false);
   try {
     /* 取满 320 根算指标，再按用户选择的根数裁剪显示窗口；
        这样 MA60 / RSI 等长周期指标在 60 根窗口下依然准确 */
@@ -7581,6 +8098,13 @@ function bindEvents() {
       loadCode(code, { name: asiaMinName(code), period: 'day' });
     });
   }
+  /* ---- ①A股大盘：把当前分时图的指数载入 ② 做K线分析 ---- */
+  if ($('btnMarketMinuteKline')) {
+    $('btnMarketMinuteKline').addEventListener('click', () => {
+      const code = UI.marketIndex || 'sh000001';
+      loadCode(code, { name: codeName(code) || '', period: 'day' });
+    });
+  }
   /* ---- ② 图上方：把当前标的加入 / 移出自选 ---- */
   if ($('btnFavAdd')) {
     $('btnFavAdd').addEventListener('click', () => {
@@ -7633,6 +8157,9 @@ function bindEvents() {
     const sg = ev.target.closest('.sg-item[data-code]');
     if (sg) { pickSuggestEl(sg); return; }
     if (!ev.target.closest('.search-wrap')) hideSuggest();
+    /* ①A股大盘的指数卡片：切换本模块的分时图（要在通用 .card 之前判断） */
+    const mktCard = ev.target.closest('.card[data-market][data-code]');
+    if (mktCard) { setMarketIndex(mktCard.getAttribute('data-code')); return; }
     const act = ev.target.closest('[data-act][data-code]');
     if (act) {
       const ac = act.getAttribute('data-code');
@@ -7696,7 +8223,7 @@ function bindEvents() {
     UI.resizeTimer = setTimeout(() => {
       syncStickyVar();
       renderKlinePanel(true);
-      renderIndexMinute();
+      redrawMarketMinute();
       renderGlobalSummary();
       redrawWatchPanel();
       redrawAsiaMinute();
@@ -7810,6 +8337,7 @@ async function refreshGlobalKlines() {
 
 function renderQuoteDependents() {
   renderIndexCards();
+  syncMarketMinuteTitle();
   renderGlobalGrid();
   renderGlobalSummary();
   syncAsiaTencent();
@@ -7826,7 +8354,7 @@ async function refreshAll(showProgress) {
     refreshMarketData(showProgress),
     refreshBoards(),
     refreshGlobalKlines(),
-    renderIndexMinute()
+    renderIndexMinute(true)
   ]);
   /* 亚太市场放在行情快照之后：腾讯兜底行要用到刚抓到的港股 / 期货快照 */
   await loadAsiaPacific(true).catch(() => {});
@@ -7850,7 +8378,7 @@ async function fastTick() {
   await refreshQuotes();
   renderQuoteDependents();
   tickAnomaly();
-  if (TICK_COUNT % 6 === 0) await renderIndexMinute();
+  if (TICK_COUNT % 6 === 0) await renderIndexMinute(true);
   if (TICK_COUNT % 6 === 0 || UI.kline.period === 'min') await renderKlinePanel(true);
 }
 
@@ -7907,9 +8435,11 @@ async function init() {
   buildQuickChips();
   buildEtfChips();
   loadWatch();
+  loadMarketIndex();
   bindEvents();
   bindHover();
   bindAsiaMinuteHover();
+  bindMarketMinuteHover();
   bindScrollSpy();
   syncSegs();
   tickClock();
