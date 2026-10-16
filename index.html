@@ -401,6 +401,52 @@ canvas{display:block;width:100%;}
 /* ①A股大盘：当前正显示在下方分时图里的那个指数 */
 .idx-card.on{border-color:var(--gold);box-shadow:0 0 0 1px rgba(240,183,63,.45) inset;}
 .idx-card.on .card-title{color:var(--gold);}
+
+/* ---------- 视觉细节打磨 ---------- */
+.card{box-shadow:0 6px 18px rgba(0,0,0,.20);transition:border-color .18s ease,box-shadow .18s ease;}
+.card:hover{border-color:var(--line2);box-shadow:0 8px 22px rgba(0,0,0,.26);}
+.panel{position:relative;}
+.panel-head{border-bottom-color:rgba(46,63,94,.85);}
+.panel-head h2 .num{background:linear-gradient(180deg,rgba(74,158,255,.26),rgba(74,158,255,.08));}
+table.tbl tbody tr:nth-child(even){background:rgba(140,156,182,.035);}
+.btn{border-radius:10px;}
+.tag{border-radius:8px;}
+
+/* ---------- 手机端：一次一屏的模块标签（不再一路下滑） ---------- */
+.mobtabs{display:none;position:fixed;left:0;right:0;bottom:0;z-index:70;
+  gap:6px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+  background:rgba(8,12,20,.94);backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;}
+.mobtabs::-webkit-scrollbar{display:none;}
+.mobtabs a{flex:none;padding:7px 12px;border-radius:11px;border:1px solid var(--line2);
+  background:var(--panel);color:var(--muted);font-size:12px;text-decoration:none;white-space:nowrap;transition:.18s;}
+.mobtabs a.on{color:var(--gold);border-color:var(--gold);background:var(--gold-bg);font-weight:700;}
+@media (max-width:760px){
+  .mobtabs{display:flex;}
+  /* 只显示当前模块：配合底部标签，手机上每次只看一屏 */
+  body.mob main{padding:10px 10px 0;}
+  /* 注意：#sec-analyze 自带 display:flex，是 id 级选择器，这里必须用 !important 才压得住 */
+  body.mob main > .panel:not(.mob-on),
+  body.mob main > .note:not(.mob-on),
+  body.mob main > .risk-box:not(.mob-on){display:none !important;}
+  body.mob main > .panel.mob-on,
+  body.mob main > .note.mob-on,
+  body.mob main > .risk-box.mob-on{display:block;}
+  body.mob{padding-bottom:calc(76px + env(safe-area-inset-bottom));}
+  body.mob .panel{padding:12px 12px 14px;border-radius:12px;}
+  body.mob .panel-head{padding-bottom:9px;margin-bottom:11px;}
+  body.mob .panel-head h2{font-size:15px;}
+  body.mob .grid{gap:10px;}
+  body.mob .card{padding:10px 11px;}
+  body.mob .price{font-size:20px;}
+  body.mob .tbl-wrap{max-height:none;}
+  body.mob table.tbl th,
+  body.mob table.tbl td{padding:7px 8px;font-size:12px;}
+  /* 手机端顶部导航收成一行小标签，释放屏幕高度 */
+  body.mob .navbar{padding:8px 10px 0;gap:6px;}
+  body.mob .navbar a{font-size:12px;padding:5px 10px;}
+}
 .flash-up{animation:fu .7s ease-out;}
 .flash-down{animation:fd .7s ease-out;}
 @keyframes fu{0%{background:rgba(255,77,94,.22);}100%{background:transparent;}}
@@ -1372,6 +1418,7 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
     </ol>
   </section>
 
+  <nav class="mobtabs" id="mobTabs" aria-label="模块切换"></nav>
 </main>
 
 <button class="btn primary" id="toTop">↑ 回到顶部</button>
@@ -7046,26 +7093,95 @@ function buildEtfChips() {
   }).join('');
 }
 
-/** 懒加载区块：滚动到附近（或导航跳转）才触发，失败不重试、由刷新按钮兜底 */
+/* ---------------- 手机端：一次一屏的模块切换 ----------------
+   窄屏（≤760px）给 body 加 .mob：只显示当前选中的那个模块，底部给一条可横向滑动的模块标签栏。
+   点顶部导航、点表格行跳到别的模块时都会自动切过去；宽屏完全不受影响（.mob 不会被加上）。 */
+
+const MOB_SECTIONS = [
+  ['sec-market', '① 大盘'], ['sec-kline', '② K线'], ['sec-analyze', '③ 分析'], ['sec-global', '④ 全球'],
+  ['sec-flow', '⑤ 资金'], ['sec-dragon', '⑥ 热点'], ['sec-rank', '⑦ 排行'], ['sec-zt', '⑧ 连板'],
+  ['sec-pick', '⑨ 选股'], ['sec-review', '⑩ 复盘'], ['sec-watch', '⑪ 自选'], ['sec-etf', '⑫ ETF'],
+  ['sec-method', '⑬ 方法'], ['sec-risk', '⑭ 风险']
+];
+let MOB_CUR = 'sec-market';
+
+function isMobile() {
+  return typeof window.matchMedia === 'function' && window.matchMedia('(max-width:760px)').matches;
+}
+
+function buildMobTabs() {
+  const el = $('mobTabs');
+  if (!el) return;
+  el.innerHTML = MOB_SECTIONS.map((s) => '<a href="#' + s[0] + '" data-mob="' + s[0] + '">' + esc(s[1]) + '</a>').join('');
+}
+
+/** 切到某个模块（手机上），noScroll=true 时不回到顶部 */
+function setMobTab(id, noScroll) {
+  if (!id) return;
+  MOB_CUR = id;
+  if (!isMobile()) return;
+  document.body.classList.add('mob');
+  Array.prototype.forEach.call(document.querySelectorAll('main > .panel, main > .note, main > .risk-box'), (el) => {
+    el.classList.toggle('mob-on', el.id === id);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('#mobTabs a'), (a) => a.classList.toggle('on', a.getAttribute('data-mob') === id));
+  Array.prototype.forEach.call(document.querySelectorAll('#mainNav a'), (a) => a.classList.toggle('on', a.getAttribute('href') === '#' + id));
+  if (!noScroll) { try { window.scrollTo(0, 0); } catch (e) { /* 忽略 */ } }
+  /* display:none 时画布量不到宽度，切回来必须重画；顺带触发这个模块的懒加载 */
+  setTimeout(() => { runLazy(id); refreshMobSection(id); }, 40);
+}
+
+/** 切回某个模块时重画它的图（隐藏期间画布宽度是 0） */
+function refreshMobSection(id) {
+  try {
+    if (id === 'sec-market') { renderMarket(); renderIndexMinute(true); }
+    else if (id === 'sec-kline') { renderKlineHead(); renderKlinePanel(true); }
+    else if (id === 'sec-analyze') { renderAnalyze(); }
+    else if (id === 'sec-global') { renderGlobalGrid(); renderGlobalSummary(); renderAsiaCard(); }
+    else if (id === 'sec-flow') { renderFlow(); }
+    else if (id === 'sec-dragon') { renderHot(); renderLHB(); renderAnomalyBoards(); }
+    else if (id === 'sec-rank') { renderRank(); }
+    else if (id === 'sec-zt') { renderZt(); }
+    else if (id === 'sec-review') { renderReview(); }
+    else if (id === 'sec-watch') { renderWatch(); redrawWatchPanel(); }
+    else if (id === 'sec-etf') { renderEtf(); }
+  } catch (e) { /* 单块失败不影响其它模块 */ }
+}
+
+/** 进入 / 离开窄屏时同步 .mob；离开时把所有模块还原成正常显示 */
+function syncMobMode() {
+  if (isMobile()) {
+    document.body.classList.add('mob');
+    setMobTab(MOB_CUR, true);
+  } else {
+    document.body.classList.remove('mob');
+    Array.prototype.forEach.call(document.querySelectorAll('.mob-on'), (el) => el.classList.remove('mob-on'));
+  }
+}
+
+/** 懒加载区块：滚动到附近、或手机端切到该模块时才触发；失败不重试，由刷新按钮兜底 */
 const LAZY_DONE = {};
+const LAZY_TASKS = {};
+function runLazy(id) {
+  const task = LAZY_TASKS[id];
+  if (!task || LAZY_DONE[id]) return;
+  LAZY_DONE[id] = true;
+  try {
+    const p = task();
+    if (p && p.catch) p.catch(() => {});
+  } catch (e) { /* 忽略：模块内部已提示 */ }
+}
 function lazySection(id, task) {
   if (LAZY_DONE[id]) return;
   const el = $(id);
   if (!el) return;
-  const run = () => {
-    if (LAZY_DONE[id]) return;
-    LAZY_DONE[id] = true;
-    try {
-      const p = task();
-      if (p && p.catch) p.catch(() => {});
-    } catch (e) { /* 忽略：模块内部已提示 */ }
-  };
+  LAZY_TASKS[id] = task;
   if (typeof IntersectionObserver === 'function') {
     const obs = new IntersectionObserver((entries) => {
-      entries.forEach((en) => { if (en.isIntersecting) { obs.disconnect(); run(); } });
+      entries.forEach((en) => { if (en.isIntersecting) { obs.disconnect(); runLazy(id); } });
     }, { rootMargin: '240px 0px' });
     obs.observe(el);
-  } else run();
+  } else runLazy(id);
 }
 
 /* ---------------- E4. 连板股 · 涨停梯队（东方财富涨停板行情） ---------------- */
@@ -7939,6 +8055,8 @@ function bindHover() {
 function scrollToSection(id) {
   const el = $(id);
   if (!el) return;
+  /* 手机端是「一次一屏」：跳到别的模块 = 切标签，而不是滚动 */
+  if (isMobile() && document.body.classList.contains('mob')) { setMobTab(id); return; }
   const top = Math.max(0, el.getBoundingClientRect().top + window.scrollY - stickyOffset() - 12);
   try { window.scrollTo({ top: top, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, top); }
 }
@@ -8157,6 +8275,13 @@ function bindEvents() {
     const sg = ev.target.closest('.sg-item[data-code]');
     if (sg) { pickSuggestEl(sg); return; }
     if (!ev.target.closest('.search-wrap')) hideSuggest();
+    /* 手机端：顶部导航 / 底部标签 = 切换模块（不再长滚动） */
+    const mobLink = ev.target.closest('#mainNav a[href^="#sec-"], #mobTabs a[href^="#sec-"]');
+    if (mobLink && isMobile()) {
+      ev.preventDefault();
+      setMobTab(mobLink.getAttribute('href').slice(1));
+      return;
+    }
     /* ①A股大盘的指数卡片：切换本模块的分时图（要在通用 .card 之前判断） */
     const mktCard = ev.target.closest('.card[data-market][data-code]');
     if (mktCard) { setMarketIndex(mktCard.getAttribute('data-code')); return; }
@@ -8221,6 +8346,7 @@ function bindEvents() {
   window.addEventListener('resize', () => {
     clearTimeout(UI.resizeTimer);
     UI.resizeTimer = setTimeout(() => {
+      syncMobMode();
       syncStickyVar();
       renderKlinePanel(true);
       redrawMarketMinute();
@@ -8456,6 +8582,8 @@ async function init() {
   lazySection('sec-zt', () => loadZtData(false));
   lazySection('sec-etf', () => loadEtfData(false));
   lazySection('sec-watch', () => loadWatchPanel(false));
+  buildMobTabs();
+  syncMobMode();
   await refreshAll(true);
   startLoops();
 }
