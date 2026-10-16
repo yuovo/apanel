@@ -236,6 +236,11 @@ canvas{display:block;width:100%;}
 .segs button.on{background:var(--blue-bg);color:var(--blue);font-weight:700;}
 .segs button:hover{color:var(--text);}
 
+/* ---------- 亚太分时：指数切换小标签（窄屏要能换行，不能把页面撑宽） ---------- */
+.asia-chips{display:flex;flex-wrap:wrap;gap:6px;min-width:0;}
+.asia-chips .chip{cursor:pointer;}
+.asia-panel{min-width:0;}          /* 网格子项默认 min-width:auto，会被内容顶宽 */
+
 /* ---------- 建议卡 ---------- */
 .advice{
   border-radius:12px;padding:14px;border:1px solid var(--line2);
@@ -445,6 +450,9 @@ main{padding-bottom:calc(24px + env(safe-area-inset-bottom));}
 @media (max-width:760px){
   body{font-size:14px;}
   .topbar{padding:8px 10px;}
+  /* 窄屏兜底：卡片内的宽表格（指标总览 / 支撑压力 / 评分拆解）在本卡片内横向滑动，不撑宽整页 */
+  #sec-analyze .card{overflow-x:auto;}
+  #sec-analyze .card-head{position:sticky;left:0;}
   .brand{flex:1 1 100%;}                                 /* 品牌独占一行，右侧控件换行排布，顶栏更矮 */
   .brand h1{font-size:13.5px;max-width:76vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .topbar-right{width:100%;justify-content:space-between;gap:8px;}
@@ -596,13 +604,15 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
             <div class="li"><span class="dot blue"></span><span><b>点表格行＝载入</b>：⑦排行榜、⑥热点龙虎榜、⑧连板梯队、⑫ETF 榜、⑪自选股，点任意一行都会把它载入②，并在③自动生成分析。</span></div>
             <div class="li"><span class="dot orange"></span><span><b>看图</b>：在 K 线主图上移动鼠标（手机按住拖动）会出现十字光标与浮层：日期、开高低收、涨跌幅、量额、MA5/10/20/60、MACD、KDJ、RSI、量比与当日综合评分。</span></div>
             <div class="li"><span class="dot gold"></span><span><b>自选</b>：② 图上方有「＋加入自选／－移出自选」；⑪ 自选页每行、每张卡片都能单独移除，并带当日分时图与今日点评。</span></div>
+            <div class="li"><span class="dot blue"></span><span><b>亚太也能看图</b>：④全球市场 的「亚太市场 · 大盘情况」左侧是<b>专门的分时图</b>，点上面的指数标签即可切换（日经225 / 韩国KOSPI / 澳洲标普200 / 台湾加权 / 新加坡STI / 印度NIFTY50 / 新西兰NZ50 / 恒生系）；点右侧表格任意一行，或者点「看K线分析」，就会在 ② 载入它的 K 线并生成完整技术分析（日线 / 周线 / 月线都支持）。</span></div>
           </div>
         </div>
         <div class="card">
           <div class="card-head"><div class="card-title">数据源与口径</div><div class="card-sub">看到「已降级」时看这里</div></div>
           <div class="list">
-            <div class="li"><span class="dot blue"></span><span><b>数据源</b>：腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（龙虎榜 / 涨停池）。顶部状态依次为<b>正常 / 待连接 / 已降级 / 异常</b>。</span></div>
-            <div class="li"><span class="dot orange"></span><span><b>已降级</b>：只可能出现在「东财·涨停池」——该域名在当前网络被拦截，⑧ 连板股会自动改用「全市场快照＋日线」本地推算涨停与连板高度；此时没有封板资金与首封时间，页面会明确标注口径。</span></div>
+            <div class="li"><span class="dot blue"></span><span><b>数据源</b>：腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（龙虎榜 / 涨停池）、东财 push2 或 CNBC（亚太指数行情 / 分时 / K线）。顶部状态依次为<b>正常 / 待连接 / 已降级 / 异常</b>。</span></div>
+            <div class="li"><span class="dot orange"></span><span><b>已降级</b>：可能出现在两个地方。①「东财·涨停池」——该域名在当前网络被拦截时，⑧ 连板股会自动改用「全市场快照＋日线」本地推算涨停与连板高度；②「亚太·指数」——东财 push2 与 CNBC 都不可达时，④ 亚太市场自动退回腾讯口径（港股指数 + 富时A50期货 + 日经225期货，此时没有日经 / 韩国 / 台湾的现货指数与分时K线）。两处都会明确标注当前口径。</span></div>
+            <div class="li"><span class="dot gray"></span><span><b>美股也能看分时</b>：② 顶部周期切到「分时」即可看美股个股与美股指数的当日分时（腾讯 usMinute 接口，横轴为美股当地 09:30-16:00）；但公开接口不提供美股个股的历史K线，所以日线技术分析仍只对A股 / ETF / 港股 / 美股指数开放。</span></div>
             <div class="li"><span class="dot gold"></span><span><b>ETF 的 T+0 / T+1</b>：名称后的标签是交易规则备注——T+0＝当天买当天能卖（债券、货币、黄金/商品、跨境类 ETF）；T+1＝次日才能卖（境内股票型 ETF）。按代码段＋名称关键词推定，个别产品以券商与基金公告为准。</span></div>
             <div class="li"><span class="dot gray"></span><span><b>非交易时段</b>：显示最近一个交易日的收盘数据；所有指标、评分、买卖建议都是按固定规则计算，不预测涨跌，也不构成投资建议。</span></div>
           </div>
@@ -871,7 +881,7 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
   <section class="panel" id="sec-global">
     <div class="panel-head">
       <h2><span class="num">④</span>全球市场参考</h2>
-      <span class="tag blue">美股 · 港股 · 国际商品</span>
+      <span class="tag blue">美股 · 港股 · 亚太 · 国际商品</span>
       <span class="tag gold">点击指数卡片 → 载入K线并分析</span>
       <div class="spacer"></div>
       <span class="src-line"><i class="dot-live" id="globalDot"></i><span id="globalUpdate">更新时间：--</span></span>
@@ -905,6 +915,43 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
     </div>
 
     <div class="grid g5" id="globalGrid"></div>
+
+    <div class="card" style="margin-top:14px;">
+      <div class="card-head">
+        <div class="card-title">亚太市场 · 大盘情况</div>
+        <div class="card-sub" id="asiaHint">正在抓取日经225 / 韩国KOSPI / 澳洲 / 台湾 / 新加坡 / 印度…</div>
+        <span class="tag gray" id="asiaAvg">亚太均值 --</span>
+      </div>
+      <div class="grid g2" style="gap:14px;align-items:start;">
+        <div class="asia-panel">
+          <div class="card-head" style="margin-bottom:6px;">
+            <div class="card-title" id="asiaMinName">亚太指数 · 实时分时</div>
+            <div class="spacer"></div>
+            <button class="btn sm" id="asiaMinKline">看K线分析</button>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="chartAsiaMinute" height="220"></canvas>
+            <div class="tip" id="asiaMinTip"></div>
+          </div>
+          <div class="chart-legend" id="asiaMinLegend"></div>
+          <div class="asia-chips" id="asiaMinChips" style="margin-top:8px;"></div>
+          <div class="hint" id="asiaMinHint" style="margin-top:8px;">点上面的指数切换分时图；点右侧表格任意一行，会在 ② 载入它的K线与技术分析。</div>
+        </div>
+        <div class="asia-panel">
+          <div class="tbl-wrap" style="max-height:none;">
+            <table class="tbl">
+              <thead>
+                <tr><th>市场 / 指数</th><th>最新</th><th>涨跌</th><th>涨跌幅</th><th>数据源</th><th>分时</th></tr>
+              </thead>
+              <tbody id="asiaBody">
+                <tr><td colspan="6" class="hint">正在抓取亚太指数行情…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="mini-note" id="asiaNote">亚太指数来源按「东方财富 → CNBC → 腾讯」逐级降级，逐行标注来源；期货行不计入亚太均值。</div>
+    </div>
 
     <div class="card" style="margin-top:14px;">
       <div class="card-head">
@@ -1289,11 +1336,12 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
       <li>所有技术指标均存在<b>滞后性</b>，指标信号可能失真、出现骗线（假金叉/假死叉/假突破）。</li>
       <li>突发消息、政策变化、地缘冲突、外围市场大幅波动，均可能直接打破既有技术形态。</li>
       <li>方向概率推演仅为技术模型的推演结果，<b>不能保证准确</b>，历史规律不代表未来表现。</li>
-      <li>本页行情数据来自腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）与东方财富（涨停池 / 连板 / 龙虎榜）的<b>公开行情接口</b>，为程序直接抓取，可能存在延迟、缺失或与交易所官方数据不一致的情况；免费接口也可能随时调整或不可用，请以券商交易软件为准。</li>
+      <li>本页行情数据来自腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（涨停池 / 连板 / 龙虎榜）以及东方财富 push2 或 CNBC（亚太指数）的<b>公开行情接口</b>，为程序直接抓取，可能存在延迟、缺失或与交易所官方数据不一致的情况；免费接口也可能随时调整或不可用，请以券商交易软件为准。</li>
       <li>ETF / 场内基金与个股的规则不同（T+0 或 T+1、涨跌幅 ±10% 或 ±20%、有折溢价），本页已按品种自动套用相应口径，但<b>折溢价率、跟踪指数、成分股</b>仍需自行在基金页面核对。</li>
       <li>连板股 / 涨停梯队数据为<b>收盘口径</b>，盘中会随封板与开板实时变化；高连板个股波动剧烈，属于高风险品种，本页只做客观呈现，不构成追板建议。</li>
       <li>分时、日线等数据在非交易时段显示的是<b>最近一个交易日的收盘数据</b>，并非当前时点的实时成交。</li>
-      <li>美股个股、国际商品期货仅提供<b>实时行情快照</b>，公开接口不提供其历史K线，因此无法生成技术分析。</li>
+      <li>美股个股提供<b>实时行情快照 + 当日分时</b>，但公开接口不提供其历史K线，因此无法生成日线技术分析；国际商品期货仅提供<b>实时行情快照</b>。</li>
+      <li>亚太市场指数（日经225 / 韩国KOSPI / 澳洲标普200 / 台湾加权 / 新加坡STI / 印度NIFTY / 新西兰NZ50）来自公开接口，普遍<b>延迟至少 15 分钟</b>，其分时图为该指数的分钟级序列，<b>个别市场（如台湾、韩国）的最后一分钟可能与官方收盘价有细微差异</b>，日线则以官方收盘价为准；「富时A50期货」「日经225期货」是期货合约（24 小时交易、反映美国时段预期），与当地现货指数涨跌<b>不等价</b>，仅作方向参考。</li>
       <li>本工具仅用于学习、复盘与量化研究，<span class="risk-strong">所有内容不构成任何投资建议，股市有风险，投资需谨慎</span>。</li>
     </ol>
   </section>
@@ -2334,10 +2382,13 @@ function fmtP(v) {
    数据来源（均为公开行情接口，由浏览器直接请求，页面不做任何本地模拟）：
    1) 腾讯财经 qt.gtimg.cn            —— 实时行情快照（A股 / ETF / 指数 / 港股 / 美股 / 国际商品）
    2) 腾讯财经 proxy.finance.qq.com   —— 前复权日 / 周 / 月K线
-   3) 腾讯财经 web.ifzq.gtimg.cn      —— 当日分时、分钟K线
+   3) 腾讯财经 web.ifzq.gtimg.cn      —— 当日分时（A股 / 港股走 minute，美股个股与美股指数走 usMinute）
    4) 腾讯财经 proxy.finance.qq.com/…/smartbox/search/get —— 中文名 / 拼音首字母 / 代码联想搜索
    5) 新浪财经 vip.stock.finance.sina.com.cn —— 全市场A股列表、场内ETF / 基金列表、行业 / 概念 / 地域板块
    6) 东方财富 push2ex.eastmoney.com  —— 涨停池 / 炸板池 / 跌停池 / 昨日涨停池（连板股页面数据）
+   7) 东方财富 push2.eastmoney.com / CNBC quote.cnbc.com —— 亚太主要指数（日经225 / 韩国KOSPI / 澳洲标普200 /
+      台湾加权 / 新加坡STI / 印度NIFTY / 新西兰NZ50），两个接口任一可用即可，都不可用时自动退回
+      腾讯口径（恒生系指数 + 富时A50期货 + 日经225期货），并把「亚太·指数」标记为已降级
    统一使用 JSONP（<script> 注入）传输，可绕过浏览器跨域限制，
    因此本文件用 file:// 直接双击打开时同样可用。
    ============================================================ */
@@ -2346,6 +2397,7 @@ const API = {
   quote: 'https://qt.gtimg.cn/q=',
   kline: 'https://proxy.finance.qq.com/ifzqgtimg/appstock/app/newfqkline/get',
   minute: 'https://web.ifzq.gtimg.cn/appstock/app/minute/query',
+  usMinute: 'https://web.ifzq.gtimg.cn/appstock/app/usMinute/query',
   mkline: 'https://proxy.finance.qq.com/ifzqgtimg/appstock/app/kline/mkline',
   search: 'https://proxy.finance.qq.com/ifzqgtimg/appstock/smartbox/search/get',
   dc: 'https://datacenter-web.eastmoney.com/api/data/v1/get',
@@ -2356,7 +2408,12 @@ const API = {
   sinaJsp: 'https://vip.stock.finance.sina.com.cn/quotes_service/api/jsonp_v2.php/',
   sinaList: 'Market_Center.getHQNodeData',
   sinaCount: 'Market_Center.getHQNodeStockCountSimple',
-  sinaBoard: 'https://vip.stock.finance.sina.com.cn/q/view/'
+  sinaBoard: 'https://vip.stock.finance.sina.com.cn/q/view/',
+  /* 亚太指数：东财 push2（JSONP）→ CNBC（fetch）→ 腾讯（港股指数 + 期货，兜底） */
+  emList: 'https://push2.eastmoney.com/api/qt/ulist.np/get',
+  cnbc: 'https://quote.cnbc.com/quote-html-webservice/restQuote/symbolType/symbol',
+  /* CNBC 图表接口：路径里放起止时间（yyyyMMddHHmmss），symbol 走查询参数 */
+  cnbcChart: 'https://ts-api.cnbc.com/harmony/app/charts/'
 };
 
 /** 全市场列表节点：hs_a = 沪深A股，etf_hq_fund = 场内ETF（含货币/债券/跨境ETF） */
@@ -2373,7 +2430,8 @@ const DATA = {
   snapshot: null,      // { t, list, stats }
   boards: {},          // kind -> { t, list }
   src: {},             // 数据源健康状态
-  history: {}          // code -> 最近一次价格（用于涨跌闪动）
+  history: {},         // code -> 最近一次价格（用于涨跌闪动）
+  asia: null           // { t, rows, avg, src } 亚太市场（多源容错）
 };
 
 const SRC_LABEL = {
@@ -2384,7 +2442,8 @@ const SRC_LABEL = {
   list: '新浪·全市场',
   etf: '新浪·场内基金',
   zt: '东财·涨停池',
-  board: '新浪·板块'
+  board: '新浪·板块',
+  asia: '亚太·指数'
 };
 
 const CONCURRENCY = 6;
@@ -2466,8 +2525,9 @@ async function jsonpParam(url, param, charset, timeoutMs) {
 
 /* ---------------- 代码规范化 ---------------- */
 
-/** 带 function 回调的 JSONP（东财 datacenter 用 callback=函数名，返回 cb({...})） */
-function fetchJsonpCb(url, timeoutMs) {
+/** 带 function 回调的 JSONP（东财 datacenter 用 callback=函数名，返回 cb({...})）
+ *  param 可换成 push2 系列用的 cb= */
+function fetchJsonpCb(url, timeoutMs, param) {
   const name = uniqName('cb');
   return new Promise((resolve, reject) => {
     let done = false;
@@ -2495,7 +2555,7 @@ function fetchJsonpCb(url, timeoutMs) {
       cleanup();
       reject(new Error('接口请求失败'));
     };
-    s.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + name;
+    s.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + (param || 'callback') + '=' + name;
     document.head.appendChild(s);
   });
 }
@@ -2507,6 +2567,8 @@ function normalizeCode(raw) {
   /* 全球指数代码大小写敏感（hkHSI / usDJI），先按小写映射回标准写法 */
   if (GLOBAL_CANON[low]) return GLOBAL_CANON[low];
   if (/^us[a-z.\-]{1,7}$/.test(low)) return 'us' + low.slice(2).toUpperCase();
+  if (/^ap[a-z0-9]{1,6}$/.test(low)) return 'ap' + low.slice(2).toUpperCase();   /* 亚太指数：apN225 / apKS11 … */
+  if (/^fu[a-z0-9]{1,5}$/.test(low) && low !== 'fu') return 'fu' + low.slice(2).toUpperCase();
   if (/^(sh|sz|bj|hk)\d{5,6}$/.test(low)) return low;
   if (/^\d{6}$/.test(low)) {
     if (/^92/.test(low)) return 'bj' + low;
@@ -2576,6 +2638,9 @@ function fundModeTag(code, name) {
 function instInfo(code, name) {
   const nm = String(name || '');
   if (/^hf_/.test(code)) return { type: '国际商品期货', tag: '期货', cls: 'orange', isFund: false, t0: true };
+  if (/^fu[A-Z0-9]{1,5}$/.test(code)) return { type: '国际指数期货（CME / 新加坡）', tag: '期货', cls: 'orange', isFund: false };
+  const apDef = asiaDefOf(code);
+  if (apDef) return { type: '亚太指数（' + apDef.label + '）', tag: '亚太', cls: 'blue', isFund: false };
   if (/^us/.test(code)) return { type: /^(DJI|IXIC|INX|NDX|VIX)$/.test(code.slice(2)) ? '美股指数' : '美股个股', tag: '美股', cls: 'blue', isFund: false };
   if (/^hk/.test(code)) {
     if (/ETF|基金|FUND|杠杆|反向/i.test(nm)) return { type: '港股 ETF / 杠杆反向产品', tag: '港股ETF', cls: 'gold', isFund: true, t0: true };
@@ -2592,20 +2657,26 @@ function instInfo(code, name) {
 }
 
 /** 公开接口能取到历史K线的标的类型
- *  A股/指数/北交所、港股、美股指数 ✓；美股个股与国际商品期货只有实时快照 ✗ */
+ *  A股/指数/北交所、港股、美股指数、亚太指数（CNBC 日线）、国际指数期货（腾讯）✓；
+ *  美股个股（只有实时快照 + 当日分时）与国际商品期货（只有实时快照）✗ */
 function klineCapable(code) {
   if (/^(sh|sz|bj)\w+$/.test(code)) return true;
   if (/^hk\d{5}$/.test(code)) return true;
   if (/^hk(HSI|HSCEI|HSTECH)$/.test(code)) return true;
   if (/^us(DJI|IXIC|INX|NDX|VIX)$/.test(code)) return true;
+  if (asiaDefOf(code)) return true;
+  if (/^fu[A-Z0-9]{1,5}$/.test(code)) return true;
   return false;
 }
 
-/** 能取到当日分时的标的：A股与港股；美股指数接口只返回一笔快照 */
+/** 能取到当日分时的标的：A股 / 港股 / 美股（个股与指数都有分钟级分时）；
+ *  亚太指数走 CNBC 分钟级接口；国际商品期货与期货合约只有实时快照，没有分时 */
 function minuteCapable(code) {
   if (/^(sh|sz|bj)\w+$/.test(code)) return true;
   if (/^hk\d{5}$/.test(code)) return true;
   if (/^hk(HSI|HSCEI|HSTECH)$/.test(code)) return true;
+  if (/^us[A-Z.\-]{1,7}$/.test(code)) return true;
+  if (asiaDefOf(code)) return true;
   return false;
 }
 
@@ -2768,6 +2839,8 @@ function normalizeKline(code, rows) {
 }
 
 async function fetchKline(code, period, count) {
+  /* 亚太指数：CNBC 图表接口（日线），周 / 月线由日线聚合 */
+  if (asiaDefOf(code)) return await fetchAsiaDaily(code, period, count);
   const p = period === 'week' || period === 'month' ? period : 'day';
   const name = uniqName('kl');
   /* param 格式为 code,周期,起始日期,结束日期,数量,复权方式 —— 中间的日期留空，逗号不能少 */
@@ -2819,15 +2892,19 @@ async function getKline(code, period, count, maxAgeMs) {
 
 async function fetchMinute(code) {
   const name = uniqName('mn');
+  /* 亚太指数走 CNBC 的分钟级接口（本地时段过滤后返回） */
+  if (asiaDefOf(code)) return await fetchAsiaIntraday(code);
+  /* 美股（个股与指数）的分时在 usMinute 接口上；A股 / 港股 / 北交所走 minute 接口 */
+  const ep = /^us/.test(code) ? API.usMinute : API.minute;
   let json = null;
   try {
-    json = await jsonpValue(API.minute + '?code=' + code + '&_var=' + name + '&_=' + Date.now(), name, 'UTF-8', 15000);
+    json = await jsonpValue(ep + '?code=' + code + '&_var=' + name + '&_=' + Date.now(), name, 'UTF-8', 15000);
   } catch (e) {
     json = null;
   }
   if (!json) {
     try {
-      const r = await fetch(API.minute + '?code=' + code + '&_=' + Date.now());
+      const r = await fetch(ep + '?code=' + code + '&_=' + Date.now());
       json = await r.json();
     } catch (e2) {
       srcMark('minute', false, '分时接口请求失败');
@@ -3101,6 +3178,10 @@ const UI = {
   kline: { code: 'sh000001', period: 'min', active: null, bars: 250, count: 0 },
   analyzeCode: 'sh000001',
   watch: [],
+  asiaMin: '',            // 亚太分时图当前选中的指数代码（apN225 / hkHSI …）
+  asiaMinData: null,
+  asiaMinName: '',
+  asiaMinActive: null,    // 亚太分时图十字线当前指向的分钟点
   refreshSec: 30,
   scanning: false,
   timers: {},
@@ -3143,7 +3224,7 @@ function chartError(cv, msg) {
 function unavailableText(code) {
   const name = codeName(code);
   if (/^us(?!DJI|IXIC|INX|NDX|VIX)[A-Z.\-]+$/.test(code)) {
-    return name + '：公开接口只提供美股个股的实时行情快照，没有历史K线，无法生成技术分析。';
+    return name + '：公开接口能拿到美股个股的实时行情与当日分时（切到「分时」就能看），但不提供历史K线，因此无法生成日线技术分析。';
   }
   if (/^hf_/.test(code)) {
     return name + '：国际商品期货只提供实时行情快照，没有历史K线，无法生成技术分析。';
@@ -3262,10 +3343,12 @@ function renderGlobalGrid() {
     const q = DATA.quotes[it.code];
     const cls = q ? pctCls(q.chgPct) : 'flat';
     const cap = klineCapable(it.code);
+    /* 没有K线但能取当日分时的（美股个股），标注为「分时」而不是「快照」，点击后不会白点 */
+    const minCap = !cap && minuteCapable(it.code);
     /* 无K线的标的也可点击，点击后由K线面板给出明确说明，避免"点了没反应" */
     return '<tr class="clickable' + (cap ? '' : ' no-kl') + '" data-code="' + esc(it.code) + '"' +
-      (cap ? '' : ' title="该标的仅提供实时行情快照，无历史K线"') + '>' +
-      '<td class="name">' + esc(it.label) + (cap ? '' : ' <span class="dim">·快照</span>') + '</td>' +
+      (cap ? '' : ' title="' + (minCap ? '该标的提供实时行情与当日分时，但没有历史K线' : '该标的仅提供实时行情快照，无历史K线与分时') + '"') + '>' +
+      '<td class="name">' + esc(it.label) + (cap ? '' : (minCap ? ' <span class="dim">·分时</span>' : ' <span class="dim">·快照</span>')) + '</td>' +
       '<td class="mono">' + (q ? fmtP(q.price) : '--') + '</td>' +
       '<td class="' + cls + ' mono">' + (q ? sign(q.chgPct) + '%' : '--') + '</td></tr>';
   }).join('') + '</tbody></table>';
@@ -3289,6 +3372,508 @@ function renderGlobalGrid() {
   });
 }
 
+/* ---------------- 亚太市场（日经 / 韩国 / 澳洲 / 台湾 / 新加坡 / 印度 / 新西兰） ----------------
+   按顺序尝试三个数据源，谁先给出数据就用谁，逐行标注来源，不混算、不估算：
+     ① 东方财富 push2（JSONP，中文名 + 实时指数）—— A股用户网络里最常见
+     ② CNBC restQuote（fetch JSON）—— 覆盖同样的指数
+     ③ 腾讯（恒生系指数 + 富时A50期货 + 日经225期货）—— 长期可用，作兜底，
+        保证「亚太」这块在任何网络下都有真实数据，不会整块空掉。
+   ① ② 都不可达时，「亚太·指数」在顶部数据源状态里显示为「已降级」。 */
+
+const ASIA_INDEXES = [
+  { key: 'N225', label: '日经225', em: '100.N225', cnbc: '.N225', mkt: 'jp', tz: 'Asia/Tokyo' },
+  { key: 'KS11', label: '韩国KOSPI', em: '100.KS11', cnbc: '.KS11', mkt: 'kr', tz: 'Asia/Seoul' },
+  { key: 'AS51', label: '澳洲标普200', em: '100.AS51', cnbc: '.AXJO', mkt: 'au', tz: 'Australia/Sydney' },
+  { key: 'TWII', label: '台湾加权', em: '100.TWII', cnbc: '.TWII', mkt: 'tw', tz: 'Asia/Taipei' },
+  { key: 'STI', label: '新加坡STI', em: '100.STI', cnbc: '.STI', mkt: 'sg', tz: 'Asia/Singapore' },
+  { key: 'NSEI', label: '印度NIFTY50', em: '100.NIFTY', cnbc: '.NSEI', mkt: 'in', tz: 'Asia/Kolkata' },
+  { key: 'NZ50', label: '新西兰NZ50', em: '100.NZ50', cnbc: '.NZ50', mkt: 'nz', tz: 'Pacific/Auckland' }
+];
+/** 腾讯口径的亚太相关标的：港股指数（与A股同时段）+ 国际期货（A50 / 日经，24小时） */
+const ASIA_TENCENT = [
+  { code: 'hkHSI', label: '恒生指数' },
+  { code: 'hkHSCEI', label: '恒生国企指数' },
+  { code: 'hkHSTECH', label: '恒生科技指数' },
+  { code: 'fuCN', label: '富时A50期货' },
+  { code: 'fuNIY', label: '日经225期货' }
+];
+const ASIA_CACHE_MS = 60000;
+
+/** 亚太均值：只用「指数」行（期货反映的是美国时段预期，不并入均值） */
+function asiaAvgOf(rows) {
+  const vals = (rows || []).filter((r) => Number.isFinite(r.chgPct) && !r.future).map((r) => r.chgPct);
+  return vals.length ? mean(vals) : NaN;
+}
+
+/** 行情快照刷新后，把亚太表里腾讯口径的行同步成最新价（不发额外请求） */
+function syncAsiaTencent() {
+  const a = DATA.asia;
+  if (!a || !a.rows || !a.rows.length) return;
+  let changed = false;
+  a.rows.forEach((r) => {
+    if (r.src !== '腾讯' || !r.code) return;
+    const q = DATA.quotes[r.code];
+    if (!q || !Number.isFinite(q.price)) return;
+    if (q.price !== r.price || q.chgPct !== r.chgPct) changed = true;
+    r.price = q.price; r.chg = q.chg; r.chgPct = q.chgPct;
+  });
+  if (!changed) return;
+  a.avg = asiaAvgOf(a.rows);
+  a.at = nowHms();
+  renderAsiaCard();
+}
+
+/** ① 东方财富：一次请求拿全部亚太指数（JSONP，回调名放在 cb= 上） */
+async function fetchAsiaEast() {
+  const url = API.emList + '?fields=f1,f12,f13,f14,f2,f3,f4,f18&secids=' + ASIA_INDEXES.map((x) => x.em).join(',');
+  const json = await fetchJsonpCb(url, 9000, 'cb');
+  const diff = json && json.data && json.data.diff;
+  if (!diff) throw new Error('东财无返回');
+  const rows = [];
+  ASIA_INDEXES.forEach((x) => {
+    const code = x.em.split('.')[1];
+    const d = diff.filter((k) => String(k.f12) === code)[0];
+    if (!d) return;
+    const div = Math.pow(10, Number.isFinite(toNum(d.f1)) ? toNum(d.f1) : 2);
+    const price = toNum(d.f2) / div;
+    if (!Number.isFinite(price)) return;
+    const prev = toNum(d.f18);
+    rows.push({
+      key: x.key, label: d.f14 || x.label, price: price, chg: toNum(d.f4) / div, chgPct: toNum(d.f3) / 100,
+      prevClose: Number.isFinite(prev) ? prev / div : NaN, src: '东财'
+    });
+  });
+  return rows;
+}
+
+/** ② CNBC：fetch JSON（浏览器是否放行取决于该接口的跨域策略，失败就自动跳下一个源） */
+async function fetchAsiaCnbc() {
+  const url = API.cnbc + '?symbols=' + ASIA_INDEXES.map((x) => x.cnbc).join('|') +
+    '&requestMethod=itv&noform=1&partnerId=2&fund=1&exthrs=1&output=json&events=1';
+  const ctl = typeof AbortController === 'function' ? new AbortController() : null;
+  const timer = ctl ? setTimeout(() => ctl.abort(), 9000) : null;
+  let txt = '';
+  try {
+    const r = await fetch(url, ctl ? { signal: ctl.signal } : undefined);
+    txt = await r.text();
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+  const json = JSON.parse(txt);
+  const list = (json.FormattedQuoteResult && json.FormattedQuoteResult.FormattedQuote) || [];
+  const rows = [];
+  ASIA_INDEXES.forEach((x) => {
+    const q = list.filter((k) => k.symbol === x.cnbc)[0];
+    const price = q ? toNum(String(q.last).replace(/,/g, '')) : NaN;
+    if (!Number.isFinite(price)) return;
+    rows.push({
+      key: x.key, label: x.label, price: price,
+      chg: toNum(String(q.change).replace(/,/g, '')),
+      chgPct: toNum(String(q.change_pct).replace(/[%+,]/g, '')),
+      prevClose: toNum(String(q.previous_day_closing).replace(/,/g, '')),
+      src: 'CNBC'
+    });
+  });
+  return rows;
+}
+
+/* ---- CNBC 图表接口：让亚太指数也有分时图与K线（当地时区换算 + 只保留常规交易时段） ---- */
+
+const TZ_FMT = {};
+
+function fmtTz(tz) {
+  if (!TZ_FMT[tz]) {
+    TZ_FMT[tz] = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz, hourCycle: 'h23',
+      year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+    });
+  }
+  return TZ_FMT[tz];
+}
+
+/** 毫秒时间戳 -> 市场当地日期与分钟数 */
+function localTimeOf(tz, ms) {
+  const p = {};
+  fmtTz(tz).formatToParts(new Date(ms)).forEach((x) => { p[x.type] = x.value; });
+  const hh = Number(p.hour), mm = Number(p.minute);
+  return { date: p.year + '-' + p.month + '-' + p.day, hhmm: p.hour + p.minute, mins: hh * 60 + mm };
+}
+
+function inAnyRange(mins, ranges) {
+  for (let i = 0; i < ranges.length; i++) {
+    if (mins >= ranges[i][0] && mins <= ranges[i][1]) return true;
+  }
+  return false;
+}
+
+/** ap 代码 -> 亚太指数定义 */
+function asiaDefOf(code) {
+  const m = /^ap([A-Z0-9]+)$/.exec(String(code || ''));
+  if (!m) return null;
+  return ASIA_INDEXES.filter((x) => x.key === m[1])[0] || null;
+}
+
+/** 亚太指数分时用的「行情快照」：让K线面板标题栏与分时基准线都有数据 */
+function asiaQuoteOf(code) {
+  const def = asiaDefOf(code);
+  if (!def) return null;
+  const rows = (DATA.asia && DATA.asia.rows) || [];
+  const row = rows.filter((r) => r.key === def.key)[0];
+  const cached = DATA.minuteCache[code] ? DATA.minuteCache[code].data : null;
+  const kc = DATA.klineCache[code + '|day|' + KL_COUNT];
+  const lastCandle = kc && kc.candles.length ? kc.candles[kc.candles.length - 1] : null;
+  const price = row && Number.isFinite(row.price) ? row.price
+    : (cached && cached.points.length ? cached.points[cached.points.length - 1].price
+      : (lastCandle ? lastCandle.close : NaN));
+  if (!Number.isFinite(price)) return null;
+  const prev = (row && Number.isFinite(row.prevClose)) ? row.prevClose
+    : (cached && Number.isFinite(cached.prevClose) ? cached.prevClose
+      : (lastCandle ? (kc.candles.length > 1 ? kc.candles[kc.candles.length - 2].close : NaN) : NaN));
+  const chg = (row && Number.isFinite(row.chg)) ? row.chg : (Number.isFinite(prev) ? price - prev : NaN);
+  const chgPct = (row && Number.isFinite(row.chgPct)) ? row.chgPct
+    : (Number.isFinite(chg) && prev ? chg / prev * 100 : NaN);
+  /* 今开 / 最高 / 最低：优先用当日分时（盘中就是最新），没有再退回最近一根日线 */
+  let open = NaN, high = NaN, low = NaN;
+  if (cached && cached.points.length) {
+    cached.points.forEach((p, i) => {
+      if (!Number.isFinite(p.price)) return;
+      if (i === 0) open = p.price;
+      high = Number.isFinite(high) ? Math.max(high, p.price) : p.price;
+      low = Number.isFinite(low) ? Math.min(low, p.price) : p.price;
+    });
+  } else if (lastCandle) {
+    open = lastCandle.open; high = lastCandle.high; low = lastCandle.low;
+  }
+  return {
+    code: code, name: def.label, price: price, prevClose: prev, open: open, high: high, low: low,
+    chg: chg, chgPct: chgPct, amount: NaN, turnover: NaN,
+    amplitude: (Number.isFinite(high) && Number.isFinite(low) && prev) ? (high - low) / prev * 100 : NaN,
+    time: (DATA.asia && DATA.asia.at) || ''
+  };
+}
+
+/** CNBC 图表原始 bars（路径里放起止时间，symbol 走查询参数） */
+async function fetchCnbcChart(symbol, startMs, endMs, timeoutMs) {
+  const basic = (ms) => {
+    const d = new Date(ms);
+    return String(d.getUTCFullYear()) + pad2(d.getUTCMonth() + 1) + pad2(d.getUTCDate()) +
+      pad2(d.getUTCHours()) + pad2(d.getUTCMinutes()) + pad2(d.getUTCSeconds());
+  };
+  const url = API.cnbcChart + basic(startMs) + '/' + basic(endMs) + '.json?symbol=' + encodeURIComponent(symbol);
+  const ctl = typeof AbortController === 'function' ? new AbortController() : null;
+  const timer = ctl ? setTimeout(() => ctl.abort(), timeoutMs || 18000) : null;
+  let txt = '';
+  try {
+    const r = await fetch(url, ctl ? { signal: ctl.signal } : undefined);
+    txt = await r.text();
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+  const json = JSON.parse(txt);
+  const bars = json && json.barData && json.barData.priceBars;
+  if (!bars || !bars.length) throw new Error((json && json.statusMessage) || 'CNBC 未返回图表数据');
+  return bars;
+}
+
+/** 亚太指数当日分时（1 分钟）：取最近一个有数据的交易日，并只保留该市场的常规交易时段 */
+async function fetchAsiaIntraday(code) {
+  const def = asiaDefOf(code);
+  if (!def) throw new Error('未知的亚太指数');
+  const ses = MIN_SESSIONS[def.mkt];
+  const now = Date.now();
+  const bars = await fetchCnbcChart(def.cnbc, now - 6 * 86400000, now, 20000);
+  const groups = {};
+  bars.forEach((b) => {
+    const t = localTimeOf(def.tz, b.tradeTimeinMills);
+    (groups[t.date] || (groups[t.date] = [])).push({ t: t, b: b });
+  });
+  const dates = Object.keys(groups).sort();
+  let pick = null;
+  for (let i = dates.length - 1; i >= 0; i--) {
+    const seg = groups[dates[i]].filter((x) => (ses ? inAnyRange(x.t.mins, ses.ranges) : true));
+    if (seg.length >= 20) { pick = { date: dates[i], seg: seg }; break; }
+  }
+  if (!pick) throw new Error('CNBC 未返回该指数的分时数据');
+  const points = [];
+  let cumPV = 0, cumV = 0;
+  pick.seg.forEach((x) => {
+    const price = toNum(x.b.close);
+    if (!Number.isFinite(price) || price <= 0) return;
+    const vol = toNum(x.b.volume) || 0;
+    if (vol > 0) { cumPV += price * vol; cumV += vol; }
+    points.push({ time: x.t.hhmm, price: price, volume: vol, amount: price * vol, avg: cumV > 0 ? cumPV / cumV : price });
+  });
+  if (points.length < 5) throw new Error('CNBC 分时点太少');
+  /* 昨收 = 上一个交易日的最后一根分钟收盘价，用来画分时基准线 */
+  const prevDate = dates[dates.indexOf(pick.date) - 1];
+  let prevClose = NaN;
+  if (prevDate && groups[prevDate].length) prevClose = toNum(groups[prevDate][groups[prevDate].length - 1].b.close);
+  srcMark('minute', true, def.label + ' 分时 ' + points.length + ' 点（CNBC）');
+  return { code: code, points: points, date: pick.date.replace(/-/g, ''), prevClose: prevClose };
+}
+
+/** 把日线聚合成周线 / 月线（亚太指数没有现成的周月线接口） */
+function aggCandles(daily, period) {
+  const out = [];
+  let cur = null, key = '';
+  daily.forEach((c) => {
+    let k;
+    if (period === 'month') k = c.date.getFullYear() + '-' + pad2(c.date.getMonth() + 1);
+    else {
+      const t = new Date(c.date.getTime());
+      t.setDate(t.getDate() - ((t.getDay() + 6) % 7));   /* 归到本周一 */
+      k = t.getFullYear() + '-' + pad2(t.getMonth() + 1) + '-' + pad2(t.getDate());
+    }
+    if (k !== key) {
+      cur = { date: c.date, open: c.open, close: c.close, high: c.high, low: c.low, volume: c.volume };
+      out.push(cur);
+      key = k;
+    } else {
+      cur.close = c.close;
+      cur.high = Math.max(cur.high, c.high);
+      cur.low = Math.min(cur.low, c.low);
+      cur.volume += c.volume;
+      cur.date = c.date;                                  /* 用该周期最后一根日线的日期做标签 */
+    }
+  });
+  return out;
+}
+
+/** 亚太指数日线（约 3 年，够 MA60 / RSI 等长周期指标用） */
+async function fetchAsiaDaily(code, period, count) {
+  const def = asiaDefOf(code);
+  if (!def) throw new Error('未知的亚太指数');
+  const now = Date.now();
+  /* 区间别拉太长：CNBC 在 3 年附近会把粒度降级成周线，这里用 2.5 年，并做一次粒度自检 */
+  const bars = await fetchCnbcChart(def.cnbc, now - 2.5 * 365 * 86400000, now + 2 * 86400000, 25000);
+  const out = [];
+  bars.forEach((b) => {
+    const d = parseYmd(String(b.tradeTime).slice(0, 8));
+    const o = toNum(b.open), c = toNum(b.close), h = toNum(b.high), l = toNum(b.low);
+    if (!d || !Number.isFinite(o) || !Number.isFinite(c) || !Number.isFinite(h) || !Number.isFinite(l)) return;
+    if (c <= 0 || o <= 0) return;
+    out.push({ date: d, open: o, close: c, high: h, low: l, volume: toNum(b.volume) || 0 });
+  });
+  if (out.length < 40) throw new Error('CNBC 日线数据不足（' + out.length + ' 根）');
+  const gaps = [];
+  for (let i = 1; i < Math.min(out.length, 40); i++) gaps.push((out[i].date - out[i - 1].date) / 86400000);
+  gaps.sort((a, b) => a - b);
+  if (gaps.length && gaps[Math.floor(gaps.length / 2)] > 3) {
+    srcMark('kline', false, 'CNBC 返回的是周线粒度');
+    throw new Error('CNBC 返回的K线粒度为周线，已放弃显示（避免把周线当K线画）');
+  }
+  const candles = (period === 'week' || period === 'month') ? aggCandles(out, period) : out;
+  srcMark('kline', true, def.label + ' 返回 ' + out.length + ' 根日线（CNBC）');
+  return count ? candles.slice(-count) : candles;
+}
+
+/** 拉取亚太市场：东财 → CNBC → 腾讯兜底，逐行标注来源 */
+async function loadAsiaPacific(force) {
+  if (!force && DATA.asia && Date.now() - DATA.asia.t < ASIA_CACHE_MS) return DATA.asia;
+  let idxRows = [], src = '';
+  try {
+    const r = await fetchAsiaEast();
+    if (r.length >= 3) { idxRows = r; src = '东方财富'; }
+  } catch (e) { /* 换下一个源 */ }
+  if (!idxRows.length) {
+    try {
+      const r = await fetchAsiaCnbc();
+      if (r.length >= 3) { idxRows = r; src = 'CNBC'; }
+    } catch (e) { /* 走腾讯兜底 */ }
+  }
+  const tencent = [];
+  ASIA_TENCENT.forEach((x) => {
+    const q = DATA.quotes[x.code];
+    if (!q || !Number.isFinite(q.price)) return;
+    tencent.push({ key: x.code, code: x.code, label: x.label, price: q.price, chg: q.chg, chgPct: q.chgPct, src: '腾讯', future: /^fu/.test(x.code) });
+  });
+  const all = idxRows.concat(tencent);
+  const avg = asiaAvgOf(all);
+  const out = { t: Date.now(), rows: all, idxCount: idxRows.length, src: src, avg: avg, at: nowHms() };
+  DATA.asia = out;
+  const s = DATA.src.asia || (DATA.src.asia = { ok: 0, err: 0, msg: '', t: 0, state: 'idle' });
+  if (src) {
+    s.ok++; s.state = 'ok'; s.t = Date.now();
+    s.msg = src + ' 口径 ' + idxRows.length + ' 个亚太指数 + 腾讯 ' + tencent.length + ' 个标的';
+  } else {
+    s.err++; s.state = 'warn'; s.t = Date.now();
+    s.msg = '亚太指数接口不可达，已退回腾讯口径（港股指数 + 期货）';
+  }
+  if (typeof renderSourceStatus === 'function') renderSourceStatus();
+  renderAsiaCard();
+  /* 首次拿到亚太行情后，自动把第一个能取分时的指数画到分时图上 */
+  if (!UI.asiaMin && all.length) {
+    const first = asiaMinChoices().filter((c) => minuteCapable(c.code))[0];
+    if (first) selectAsiaMinute(first.code).catch(() => {});
+  }
+  return out;
+}
+
+/** 亚太市场表格 */
+function renderAsiaCard() {
+  const box = $('asiaBody');
+  if (!box) return;
+  const a = DATA.asia;
+  const rows = (a && a.rows) || [];
+  const avgTag = $('asiaAvg'), note = $('asiaNote');
+  if (avgTag) {
+    const v = a && Number.isFinite(a.avg) ? a.avg : NaN;
+    avgTag.textContent = '亚太均值 ' + (Number.isFinite(v) ? sign(v) + '%' : '--');
+    avgTag.className = 'tag ' + (Number.isFinite(v) ? (v > 0.2 ? 'red' : v < -0.2 ? 'green' : 'gray') : 'gray');
+  }
+  if (!rows.length) {
+    box.innerHTML = '<tr><td colspan="6" class="hint">亚太行情暂未返回，稍后自动刷新即可；也可以点右上角「立即刷新」。</td></tr>';
+  } else {
+    box.innerHTML = rows.map((r) => {
+      const cls = Number.isFinite(r.chgPct) ? pctCls(r.chgPct) : 'flat';
+      const code = r.code || ('ap' + r.key);
+      const cap = klineCapable(code);
+      return '<tr class="' + (cap ? 'clickable' : '') + '"' + (cap ? ' data-code="' + esc(code) + '" data-period="day"' : '') +
+        ' title="' + (cap ? '点击载入该指数的K线与技术分析' : '该指数只有实时行情快照，不提供历史K线') + '">' +
+        '<td class="name">' + esc(r.label) + (r.future ? ' <span class="dim">·期货</span>' : '') + '</td>' +
+        '<td class="mono">' + (Number.isFinite(r.price) ? fmtP(r.price) : '--') + '</td>' +
+        '<td class="' + cls + ' mono">' + (Number.isFinite(r.chg) ? sign(r.chg) : '--') + '</td>' +
+        '<td class="' + cls + ' mono">' + (Number.isFinite(r.chgPct) ? sign(r.chgPct) + '%' : '--') + '</td>' +
+        '<td class="code">' + esc(r.src) + '</td>' +
+        '<td>' + (minuteCapable(code)
+          ? '<button class="btn sm" data-asia-min="' + esc(code) + '" title="在左侧分时图里查看该指数">分时</button>'
+          : '<span class="dim" title="该品种公开接口没有分时数据">—</span>') + '</td></tr>';
+    }).join('');
+  }
+  if (note) {
+    note.innerHTML = a && a.src
+      ? '亚太指数来源：<b>' + esc(a.src) + '</b>（' + a.idxCount + ' 个指数，普遍延迟 ≥15 分钟）；港股与期货行为腾讯实时口径。' +
+        '分时图为该指数的分钟级数据（CNBC，当地时间），个别市场的最后一分钟可能与官方收盘价有细微差异，日线以官方收盘价为准。' +
+        '期货（富时A50 / 日经225）24 小时交易，反映的是美国时段的预期，方向可参考、不等于当地指数涨跌。'
+      : '亚太指数接口（东财 push2 / CNBC）在当前网络均不可达，已降级为腾讯口径：港股指数 + 富时A50期货 + 日经225期货，' +
+        '均为真实行情，但缺少日经 / 韩国 / 澳洲 / 台湾等现货指数的涨跌与分时K线。';
+  }
+  const hint = $('asiaHint');
+  if (hint) hint.textContent = '更新 ' + (a && a.at ? a.at : nowHms()) + ' · 点表格行载入K线，点「分时」看左侧分时图';
+  renderAsiaMinChips();
+}
+
+/* ---------------- 亚太市场 · 专门分时图 ---------------- */
+
+/** 分时可切换的指数：7 个亚太指数（CNBC）+ 3 个恒生指数（腾讯） */
+function asiaMinChoices() {
+  return ASIA_INDEXES.map((x) => ({ code: 'ap' + x.key, label: x.label }))
+    .concat([
+      { code: 'hkHSI', label: '恒生指数' },
+      { code: 'hkHSCEI', label: '恒生国企指数' },
+      { code: 'hkHSTECH', label: '恒生科技指数' }
+    ]);
+}
+
+function asiaMinName(code) {
+  const def = asiaDefOf(code);
+  if (def) return def.label;
+  const c = asiaMinChoices().filter((x) => x.code === code)[0];
+  return c ? c.label : (codeName(code) || dispCode(code));
+}
+
+/** 交易时段文字，例如「当地 09:00-11:30 / 12:30-15:00」 */
+function sessionRangeText(code) {
+  const sp = MIN_SESSIONS[marketOf(code)];
+  if (!sp) return '';
+  const hm = (v) => pad2(Math.floor(v / 60)) + ':' + pad2(v % 60);
+  return '当地 ' + sp.ranges.map((r) => hm(r[0]) + '-' + hm(r[1])).join(' / ');
+}
+
+function renderAsiaMinChips() {
+  const box = $('asiaMinChips');
+  if (!box) return;
+  const cur = UI.asiaMin || '';
+  box.innerHTML = asiaMinChoices().map((c) =>
+    '<span class="chip' + (c.code === cur ? ' on' : '') + '" data-asia-min="' + esc(c.code) + '">' + esc(c.label) + '</span>').join('');
+}
+
+/** 切换亚太分时图上的指数 */
+async function selectAsiaMinute(code) {
+  if (!code) return;
+  UI.asiaMin = code;
+  UI.asiaMinActive = null;
+  const nm = asiaMinName(code);
+  UI.asiaMinName = nm;
+  renderAsiaMinChips();
+  const cv = $('chartAsiaMinute');
+  const nameEl = $('asiaMinName'), legend = $('asiaMinLegend'), hint = $('asiaMinHint');
+  if (nameEl) nameEl.textContent = nm + ' · 实时分时';
+  if (legend) legend.innerHTML = '';
+  if (hint) hint.textContent = '正在抓取 ' + nm + ' 的分时…';
+  try {
+    const m = await getMinute(code, 30000);
+    if (!m.points || m.points.length < 5) throw new Error('分时点太少');
+    const base = DATA.quotes[code] || asiaQuoteOf(code) || null;
+    const q = base ? Object.assign({}, base, { prevClose: Number.isFinite(m.prevClose) ? m.prevClose : base.prevClose }) : null;
+    UI.asiaMinData = m;
+    drawMinute(cv, m, q, { height: 220, active: UI.asiaMinActive });
+    if (legend) {
+      legend.innerHTML = '<span><i style="background:#ff4d5e"></i>价格</span><span><i style="background:#f0b73f"></i>分时均价</span>' +
+        (q && Number.isFinite(q.prevClose) ? '<span><i style="background:#8c9cb6"></i>昨收 ' + fmtP(q.prevClose) + '</span>' : '');
+    }
+    if (hint) {
+      hint.textContent = (m.date ? '交易日 ' + m.date + ' · ' : '') + '共 ' + m.points.length + ' 个分钟点 · ' +
+        sessionRangeText(code) + (asiaDefOf(code) ? ' · 数据源 CNBC（延迟 ≥15 分钟）' : ' · 数据源腾讯') +
+        ' · 图上移动鼠标（手机按住拖动）看每分钟价格 / 涨跌 / 均价 · 更新 ' + nowHms();
+    }
+  } catch (e) {
+    chartError(cv, nm + ' 分时获取失败：' + e.message);
+    if (legend) legend.innerHTML = '';
+    if (hint) hint.innerHTML = '<span class="orange">' + esc(nm + ' 分时获取失败：' + e.message) + '</span>';
+  }
+}
+
+/** 定时刷新当前选中的亚太分时（60 秒一次，跟随中速循环） */
+function refreshAsiaMinute() {
+  if (!UI.asiaMin) return;
+  selectAsiaMinute(UI.asiaMin).catch(() => {});
+}
+
+/** 窗口尺寸变化后重画亚太分时（避免拉伸模糊） */
+function redrawAsiaMinute() {
+  const m = UI.asiaMinData, cv = $('chartAsiaMinute');
+  if (!m || !cv || !UI.asiaMin) return;
+  const base = DATA.quotes[UI.asiaMin] || asiaQuoteOf(UI.asiaMin) || null;
+  const q = base ? Object.assign({}, base, { prevClose: Number.isFinite(m.prevClose) ? m.prevClose : base.prevClose }) : null;
+  drawMinute(cv, m, q, { height: 220, active: UI.asiaMinActive });
+}
+
+/** 亚太分时图的十字线：鼠标移动 / 手指按住拖动，都能看每一分钟的价格、涨跌与均价 */
+function bindAsiaMinuteHover() {
+  const cv = $('chartAsiaMinute');
+  if (!cv) return;
+  const tip = $('asiaMinTip');
+  const update = (clientX, clientY) => {
+    const m = UI.asiaMinData;
+    if (!m || !m.points || !m.points.length) return;
+    const rect = cv.getBoundingClientRect();
+    const idx = minuteIndexAt(m, marketOf(UI.asiaMin), clientX - rect.left, rect.width);
+    if (idx < 0) return;
+    if (idx !== UI.asiaMinActive) {
+      UI.asiaMinActive = idx;
+      redrawAsiaMinute();
+    }
+    showTip(minuteTipHtml(m, idx, UI.asiaMin), clientX, clientY, tip);
+  };
+  const clear = () => {
+    showTip(null, 0, 0, tip);
+    if (UI.asiaMinActive != null) { UI.asiaMinActive = null; redrawAsiaMinute(); }
+  };
+  cv.addEventListener('mousemove', (ev) => update(ev.clientX, ev.clientY));
+  cv.addEventListener('mouseleave', clear);
+  /* 手指模式：按下即显示，抬起后保留 4 秒方便读数 */
+  let timer = null;
+  const hideLater = () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { showTip(null, 0, 0, tip); UI.asiaMinActive = null; redrawAsiaMinute(); }, 4000);
+  };
+  cv.addEventListener('touchstart', (ev) => { clearTimeout(timer); if (ev.touches && ev.touches[0]) update(ev.touches[0].clientX, ev.touches[0].clientY); }, { passive: true });
+  cv.addEventListener('touchmove', (ev) => { if (ev.touches && ev.touches[0]) update(ev.touches[0].clientX, ev.touches[0].clientY); }, { passive: true });
+  cv.addEventListener('touchend', hideLater, { passive: true });
+  cv.addEventListener('touchcancel', hideLater, { passive: true });
+}
+
 function groupAvg(codes) {
   const vals = codes.map((c) => (DATA.quotes[c] ? DATA.quotes[c].chgPct : NaN)).filter((v) => Number.isFinite(v));
   return vals.length ? mean(vals) : NaN;
@@ -3309,14 +3894,16 @@ function globalModel() {
   const hk = groupAvg(GLOBAL_INDEXES.filter((c) => c.indexOf('hk') === 0));
   const cmd = groupAvg(COMMODITY.map((c) => c.code));
   const hot = groupAvg(FOCUS_STOCKS.map((c) => c.code));
+  /* 亚太均值：日经 / 韩国 / 澳洲 / 台湾 / 新加坡 / 印度等（拿不到时为 NaN，不影响打分） */
+  const ap = DATA.asia && Number.isFinite(DATA.asia.avg) ? DATA.asia.avg : NaN;
   const chgChunks = [];
-  [us, us, us, hk, hk, cmd].forEach((v) => { if (Number.isFinite(v)) chgChunks.push(v); });
+  [us, us, hk, hk, ap, ap, cmd].forEach((v) => { if (Number.isFinite(v)) chgChunks.push(v); });
   const avgChg = chgChunks.length ? mean(chgChunks) : NaN;
   const chgScore = Number.isFinite(avgChg) ? clamp(50 + avgChg * 12, 0, 100) : 50;
   const inds = GLOBAL_INDEXES.map(indicatorScoreOf).filter((v) => Number.isFinite(v));
   const indScore = inds.length ? mean(inds) : NaN;
   const score = clamp(Math.round(indScore === indScore ? chgScore * 0.6 + indScore * 0.4 : chgScore), 0, 100);
-  return { us: us, hk: hk, cmd: cmd, hot: hot, avgChg: avgChg, chgScore: chgScore, indScore: indScore, score: score, indCount: inds.length };
+  return { us: us, hk: hk, ap: ap, cmd: cmd, hot: hot, avgChg: avgChg, chgScore: chgScore, indScore: indScore, score: score, indCount: inds.length };
 }
 
 function renderGlobalSummary() {
@@ -3340,6 +3927,7 @@ function renderGlobalSummary() {
   $('globalKv').innerHTML = kvHtml([
     ['美股均值', Number.isFinite(m.us) ? sign(m.us) + '%' : '--'],
     ['港股均值', Number.isFinite(m.hk) ? sign(m.hk) + '%' : '--'],
+    ['亚太均值', Number.isFinite(m.ap) ? sign(m.ap) + '%' : '--'],
     ['商品均值', Number.isFinite(m.cmd) ? sign(m.cmd) + '%' : '--'],
     ['指标样本', m.indCount + ' 个指数日线']
   ]);
@@ -3352,11 +3940,17 @@ function renderGlobalSummary() {
       '<div class="bar-track"><div class="bar-fill" style="width:' + w + '%;background:' + col + '"></div></div>' +
       '<div class="bar-val ' + cls + '">' + (Number.isFinite(v) ? sign(v) + '%' : '--') + '</div></div>';
   };
-  $('globalBars').innerHTML = bar('美股', m.us) + bar('港股', m.hk) + bar('国际商品', m.cmd) + bar('焦点个股', m.hot);
+  $('globalBars').innerHTML = bar('美股', m.us) + bar('港股', m.hk) + bar('亚太', m.ap) + bar('国际商品', m.cmd) + bar('焦点个股', m.hot);
 
   const lines = [];
   if (Number.isFinite(m.us)) lines.push('<b>美股：</b>' + (m.us > 0.5 ? '整体收涨，风险偏好回升，利于科技成长类情绪' : m.us < -0.5 ? '整体收跌，外部风险偏好走弱，可能压制A股开盘情绪' : '涨跌互现，方向不明确'));
   if (Number.isFinite(m.hk)) lines.push('<b>港股：</b>' + (m.hk > 0.5 ? '走强，南向与外资情绪偏暖，对A股蓝筹有正面参照' : m.hk < -0.5 ? '走弱，需留意与A股的联动压制' : '窄幅波动，参考意义有限'));
+  if (Number.isFinite(m.ap)) lines.push('<b>亚太：</b>' + (m.ap > 0.5 ? '主要市场普涨，外部风险偏好偏暖，对出口链 / 半导体链的情绪有支撑' : m.ap < -0.5 ? '主要市场普跌，注意对A股早盘与科技链的情绪压制' : '涨跌互现，方向不明，参考意义有限'));
+  const apRows = ((DATA.asia && DATA.asia.rows) || []).filter((r) => Number.isFinite(r.chgPct) && !r.future);
+  if (apRows.length) {
+    lines.push('<b>亚太明细：</b>' + apRows.slice().sort((a, b) => b.chgPct - a.chgPct)
+      .map((r) => esc(r.label) + ' ' + sign(r.chgPct) + '%').join('、') + '。');
+  }
   if (Number.isFinite(m.cmd)) lines.push('<b>商品：</b>' + (m.cmd > 1 ? '明显上涨，关注资源/周期板块的联动机会，同时留意成本端压力' : m.cmd < -1 ? '明显回落，资源类板块短期承压' : '波动不大，对A股板块结构影响有限'));
   if (Number.isFinite(m.avgChg)) lines.push('<b>综合：</b>外围加权涨跌幅 ' + sign(m.avgChg) + '%，外围情绪分 ' + m.score + '（' + verdict + '）。');
   const usIdx = DATA.quotes['usVIX'];
@@ -5015,13 +5609,74 @@ function refreshMarketIntel() {
    模块C：K线面板（含分时图）+ 交互 + 自动刷新调度
    ============================================================ */
 
-function minuteSlot(t) {
+/** 三个市场的交易时段（均为当地时间的分钟数）：
+ *   沪 / 深 / 北：09:30-11:30、13:00-15:00 = 240 分钟，午休跳空；
+ *   港股：09:30-12:00、13:00-16:00 = 330 分钟（比 A股 晚收盘 1 小时）；
+ *   美股：09:30-16:00 连续 = 390 分钟（盘中不休息，且北京时间跨零点，所以按当地 09:30 起算）。
+ *   labels 用于画横轴刻度，数字是「第几分钟」。 */
+const MIN_SESSIONS = {
+  cn: { slots: 240, ranges: [[570, 690], [780, 900]], labels: [[0, '09:30'], [60, '10:30'], [120, '11:30/13:00'], [180, '14:00'], [240, '15:00']] },
+  hk: { slots: 330, ranges: [[570, 720], [780, 960]], labels: [[0, '09:30'], [90, '11:00'], [150, '12:00/13:00'], [240, '14:30'], [330, '16:00']] },
+  us: { slots: 390, ranges: [[570, 960]], labels: [[0, '09:30'], [120, '11:30'], [240, '13:30'], [330, '15:00'], [390, '16:00']] },
+  /* 亚太各市场的常规交易时段（当地时间的分钟数），strict=时段外的点直接丢弃 */
+  /* 东京交易所 2024-11 起收盘延长到 15:30 */
+  jp: { slots: 330, strict: true, ranges: [[540, 690], [750, 930]], labels: [[0, '09:00'], [90, '10:30'], [150, '11:30/12:30'], [240, '13:30'], [330, '15:30']] },
+  kr: { slots: 390, strict: true, ranges: [[540, 930]], labels: [[0, '09:00'], [120, '11:00'], [270, '13:30'], [390, '15:30']] },
+  au: { slots: 360, strict: true, ranges: [[600, 960]], labels: [[0, '10:00'], [120, '12:00'], [240, '14:00'], [360, '16:00']] },
+  tw: { slots: 270, strict: true, ranges: [[540, 810]], labels: [[0, '09:00'], [90, '10:30'], [180, '12:00'], [270, '13:30']] },
+  sg: { slots: 420, strict: true, ranges: [[540, 720], [780, 1020]], labels: [[0, '09:00'], [120, '11:00'], [180, '12:00/13:00'], [300, '14:00'], [420, '17:00']] },
+  in: { slots: 375, strict: true, ranges: [[555, 930]], labels: [[0, '09:15'], [120, '11:15'], [270, '13:45'], [375, '15:30']] },
+  nz: { slots: 420, strict: true, ranges: [[600, 1020]], labels: [[0, '10:00'], [120, '12:00'], [240, '14:00'], [420, '17:00']] }
+};
+
+/** 标的所属市场（决定分时横轴的时段划分与成交量单位） */
+function marketOf(code) {
+  const c = String(code || '');
+  const ap = asiaDefOf(c);
+  if (ap) return ap.mkt;
+  if (/^us/.test(c)) return 'us';
+  if (/^hk/.test(c)) return 'hk';
+  return 'cn';
+}
+
+/** 把「HHMM」摆到分时横轴的槽位上；集合竞价等落在时段外的点归到最近的一端 */
+function minuteSlot(t, mkt) {
   const s = String(t);
   const h = Number(s.slice(0, 2)), m = Number(s.slice(2, 4));
   if (!Number.isFinite(h) || !Number.isFinite(m)) return NaN;
   const mins = h * 60 + m;
-  if (mins <= 690) return mins - 570;
-  return 120 + (mins - 780);
+  const sp = MIN_SESSIONS[mkt] || MIN_SESSIONS.cn;
+  let acc = 0;
+  for (let i = 0; i < sp.ranges.length; i++) {
+    const a = sp.ranges[i][0], b = sp.ranges[i][1];
+    if (mins >= a && mins <= b) return acc + (mins - a);
+    acc += b - a;
+  }
+  /* 亚太市场：时段外的点（隔夜 / 盘前）直接丢掉，避免堆在两端 */
+  if (sp.strict) return NaN;
+  if (mins < sp.ranges[0][0]) return 0;
+  return sp.slots;
+}
+
+/** 分时图悬停：把画布内的 x 换算成分钟槽位，再取槽位最接近的那个分钟点
+ *  （横轴总长按市场取 240 / 330 / 390 / 各亚太市场，不能写死 A股 的 240） */
+function minuteIndexAt(m, mkt, x, cssWidth) {
+  const pts = (m && m.points) || [];
+  if (!pts.length) return -1;
+  const ses = MIN_SESSIONS[mkt] || MIN_SESSIONS.cn;
+  const padL = 6, padR = 58;
+  const plotW = (cssWidth || 0) - padL - padR;
+  if (plotW <= 0) return -1;
+  const slot = ((x - padL) / plotW) * ses.slots - 0.5;
+  let best = -1, bestD = Infinity;
+  pts.forEach((p, i) => {
+    const s = minuteSlot(p.time, mkt);
+    if (!Number.isFinite(s)) return;
+    const d = Math.abs(s - slot);
+    if (d < bestD) { bestD = d; best = i; }
+  });
+  if (best < 0) return -1;
+  return best;
 }
 
 /** 分时图：价格走势 + 均价线 + 昨收参考 + 成交量能 */
@@ -5030,11 +5685,18 @@ function drawMinute(cv, m, quote, opt) {
   const box = setupCanvas(cv, o.height);
   const ctx = box.ctx, W = box.w, H = box.h;
   const padL = 6, padR = 58, padT = 14, padB = 16;
-  const volH = Math.round((H - padT - padB) * 0.20);
+  /* 指数类分时没有成交量（接口给 0），此时不占那一条量能带，把空间留给价格走势 */
+  const anyVol = !!((m && m.points) || []).some((p) => (p.volume || 0) > 0);
+  const volH = anyVol ? Math.round((H - padT - padB) * 0.20) : 0;
   const gap = 12;
   const plotH = H - padT - padB - volH - gap;
   const plotW = W - padL - padR;
-  const SLOTS = 240;
+  /* 按市场取时段：A股 240 分钟、港股 330 分钟、美股 390 分钟 */
+  const mkt = marketOf(m && m.code);
+  const SES = MIN_SESSIONS[mkt] || MIN_SESSIONS.cn;
+  const SLOTS = SES.slots;
+  /* 成交量单位：A股上报「手」，港股 / 美股上报「股」 */
+  const volUnit = mkt === 'cn' ? 100 : 1;
   const xOf = (slot) => padL + (slot + 0.5) * (plotW / SLOTS);
   const pts = (m && m.points) || [];
   if (!pts.length) {
@@ -5070,7 +5732,8 @@ function drawMinute(cv, m, quote, opt) {
     ctx.fillText(fmtP(hi - ((hi - lo) / 4) * i), padL + plotW + 6, y + 3.5);
   }
   /* 时间竖线 */
-  [0, 60, 120, 180, 240].forEach((slot) => {
+  SES.labels.forEach((lb) => {
+    const slot = lb[0];
     const x = padL + slot * (plotW / SLOTS);
     ctx.strokeStyle = 'rgba(34,48,74,.85)';
     ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, padT + plotH + gap + volH); ctx.stroke();
@@ -5087,7 +5750,10 @@ function drawMinute(cv, m, quote, opt) {
 
   /* 价格折线 + 填充 */
   const path = [];
-  pts.forEach((p) => { const slot = minuteSlot(p.time); if (Number.isFinite(slot)) path.push({ slot: slot, price: p.price, avg: p.avg, volume: p.volume, time: p.time }); });
+  pts.forEach((p, i) => {
+    const slot = minuteSlot(p.time, mkt);
+    if (Number.isFinite(slot)) path.push({ slot: slot, price: p.price, avg: p.avg, volume: p.volume, time: p.time, i: i });
+  });
   if (!path.length) return;
   ctx.beginPath();
   path.forEach((p, i) => { const x = xOf(p.slot), y = yOf(p.price); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
@@ -5115,17 +5781,19 @@ function drawMinute(cv, m, quote, opt) {
 
   /* 成交量 */
   const volTop = padT + plotH + gap;
-  const vmax = Math.max.apply(null, path.map((p) => p.volume || 1)) || 1;
-  path.forEach((p, i) => {
-    const prev = i ? path[i - 1].price : prevClose;
-    const h = ((p.volume || 0) / vmax) * (volH - 3);
-    ctx.fillStyle = p.price >= prev ? 'rgba(255,77,94,.7)' : 'rgba(18,196,106,.7)';
-    const w = Math.max(1, (plotW / SLOTS) * 0.7);
-    ctx.fillRect(xOf(p.slot) - w / 2, volTop + volH - h, w, h);
-  });
-  ctx.fillStyle = CLR.text;
-  ctx.font = '10.5px Consolas, Menlo, monospace';
-  ctx.fillText('量 ' + fmtVol(vmax), padL + plotW + 6, volTop + 12);
+  if (anyVol) {
+    const vmax = Math.max.apply(null, path.map((p) => p.volume || 0)) || 1;
+    path.forEach((p, i) => {
+      const prev = i ? path[i - 1].price : prevClose;
+      const h = ((p.volume || 0) / vmax) * (volH - 3);
+      ctx.fillStyle = p.price >= prev ? 'rgba(255,77,94,.7)' : 'rgba(18,196,106,.7)';
+      const w = Math.max(1, (plotW / SLOTS) * 0.7);
+      ctx.fillRect(xOf(p.slot) - w / 2, volTop + volH - h, w, h);
+    });
+    ctx.fillStyle = CLR.text;
+    ctx.font = '10.5px Consolas, Menlo, monospace';
+    ctx.fillText('量 ' + fmtVol(vmax), padL + plotW + 6, volTop + 12);
+  }
 
   /* 最新价标签 */
   const lastP = path[path.length - 1];
@@ -5142,15 +5810,20 @@ function drawMinute(cv, m, quote, opt) {
   ctx.font = '11px Consolas, Menlo, monospace';
   ctx.fillStyle = CLR.text;
   ctx.textAlign = 'center';
-  ['09:30', '10:30', '11:30/13:00', '14:00', '15:00'].forEach((label, i) => {
-    const x = clamp(padL + (60 * i) * (plotW / SLOTS), padL + 20, padL + plotW - 20);
-    ctx.fillText(label, x, padT + plotH + gap + volH + 13);
+  SES.labels.forEach((lb) => {
+    const x = clamp(padL + lb[0] * (plotW / SLOTS), padL + 20, padL + plotW - 20);
+    ctx.fillText(lb[1], x, padT + plotH + gap + volH + 13);
   });
   ctx.textAlign = 'left';
 
   /* 十字光标 */
-  if (o.active != null && path[o.active]) {
-    const p = path[o.active];
+  /* o.active 是「原始分钟点」的下标，这里按原始下标找回对应的那一段折线（避免时段过滤后错位） */
+  let actPt = null;
+  if (o.active != null) {
+    actPt = path.filter((x) => x.i === o.active)[0] || path[o.active] || null;
+  }
+  if (actPt) {
+    const p = actPt;
     const x = xOf(p.slot), y = yOf(p.price);
     ctx.save();
     ctx.setLineDash([3, 3]);
@@ -5160,7 +5833,9 @@ function drawMinute(cv, m, quote, opt) {
     ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + plotW, y); ctx.stroke();
     ctx.restore();
     const h = String(p.time || '');
-    const info = h.slice(0, 2) + ':' + h.slice(2, 4) + '  价' + fmtP(p.price) + (Number.isFinite(p.avg) ? '  均' + fmtP(p.avg) : '') + '  量' + fmtVol((p.volume || 0) * 100);
+    const info = h.slice(0, 2) + ':' + h.slice(2, 4) + '  价' + fmtP(p.price) +
+      (Number.isFinite(p.avg) ? '  均' + fmtP(p.avg) : '') +
+      ((p.volume || 0) > 0 ? '  量' + fmtVol(p.volume * volUnit) : '');
     ctx.font = '11px Consolas, Menlo, monospace';
     const iw = ctx.measureText(info).width + 12;
     ctx.fillStyle = 'rgba(9,13,20,.9)';
@@ -5270,14 +5945,18 @@ async function renderKlinePanel(keepActive) {
   const cv = $('chartPrice');
   if (!keepActive) { UI.kline.active = null; renderKlineHead(); showTip(null); }
   syncSegs();
-  if (!klineCapable(code)) { setKlineUnavailable(unavailableText(code)); return; }
+  /* 有K线走K线；没有K线但有分时的（美股个股）在「分时」周期下照样能画 */
+  if (period === 'min' ? !minuteCapable(code) : !klineCapable(code)) {
+    setKlineUnavailable(unavailableText(code));
+    return;
+  }
   if (period === 'min') {
     setIndVisible(false);
     try {
       const m = await getMinute(code, 25000);
       UI.minuteData = m;
       if (!m.points || m.points.length < 5) {
-        /* 美股指数接口只返回一笔快照，自动退回日线 */
+        /* 拿不到分钟点时（例如国际商品的实时快照接口），自动退回日线 */
         UI.kline.period = 'day';
         syncSegs();
         return renderKlinePanel(keepActive);
@@ -5287,7 +5966,9 @@ async function renderKlinePanel(keepActive) {
       const base = q && Number.isFinite(q.prevClose) ? q.prevClose : (m.points[0] ? m.points[0].price : NaN);
       $('klLegend').innerHTML = '<span><i style="background:#ff4d5e"></i>价格</span><span><i style="background:#f0b73f"></i>分时均价</span>' +
         (Number.isFinite(base) ? '<span><i style="background:#8c9cb6"></i>昨收 ' + fmtP(base) + '</span>' : '');
-      $('klHint').textContent = '分时数据为每个分钟的成交价与累计成交量（腾讯财经）· ' + (m.date ? '交易日 ' + m.date : '') + ' · 共 ' + m.points.length + ' 点 · 更新 ' + nowHms();
+      $('klHint').textContent = '分时数据为每个分钟的成交价与累计成交量（' +
+        (asiaDefOf(code) ? 'CNBC，延迟 ≥15 分钟' : '腾讯财经') + '）· ' +
+        (m.date ? '交易日 ' + m.date : '') + ' · 共 ' + m.points.length + ' 点 · ' + sessionRangeText(code) + ' · 更新 ' + nowHms();
     } catch (e) {
       chartError(cv, '分时数据获取失败：' + e.message);
       $('klLegend').innerHTML = '';
@@ -5323,7 +6004,8 @@ async function renderKlinePanel(keepActive) {
       '<span><i style="background:#f0b73f"></i>MA5</span><span><i style="background:#4a9eff"></i>MA10</span>' +
       '<span><i style="background:#b06bff"></i>MA20</span><span><i style="background:#cfd8e8"></i>MA60</span>';
     const label = period === 'day' ? '日线' : period === 'week' ? '周线' : '月线';
-    $('klHint').textContent = label + '前复权数据（腾讯财经）· 显示最近 ' + candles.length + ' 根（可切换 60/120/250），指标按完整 ' +
+    $('klHint').textContent = label + (asiaDefOf(code) ? '数据（CNBC，指数不复权，日线由官方收盘价构成）' : '前复权数据（腾讯财经）') +
+      '· 显示最近 ' + candles.length + ' 根（可切换 60/120/250），指标按完整 ' +
       full.length + ' 根历史计算 · 最新 ' + (last.date.getFullYear() + '-' + pad2(last.date.getMonth() + 1) + '-' + pad2(last.date.getDate())) + ' · 更新 ' + nowHms();
   } catch (e) {
     chartError(cv, 'K线数据获取失败：' + e.message);
@@ -5409,7 +6091,9 @@ function renderChartNameLine(code, q) {
   }
   const metaEl = $('klChartMeta');
   if (metaEl) {
-    const pl = UI.kline.period === 'min' ? '分时' : UI.kline.period === 'day' ? '日线（前复权）' : UI.kline.period === 'week' ? '周线（前复权）' : '月线（前复权）';
+    const apIdx = !!asiaDefOf(UI.kline.code);
+    const tail = apIdx ? '' : '（前复权）';
+    const pl = UI.kline.period === 'min' ? '分时' : UI.kline.period === 'day' ? '日线' + tail : UI.kline.period === 'week' ? '周线' + tail : '月线' + tail;
     metaEl.textContent = '当前显示：' + pl + ' · ' + (q ? '实时行情 ' + (q.time || '') : '行情快照未返回，仅显示K线');
   }
 }
@@ -6497,7 +7181,7 @@ async function loadWatchPanel(force) {
         const it = { code: code, name: codeName(code), quote: DATA.quotes[code] || null };
         if (minuteCapable(code)) {
           try { it.minute = await getMinute(code, force ? 1500 : 25000); } catch (e) { it.minuteErr = e.message; }
-        } else it.minuteErr = '该市场公开接口没有分时数据';
+        } else it.minuteErr = '该品种（' + instInfo(code, codeName(code)).type + '）没有分时数据';
         if (klineCapable(code)) {
           try {
             const candles = await getKline(code, 'day', KL_COUNT, force ? 1500 : 45000);
@@ -6592,8 +7276,8 @@ function scoreAtBar(candles, idx) {
 }
 
 /** 浮层定位：跟随鼠标，贴近右/下边界时自动翻到另一侧 */
-function placeTip(clientX, clientY) {
-  const tip = $('chartTip');
+function placeTip(clientX, clientY, tipEl) {
+  const tip = tipEl || $('chartTip');
   const wrap = tip && tip.parentElement;
   if (!tip || !wrap) return;
   const rect = wrap.getBoundingClientRect();
@@ -6606,13 +7290,13 @@ function placeTip(clientX, clientY) {
   tip.style.top = y + 'px';
 }
 
-function showTip(html, clientX, clientY) {
-  const tip = $('chartTip');
+function showTip(html, clientX, clientY, tipEl) {
+  const tip = tipEl || $('chartTip');
   if (!tip) return;
   if (html == null) { tip.style.display = 'none'; return; }
   tip.innerHTML = html;
   tip.style.display = 'block';
-  placeTip(clientX, clientY);
+  placeTip(clientX, clientY, tip);
 }
 
 /** K线浮层内容：OHLC + 涨跌 + 量额 + 四条均线 + MACD/KDJ/RSI + 评分 */
@@ -6651,18 +7335,21 @@ function klineTipHtml(candles, ind, idx) {
 }
 
 /** 分时浮层内容 */
-function minuteTipHtml(m, idx) {
+function minuteTipHtml(m, idx, code) {
   const p = m.points[idx];
   if (!p) return null;
-  const q = DATA.quotes[UI.kline.code];
+  const c = code || UI.kline.code;
+  const q = DATA.quotes[c] || asiaQuoteOf(c);
   const base = q && Number.isFinite(q.prevClose) ? q.prevClose : NaN;
+  /* A股上报「手」，港股 / 美股 / 亚太上报「股」 */
+  const volUnit = marketOf(c) === 'cn' ? 100 : 1;
   const tt = String(p.time || '');
   const row = (k, v, cls) => '<div class="tip-row"><span class="tip-k">' + k + '</span><span class="' + (cls || '') + '">' + v + '</span></div>';
   let h = '<div><b>' + tt.slice(0, 2) + ':' + tt.slice(2, 4) + '</b> <span class="dim">' + (m.date || '') + '</span></div>';
   h += row('价格', fmtP(p.price), Number.isFinite(base) ? pctCls(p.price - base) : '');
   if (Number.isFinite(base)) h += row('涨跌', sign((p.price / base - 1) * 100) + '%', pctCls(p.price - base));
   if (Number.isFinite(p.avg)) h += row('均价', fmtP(p.avg), p.price >= p.avg ? 'up' : 'down');
-  h += row('分钟量', fmtVol((p.volume || 0) * 100));
+  if ((p.volume || 0) > 0) h += row('分钟量', fmtVol(p.volume * volUnit));
   return h;
 }
 
@@ -6679,15 +7366,14 @@ function bindHover() {
     if (UI.kline.period === 'min') {
       const m = UI.minuteData;
       if (!m || !m.points || !m.points.length) return;
-      const slot = (x - padL) / (plotW / 240) - 0.5;
-      let best = -1;
-      m.points.forEach((p, i) => { if (minuteSlot(p.time) <= slot) best = i; });
-      if (best < 0) best = 0;
+      const mkt = marketOf(m.code || UI.kline.code);
+      const best = minuteIndexAt(m, mkt, x, rect.width);
+      if (best < 0) return;
       if (best !== UI.kline.active) {
         UI.kline.active = best;
         renderKlinePanel(true);
       }
-      showTip(minuteTipHtml(m, best), clientX, clientY);
+      showTip(minuteTipHtml(m, best, UI.kline.code), clientX, clientY);
       return;
     }
     const f = UI.kline.full;
@@ -6771,6 +7457,8 @@ async function loadCode(raw, opts) {
   syncSearchBox(code, o.name);          /* 搜索框立刻跟着当前标的走 */
   UI.kline.code = code; UI.analyzeCode = code; UI.kline.active = null;
   if (o.period && (o.period !== 'min' || minuteCapable(code))) UI.kline.period = o.period;
+  /* 没有历史K线但有当日分时的（美股个股）：自动切到分时，避免一进来只看到一句「不可用」 */
+  if (!o.period && !klineCapable(code) && minuteCapable(code)) UI.kline.period = 'min';
   try {
     const q = await fetchQuotes([code]);
     Object.assign(DATA.quotes, q);
@@ -6781,9 +7469,13 @@ async function loadCode(raw, opts) {
   } catch (e) { /* 行情失败也能继续画K线 */ }
   renderKlineHead();
   renderWatch();
-  if (klineCapable(code)) {
+  const hasKline = klineCapable(code);
+  const hasMinute = minuteCapable(code);
+  if (hasKline || (hasMinute && UI.kline.period === 'min')) {
+    /* 美股个股没有历史K线，但当日分时可用：此时只画分时，分析区给出说明 */
     await renderKlinePanel();
-    await renderAnalyze();
+    if (hasKline) await renderAnalyze();
+    else setAnalyzeUnavailable(unavailableText(code));
   } else {
     syncSegs();
     const msg = unavailableText(code);
@@ -6824,7 +7516,8 @@ function bindEvents() {
     if (!btn) return;
     const p = btn.getAttribute('data-period');
     if (p === 'min' && !minuteCapable(UI.kline.code)) {
-      $('klHint').innerHTML = '<span class="orange">该市场公开接口只返回一笔实时快照，没有分时数据，请选择日线 / 周线 / 月线。</span>';
+      $('klHint').innerHTML = '<span class="orange">' + esc(instInfo(UI.kline.code, codeName(UI.kline.code)).type) +
+        '只有实时行情快照，公开接口不提供分时数据，请选择日线 / 周线 / 月线。</span>';
       return;
     }
     UI.kline.period = p;
@@ -6880,6 +7573,14 @@ function bindEvents() {
   refreshBtn('btnZt', () => loadZtData(true), '刷新连板数据');
   refreshBtn('btnEtf', () => loadEtfData(true), '刷新 ETF 行情');
   refreshBtn('btnWatchPanel', () => loadWatchPanel(true), '刷新分时与点评');
+  /* ---- 亚太市场：看K线分析（把分时图上当前这个指数载入 ②） ---- */
+  if ($('asiaMinKline')) {
+    $('asiaMinKline').addEventListener('click', () => {
+      const code = UI.asiaMin || (ASIA_INDEXES[0] ? 'ap' + ASIA_INDEXES[0].key : '');
+      if (!code) return;
+      loadCode(code, { name: asiaMinName(code), period: 'day' });
+    });
+  }
   /* ---- ② 图上方：把当前标的加入 / 移出自选 ---- */
   if ($('btnFavAdd')) {
     $('btnFavAdd').addEventListener('click', () => {
@@ -6950,6 +7651,9 @@ function bindEvents() {
     }
     const rm = ev.target.closest('[data-remove]');
     if (rm) { ev.stopPropagation(); removeWatch(rm.getAttribute('data-remove')); return; }
+    /* 亚太分时图：表格里的「分时」按钮与分时图上方的指数小标签 */
+    const apMin = ev.target.closest('[data-asia-min]');
+    if (apMin) { ev.stopPropagation(); selectAsiaMinute(apMin.getAttribute('data-asia-min')); return; }
     const chip = ev.target.closest('.chip[data-code]');
     if (chip) {
       const c = chip.getAttribute('data-code');
@@ -6959,7 +7663,8 @@ function bindEvents() {
     const row = ev.target.closest('tr.clickable[data-code]');
     if (row) {
       const c = row.getAttribute('data-code');
-      loadCode(c, { name: nameFromEl(row, c) });
+      const pd = row.getAttribute('data-period');            /* 亚太表格：点行直接看日线K线 */
+      loadCode(c, pd ? { name: nameFromEl(row, c), period: pd } : { name: nameFromEl(row, c) });
       return;
     }
     const lead = ev.target.closest('.clickable-lead[data-code]');
@@ -6994,6 +7699,7 @@ function bindEvents() {
       renderIndexMinute();
       renderGlobalSummary();
       redrawWatchPanel();
+      redrawAsiaMinute();
       drawGauge($('gaugeGlobal'), globalModel().score);
     }, 260);
   });
@@ -7041,7 +7747,8 @@ function bindScrollSpy() {
 
 async function refreshQuotes() {
   const codes = INDEX_CARDS.concat(GLOBAL_INDEXES).concat(GLOBAL_QUOTE_EXTRA).concat(COMMODITY.map((c) => c.code))
-    .concat(FOCUS_STOCKS.map((c) => c.code)).concat(UI.watch).concat([UI.kline.code]);
+    .concat(FOCUS_STOCKS.map((c) => c.code)).concat(ASIA_TENCENT.map((c) => c.code))
+    .concat(UI.watch).concat([UI.kline.code]);
   try {
     const q = await fetchQuotes(codes);
     Object.assign(DATA.quotes, q);
@@ -7049,6 +7756,12 @@ async function refreshQuotes() {
   } catch (e) {
     srcMark('quote', false, e.message);
   }
+  /* 亚太指数没有腾讯快照，用 CNBC 行情表补上，保证标题栏 / 分时基准线有数 */
+  [UI.kline.code].concat(UI.watch).forEach((c) => {
+    if (!asiaDefOf(c) || DATA.quotes[c]) return;
+    const q2 = asiaQuoteOf(c);
+    if (q2) DATA.quotes[c] = q2;
+  });
 }
 
 async function refreshMarketData(showProgress) {
@@ -7099,6 +7812,7 @@ function renderQuoteDependents() {
   renderIndexCards();
   renderGlobalGrid();
   renderGlobalSummary();
+  syncAsiaTencent();
   renderMarket();
   renderForecast();
   renderWatch();
@@ -7114,6 +7828,8 @@ async function refreshAll(showProgress) {
     refreshGlobalKlines(),
     renderIndexMinute()
   ]);
+  /* 亚太市场放在行情快照之后：腾讯兜底行要用到刚抓到的港股 / 期货快照 */
+  await loadAsiaPacific(true).catch(() => {});
   renderQuoteDependents();
   renderGlobalGrid();
   renderRank();
@@ -7144,6 +7860,8 @@ async function midTick() {
   await refreshGlobalKlines();
   renderGlobalGrid();
   renderGlobalSummary();
+  await loadAsiaPacific(false).catch(() => {});
+  refreshAsiaMinute();
 }
 
 /** 慢速循环：全市场快照 / 板块 / 外盘日线（接口较重，降低频率） */
@@ -7191,6 +7909,7 @@ async function init() {
   loadWatch();
   bindEvents();
   bindHover();
+  bindAsiaMinuteHover();
   bindScrollSpy();
   syncSegs();
   tickClock();
