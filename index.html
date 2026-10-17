@@ -412,19 +412,9 @@ table.tbl tbody tr:nth-child(even){background:rgba(140,156,182,.035);}
 .btn{border-radius:10px;}
 .tag{border-radius:8px;}
 
-/* ---------- 手机端：一次一屏的模块标签（不再一路下滑） ---------- */
-.mobtabs{display:none;position:fixed;left:0;right:0;bottom:0;z-index:70;
-  gap:6px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));
-  background:rgba(8,12,20,.94);backdrop-filter:blur(14px);
-  border-top:1px solid var(--line);overflow-x:auto;-webkit-overflow-scrolling:touch;
-  scrollbar-width:none;}
-.mobtabs::-webkit-scrollbar{display:none;}
-.mobtabs a{flex:none;padding:7px 12px;border-radius:11px;border:1px solid var(--line2);
-  background:var(--panel);color:var(--muted);font-size:12px;text-decoration:none;white-space:nowrap;transition:.18s;}
-.mobtabs a.on{color:var(--gold);border-color:var(--gold);background:var(--gold-bg);font-weight:700;}
+/* ---------- 手机端：一次一屏（用顶部导航切换模块，不再一路下滑） ---------- */
 @media (max-width:760px){
-  .mobtabs{display:flex;}
-  /* 只显示当前模块：配合底部标签，手机上每次只看一屏 */
+  /* 只显示当前模块：用顶部导航切换，手机上每次只看一屏 */
   body.mob main{padding:10px 10px 0;}
   /* 注意：#sec-analyze 自带 display:flex，是 id 级选择器，这里必须用 !important 才压得住 */
   body.mob main > .panel:not(.mob-on),
@@ -433,7 +423,7 @@ table.tbl tbody tr:nth-child(even){background:rgba(140,156,182,.035);}
   body.mob main > .panel.mob-on,
   body.mob main > .note.mob-on,
   body.mob main > .risk-box.mob-on{display:block;}
-  body.mob{padding-bottom:calc(76px + env(safe-area-inset-bottom));}
+  body.mob{padding-bottom:calc(24px + env(safe-area-inset-bottom));}
   body.mob .panel{padding:12px 12px 14px;border-radius:12px;}
   body.mob .panel-head{padding-bottom:9px;margin-bottom:11px;}
   body.mob .panel-head h2{font-size:15px;}
@@ -1263,6 +1253,15 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
       <button class="btn primary" id="btnAddWatch">添加自选</button>
       <span class="hint">共 <b id="watchCount">0</b> 只 · 自选列表保存在浏览器本地（localStorage）</span>
     </div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      <input class="input" id="watchSyncInput" placeholder="跨设备同步：粘贴另一台设备生成的同步码" style="flex:1 1 240px;min-width:0;" />
+      <button class="btn" id="btnWatchSyncOut">生成同步码</button>
+      <button class="btn primary" id="btnWatchSyncIn">导入同步码</button>
+    </div>
+    <div class="hint" id="watchSyncHint" style="margin-bottom:12px;">
+      自选股只存在各自浏览器的本地存储里——电脑打开的是本地文件、手机打开的是局域网或托管网址，属于不同站点，所以默认不会自动同步。
+      点「生成同步码」复制一串短码，到另一台设备粘进上面的框点「导入」即可合并；也可以把带 <b>#watch=</b> 的网址存成书签，打开就自动带上。
+    </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;" id="watchChips"></div>
     <div class="tbl-wrap" style="max-height:none;">
       <table class="tbl" id="watchTable"></table>
@@ -1418,7 +1417,6 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
     </ol>
   </section>
 
-  <nav class="mobtabs" id="mobTabs" aria-label="模块切换"></nav>
 </main>
 
 <button class="btn primary" id="toTop">↑ 回到顶部</button>
@@ -4620,6 +4618,63 @@ function saveWatch() {
   try { localStorage.setItem('realtime-watch-list', JSON.stringify(UI.watch)); } catch (e) { /* ignore */ }
 }
 
+/* ---------------- 自选股跨设备同步 ----------------
+   浏览器把 localStorage 按「站点」隔离：电脑是 file://、手机是局域网 / 托管网址，是不同站点，
+   所以自选不会自动同步。这里给出一串可复制的同步码（也支持写在网址 #watch= 里），
+   在哪台设备导入都会合并进本地自选。 */
+
+function watchSyncEncode(list) {
+  const arr = (list || UI.watch || []).filter(Boolean);
+  try {
+    let s = '';
+    const json = JSON.stringify(arr);
+    try { s = btoa(String.fromCharCode.apply(null, new TextEncoder().encode(json))); }
+    catch (e) { s = btoa(unescape(encodeURIComponent(json))); }
+    return s.replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
+  } catch (e) { return ''; }
+}
+
+function watchSyncDecode(str) {
+  const raw0 = String(str || '').trim();
+  if (!raw0) return [];
+  const code = raw0.replace(/^.*[#?&]watch=/i, '').replace(/\s+/g, '').replace(/-/g, '+').replace(/_/g, '/');
+  if (!code) return [];
+  let json = '';
+  try {
+    const bin = atob(code + '==='.slice(0, (4 - (code.length % 4)) % 4));
+    try { json = new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0))); }
+    catch (e) { json = decodeURIComponent(escape(bin)); }
+  } catch (e) { return []; }
+  try {
+    const arr = JSON.parse(json);
+    if (!Array.isArray(arr)) return [];
+    return arr.map((c) => normalizeCode(c)).filter((c) => c);
+  } catch (e) { return []; }
+}
+
+/** 把同步码合并进本地自选，返回新增只数 */
+function applyWatchSync(str) {
+  const list = watchSyncDecode(str);
+  if (!list.length) return -1;
+  let added = 0;
+  list.forEach((c) => { if (UI.watch.indexOf(c) < 0) { UI.watch.push(c); added++; } });
+  if (added) {
+    saveWatch();
+    renderWatch();
+    renderFavButtons();
+    if (typeof loadWatchPanel === 'function') loadWatchPanel(true);
+  }
+  return added;
+}
+
+/** 打开带 #watch= 的网址时自动合并（方便存成一个「我的自选」书签） */
+function importWatchFromUrl() {
+  const m = /[#?&]watch=([^&\s]+)/i.exec(location.hash || '') || /[#?&]watch=([^&\s]+)/i.exec(location.search || '');
+  if (!m) return;
+  const n = applyWatchSync(m[1]);
+  if (n >= 0 && typeof renderWatch === 'function') renderWatch();
+}
+
 /** 自选行里的「移出自选」按钮：只删这一只，不影响其他自选 */
 function favDelBtnHtml(code) {
   return '<button class="btn sm danger" data-act="rm" data-code="' + esc(code) + '" title="只把这一只从自选里删除">移出自选</button>';
@@ -7094,8 +7149,8 @@ function buildEtfChips() {
 }
 
 /* ---------------- 手机端：一次一屏的模块切换 ----------------
-   窄屏（≤760px）给 body 加 .mob：只显示当前选中的那个模块，底部给一条可横向滑动的模块标签栏。
-   点顶部导航、点表格行跳到别的模块时都会自动切过去；宽屏完全不受影响（.mob 不会被加上）。 */
+   窄屏（≤760px）给 body 加 .mob：只显示当前选中的那个模块，用顶部那排导航切换。
+   点表格行跳到别的模块时也会自动切过去；宽屏完全不受影响（.mob 不会被加上）。 */
 
 const MOB_SECTIONS = [
   ['sec-market', '① 大盘'], ['sec-kline', '② K线'], ['sec-analyze', '③ 分析'], ['sec-global', '④ 全球'],
@@ -7109,12 +7164,6 @@ function isMobile() {
   return typeof window.matchMedia === 'function' && window.matchMedia('(max-width:760px)').matches;
 }
 
-function buildMobTabs() {
-  const el = $('mobTabs');
-  if (!el) return;
-  el.innerHTML = MOB_SECTIONS.map((s) => '<a href="#' + s[0] + '" data-mob="' + s[0] + '">' + esc(s[1]) + '</a>').join('');
-}
-
 /** 切到某个模块（手机上），noScroll=true 时不回到顶部 */
 function setMobTab(id, noScroll) {
   if (!id) return;
@@ -7124,7 +7173,6 @@ function setMobTab(id, noScroll) {
   Array.prototype.forEach.call(document.querySelectorAll('main > .panel, main > .note, main > .risk-box'), (el) => {
     el.classList.toggle('mob-on', el.id === id);
   });
-  Array.prototype.forEach.call(document.querySelectorAll('#mobTabs a'), (a) => a.classList.toggle('on', a.getAttribute('data-mob') === id));
   Array.prototype.forEach.call(document.querySelectorAll('#mainNav a'), (a) => a.classList.toggle('on', a.getAttribute('href') === '#' + id));
   if (!noScroll) { try { window.scrollTo(0, 0); } catch (e) { /* 忽略 */ } }
   /* display:none 时画布量不到宽度，切回来必须重画；顺带触发这个模块的懒加载 */
@@ -8270,13 +8318,43 @@ function bindEvents() {
   });
   $('watchInput').addEventListener('keydown', (ev) => { if (ev.key === 'Enter') $('btnAddWatch').click(); });
   $('btnBatch').addEventListener('click', watchBatch);
+  /* ---- 自选股跨设备同步 ---- */
+  if ($('btnWatchSyncOut')) {
+    $('btnWatchSyncOut').addEventListener('click', () => {
+      const code = watchSyncEncode();
+      const box = $('watchSyncInput');
+      const hint = $('watchSyncHint');
+      if (box) box.value = code;
+      if (hint) {
+        hint.innerHTML = '已生成 <b>' + UI.watch.length + '</b> 只自选的同步码（在框里，已尝试复制）。' +
+          '到另一台设备把它粘到上面的输入框点「导入同步码」即可合并。';
+      }
+      if (code) {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).catch(() => {});
+        } catch (e) { /* 复制失败就让用户手动选 */ }
+      }
+    });
+  }
+  if ($('btnWatchSyncIn')) {
+    $('btnWatchSyncIn').addEventListener('click', () => {
+      const box = $('watchSyncInput');
+      const hint = $('watchSyncHint');
+      const n = applyWatchSync(box ? box.value : '');
+      if (hint) {
+        hint.innerHTML = n < 0
+          ? '<span class="orange">同步码无法识别：请确认整段代码都粘进来了（不含空格也行），或让对方重新「生成同步码」。</span>'
+          : ('已合并，新增 <b>' + n + '</b> 只；当前自选共 <b>' + UI.watch.length + '</b> 只。');
+      }
+    });
+  }
 
   document.addEventListener('click', (ev) => {
     const sg = ev.target.closest('.sg-item[data-code]');
     if (sg) { pickSuggestEl(sg); return; }
     if (!ev.target.closest('.search-wrap')) hideSuggest();
-    /* 手机端：顶部导航 / 底部标签 = 切换模块（不再长滚动） */
-    const mobLink = ev.target.closest('#mainNav a[href^="#sec-"], #mobTabs a[href^="#sec-"]');
+    /* 手机端：顶部导航 = 切换模块（不再长滚动） */
+    const mobLink = ev.target.closest('#mainNav a[href^="#sec-"]');
     if (mobLink && isMobile()) {
       ev.preventDefault();
       setMobTab(mobLink.getAttribute('href').slice(1));
@@ -8561,6 +8639,7 @@ async function init() {
   buildQuickChips();
   buildEtfChips();
   loadWatch();
+  importWatchFromUrl();
   loadMarketIndex();
   bindEvents();
   bindHover();
@@ -8582,7 +8661,6 @@ async function init() {
   lazySection('sec-zt', () => loadZtData(false));
   lazySection('sec-etf', () => loadEtfData(false));
   lazySection('sec-watch', () => loadWatchPanel(false));
-  buildMobTabs();
   syncMobMode();
   await refreshAll(true);
   startLoops();
