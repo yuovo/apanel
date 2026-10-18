@@ -643,6 +643,7 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
             <div class="li"><span class="dot gold"></span><span><b>搜标的（③）</b>：搜索框支持中文名（贵州茅台）、拼音首字母（gzmt）、代码片段（5103）、主题＋品种（白酒ETF / 券商ETF）；下拉里点一下就能出 K 线与买卖分析。</span></div>
             <div class="li"><span class="dot blue"></span><span><b>点表格行＝载入</b>：⑧排行榜、⑦热点龙虎榜、⑨连板梯队、⑬ETF 榜、⑫自选股，点任意一行都会把它载入③，并在④自动生成分析。</span></div>
             <div class="li"><span class="dot gold"></span><span><b>①指数分时随点随换</b>：①A股大盘 的 8 张指数卡片，点任意一张就把下面那张分时图切成它（选中的卡片会亮起来，选择会记住），分时图带<b>十字线</b>与<b>量能（含量能MA5）</b>；右上角「<b>载入 K 线图分析</b>」会把当前这个指数送进 ③ 做日线技术分析。</span></div>
+<div class="li"><span class="dot blue"></span><span><b>新闻催化 + 一键K线</b>：② 机会雷达 的「结论 2」会自动抓取东财 7×24 快讯，按板块关键词匹配后把「<b>[自动] 时间 标题</b>」填进主线板块的催化列；观察池每只股票旁边有「<b>载入K线</b>」，点一下直接进 ③ 看日线与全套指标。</span></div>
             <div class="li"><span class="dot orange"></span><span><b>看图</b>：在 K 线主图上移动鼠标（手机按住拖动）会出现十字光标与浮层：日期、开高低收、涨跌幅、量额、MA5/10/20/60、MACD、KDJ、RSI、量比与当日综合评分。</span></div>
             <div class="li"><span class="dot gold"></span><span><b>自选</b>：③ 图上方有「＋加入自选／－移出自选」；⑫ 自选页每行、每张卡片都能单独移除，并带当日分时图与今日点评。</span></div>
             <div class="li"><span class="dot blue"></span><span><b>亚太也能看图</b>：⑤全球市场 的「亚太市场 · 大盘情况」左侧是<b>专门的分时图</b>，点上面的指数标签即可切换（日经225 / 韩国KOSPI / 澳洲标普200 / 台湾加权 / 新加坡STI / 印度NIFTY50 / 新西兰NZ50 / 恒生系）；点右侧表格任意一行，或者点「看K线分析」，就会在 ③ 载入它的 K 线并生成完整技术分析（日线 / 周线 / 月线都支持）。</span></div>
@@ -652,7 +653,7 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
         <div class="card">
           <div class="card-head"><div class="card-title">数据源与口径</div><div class="card-sub">看到「已降级」时看这里</div></div>
           <div class="list">
-            <div class="li"><span class="dot blue"></span><span><b>数据源</b>：腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（龙虎榜 / 涨停池 / 每分钟大单资金流）、东财 push2 或 CNBC（亚太指数行情 / 分时 / K线）。顶部状态依次为<b>正常 / 待连接 / 已降级 / 异常</b>。</span></div>
+<div class="li"><span class="dot blue"></span><span><b>数据源</b>：腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（龙虎榜 / 涨停池 / 每分钟大单资金流 / 7×24 快讯）、东财 push2 或 CNBC（亚太指数行情 / 分时 / K线）。顶部状态依次为<b>正常 / 待连接 / 已降级 / 异常</b>。</span></div>
             <div class="li"><span class="dot orange"></span><span><b>已降级</b>：可能出现在两个地方。①「东财·涨停池」——该域名在当前网络被拦截时，⑨ 连板股会自动改用「全市场快照＋日线」本地推算涨停与连板高度；③「亚太·指数」——东财 push2 与 CNBC 都不可达时，⑤ 亚太市场自动退回腾讯口径（港股指数 + 富时A50期货 + 日经225期货，此时没有日经 / 韩国 / 台湾的现货指数与分时K线）。两处都会明确标注当前口径。</span></div>
             <div class="li"><span class="dot gray"></span><span><b>美股也能看分时</b>：③ 顶部周期切到「分时」即可看美股个股与美股指数的当日分时（腾讯 usMinute 接口，横轴为美股当地 09:30-16:00）；但公开接口不提供美股个股的历史K线，所以日线技术分析仍只对A股 / ETF / 港股 / 美股指数开放。</span></div>
             <div class="li"><span class="dot gold"></span><span><b>ETF 的 T+0 / T+1</b>：名称后的标签是交易规则备注——T+0＝当天买当天能卖（债券、货币、黄金/商品、跨境类 ETF）；T+1＝次日才能卖（境内股票型 ETF）。按代码段＋名称关键词推定，个别产品以券商与基金公告为准。</span></div>
@@ -807,10 +808,15 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
 <div class="card" style="margin-bottom:12px;">
 <div class="card-head">
 <div class="card-title">结论 2 · 重点资讯整理</div>
-<div class="card-sub">本页未接新闻源：只列你填写的催化并标注“待核对”，不编造消息</div>
+<div class="card-sub">东方财富 7×24 快讯 · 关键词规则匹配主线，自动填催化</div>
+<div class="spacer"></div>
+<span class="hint" id="swNewsMeta">未抓取</span>
+<button class="btn sm" id="btnSwNews">刷新新闻并填催化</button>
 </div>
-<div class="list" id="swNews"></div>
-<div class="hint" style="margin-top:6px;">在下方板块表的「催化」列填写政策 / 产业 / 海外映射，扫描时自动汇总到这里；利好是否已兑现、是否旧闻，需以公告与官方发布核对。</div>
+<div class="list" id="swNewsList"><div class="li"><span class="dot gray"></span><span>点「开始扫描」或右上角「刷新新闻并填催化」，抓取最新快讯并按板块关键词匹配。</span></div></div>
+<button class="btn sm" id="btnSwNewsMore" style="display:none;margin-top:6px;">展开更多</button>
+<div class="list" id="swNews" style="margin-top:10px;"></div>
+<div class="hint" style="margin-top:6px;">标题 / 摘要 / 时间来自东方财富公开快讯，点击标题可回原站核对。自动催化只做关键词匹配，可能误配或漏配；已兑现的旧闻请手动删掉。</div>
 </div>
 
     <div class="card" style="margin-bottom:12px;">
@@ -819,7 +825,7 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
         <div class="card-sub">口径：该板块涨停家数 ÷ 当日涨停总家数；>15% 雏形、>25% 确认</div>
       </div>
       <div class="tbl-wrap" style="max-height:none;"><table class="tbl" id="swBoards"></table></div>
-      <div class="hint" id="swBoardHint" style="margin-top:6px;">新闻催化可在「催化」列里手动填（可选），会写进当天日志。</div>
+<div class="hint" id="swBoardHint" style="margin-top:6px;">新闻匹配后会自动填入「催化」列，格式为「[自动] 时间 标题」；你手动改过的内容不会被自动覆盖。</div>
     </div>
 
     <div class="card" style="margin-bottom:12px;">
@@ -1515,7 +1521,7 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
       <li>所有技术指标均存在<b>滞后性</b>，指标信号可能失真、出现骗线（假金叉/假死叉/假突破）。</li>
       <li>突发消息、政策变化、地缘冲突、外围市场大幅波动，均可能直接打破既有技术形态。</li>
       <li>方向概率推演仅为技术模型的推演结果，<b>不能保证准确</b>，历史规律不代表未来表现。</li>
-      <li>本页行情数据来自腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（涨停池 / 连板 / 龙虎榜）以及东方财富 push2 或 CNBC（亚太指数）的<b>公开行情接口</b>，为程序直接抓取，可能存在延迟、缺失或与交易所官方数据不一致的情况；免费接口也可能随时调整或不可用，请以券商交易软件为准。</li>
+<li>本页行情数据来自腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（涨停池 / 连板 / 龙虎榜 / 7×24 快讯）以及东方财富 push2 或 CNBC（亚太指数）的<b>公开接口</b>，为程序直接抓取，可能存在延迟、缺失或与交易所官方数据不一致的情况；免费接口也可能随时调整或不可用，请以券商交易软件为准。</li>
       <li>「<b>大单金额</b>」为东方财富资金流口径（按单笔成交额分档的钱），每分钟净额由该分钟的<b>累计值做差</b>得到，与交易所逐笔成交口径、各券商软件的主力资金统计<b>会有差异</b>；该口径只覆盖 A股 / ETF / 北交所 / 指数，港股与美股、亚太指数没有对应数据（页面会退化为「每分钟成交额」并明确标注）。</li>
       <li>「<b>分时顶底</b>」是按分时价格序列的局部极值规则标注的（前后若干分钟都不超过它），「顶 / 底背离」是用分时 MACD 的 DIF 与相邻两个极值点比较得出的，属于<b>规则化标注</b>，不是预测，也不代表后续一定反转。</li>
       <li>ETF / 场内基金与个股的规则不同（T+0 或 T+1、涨跌幅 ±10% 或 ±20%、有折溢价），本页已按品种自动套用相应口径，但<b>折溢价率、跟踪指数、成分股</b>仍需自行在基金页面核对。</li>
@@ -1523,6 +1529,7 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
       <li>分时、日线等数据在非交易时段显示的是<b>最近一个交易日的收盘数据</b>，并非当前时点的实时成交。</li>
       <li>美股个股提供<b>实时行情快照 + 当日分时</b>，但公开接口不提供其历史K线，因此无法生成日线技术分析；国际商品期货仅提供<b>实时行情快照</b>。</li>
       <li>亚太市场指数（日经225 / 韩国KOSPI / 澳洲标普200 / 台湾加权 / 新加坡STI / 印度NIFTY / 新西兰NZ50）来自公开接口，普遍<b>延迟至少 15 分钟</b>，其分时图为该指数的分钟级序列，<b>个别市场（如台湾、韩国）的最后一分钟可能与官方收盘价有细微差异</b>，日线则以官方收盘价为准；「富时A50期货」「日经225期货」是期货合约（24 小时交易、反映美国时段预期），与当地现货指数涨跌<b>不等价</b>，仅作方向参考。</li>
+<li>「<b>新闻催化</b>」由东方财富 7×24 快讯的标题 / 摘要按板块关键词做<b>规则匹配</b>，可能误配、漏配或把旧闻当成新催化；自动填入的内容统一带「[自动]」前缀，务必点开原文核对发布时间与是否已兑现，再决定是否计入加分。</li>
       <li>本工具仅用于学习、复盘与量化研究，<span class="risk-strong">所有内容不构成任何投资建议，股市有风险，投资需谨慎</span>。</li>
     </ol>
   </section>
@@ -2630,7 +2637,8 @@ const SRC_LABEL = {
   zt: '东财·涨停池',
   bigorder: '东财·大单资金',
   board: '新浪·板块',
-  asia: '亚太·指数'
+asia: '亚太·指数',
+news: '东财·快讯'
 };
 
 const CONCURRENCY = 6;
@@ -7338,7 +7346,8 @@ const SW = {
     vetoHighGap: -3, vetoDt: 5,
     perStockPct: 20, maxPos: 2
   },
-  data: null, plan: null, logs: [], evals: 0
+data: null, plan: null, logs: [], evals: 0,
+news: null, newsAt: 0, newsErr: '', newsMatches: null, newsOpen: 8, newsNames: []
 };
 const SW_LOG_KEY = 'apanel_sw_logs_v1';
 const SW_STAGE = { ice: '冰点 / 退潮', start: '启动', ferment: '发酵', climax: '高潮', diverge: '分歧', watch: '观察（不可做）' };
@@ -7536,10 +7545,239 @@ function swLots(picks, capital, totalPct) {
   });
 }
 
+/* ---------------- 新闻快讯：抓取 / 匹配 / 自动填催化 ---------------- */
+
+/** 板块名 → 新闻关键词。东财行业名常被截断，所以同时给完整词与短词。 */
+const SW_BOARD_KW = {
+'汽车零部': ['汽车', '整车', '零部件', '智能驾驶', '新能源车', '车企', '车展', '特斯拉', '比亚迪'],
+'汽车零部件': ['汽车', '整车', '零部件', '智能驾驶', '新能源车', '车企', '车展', '特斯拉', '比亚迪'],
+'通用设备': ['设备', '机械', '工业母机', '机器人', '减速器', '机床'],
+'专用设备': ['专用设备', '半导体设备', '光伏设备', '锂电设备', '矿山设备'],
+'出版': ['出版', '传媒', '图书', '文化', '版权'],
+'航空装备': ['航空装备', '军工', '无人机', '飞机', '航天', '航空发动机', '大飞机', '军机'],
+'化学制品': ['化工', '化学', '材料', '涨价', '树脂'],
+'水泥': ['水泥', '基建', '建材'],
+'地面兵装': ['军工', '兵器', '国防', '陆军'],
+'照明设备': ['照明', 'LED', '灯具'],
+'物流': ['物流', '快递', '供应链', '仓储'],
+'软件开发': ['软件', '人工智能', 'AI', '信创', '大模型'],
+'房地产开': ['房地产', '地产', '楼市', '住房'],
+'广告营销': ['广告', '营销', '传媒', '流量'],
+'IT服务Ⅱ': ['IT', '算力', '数据中心', '云计算', '服务器'],
+'商用车': ['商用车', '重卡', '客车', '货车', '汽车'],
+'化学原料': ['化工', '化学原料', '原料', '纯碱'],
+'自动化设': ['自动化', '机器人', '工业母机', '智能制造'],
+'通信设备': ['通信', '5G', '6G', '光模块', '卫星', '基站'],
+'工程咨询': ['工程咨询', '基建', '设计', '勘察'],
+'饲料': ['饲料', '养殖', '农业', '生猪'],
+'贸易Ⅱ': ['贸易', '外贸', '出口', '进口'],
+'化学制药': ['医药', '制药', '创新药', '临床', 'CXO'],
+'其他家电': ['家电', '消费', '白电'],
+'基础建设': ['基建', '建设', '水利', '铁路', '公路'],
+'计算机设': ['计算机', '信创', '服务器', '算力'],
+'专业工程': ['工程', '基建', '订单', '中标'],
+'军工电子': ['军工', '电子', '雷达', '导弹'],
+'航空机场': ['航空', '机场', '民航', '旅游'],
+'化学纤维': ['化纤', '纤维', '化工', '涤纶']
+};
+
+/** 负向 / 地缘扰动新闻：可以展示，但不自动当作板块催化 */
+const SW_NEWS_BAD = /袭击|击落|空袭|爆炸|死亡|遇难|受伤|冲突|战争|制裁|断电|火灾|地震|洪水|台风|事故|坠毁|停运|停产|立案|调查|处罚|退市|减持|亏损|预亏|下调|暴跌|大跌|风险警示/;
+/** 自动填催化只认“像催化”的词，避免把普通产品新闻硬塞进板块 */
+const SW_AUTO_CAT_POS = /政策|国常会|部署|订单|中标|突破|量产|涨价|提价|预增|回购|增持|获批|签约|投产|扩产|补贴|支持|开工|招标|收购|重组|并购|研发|交付|首飞|试飞/;
+
+function swNewsBad(item) {
+return SW_NEWS_BAD.test(String(item.title || '') + ' ' + String(item.digest || ''));
+}
+
+function swBoardKeywords(name) {
+const raw = String(name || '').trim();
+if (SW_BOARD_KW[raw]) return SW_BOARD_KW[raw];
+const base = raw.replace(/[ⅡⅢ]/g, '').replace(/(其他|专用|通用|设备|服务|制品|开发|工程|咨询)$/g, '');
+const out = [];
+if (base.length >= 2) out.push(base);
+if (raw && out.indexOf(raw) < 0) out.push(raw);
+return out.length ? out : [raw];
+}
+
+function swNewsAge(t) {
+const ms = Date.parse(String(t || '').replace(/-/g, '/'));
+return Number.isFinite(ms) ? (Date.now() - ms) / 86400000 : NaN;
+}
+
+function swNewsShortTime(t) {
+const m = String(t || '').match(/(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/);
+return m ? m[2] + '-' + m[3] + ' ' + m[4] + ':' + m[5] : String(t || '').slice(0, 16);
+}
+
+function swHm(ms) {
+const d = new Date(ms || Date.now());
+return pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+}
+
+/** 东财 7×24 快讯：返回 var ajaxResult={...}，用 script 注入绕过跨域 */
+async function swFetchNews() {
+const url = 'https://newsapi.eastmoney.com/kuaixun/v1/getlist_102_ajaxResult_50_1_.html?_=' + Date.now();
+const json = await jsonpValue(url, 'ajaxResult', 'utf-8', 16000);
+const raw = (json && json.LivesList) || [];
+const list = raw.map((x) => ({
+id: String(x.id || x.newsid || ''),
+title: String(x.title || x.simtitle || '').trim(),
+digest: String(x.digest || x.simdigest || '').replace(/^【[^】]*】/, '').trim(),
+time: String(x.showtime || x.ordertime || '').trim(),
+url: String(x.url_w || x.url_m || '').trim(),
+source: '东方财富'
+})).filter((x) => x.title);
+if (!list.length) throw new Error('快讯返回为空');
+return list;
+}
+
+function swNewsMatchScore(item, board) {
+const title = String(item.title || '').toLowerCase();
+const text = (title + ' ' + String(item.digest || '')).toLowerCase();
+let score = 0;
+const hits = [];
+swBoardKeywords(board.name).forEach((k) => {
+const kk = String(k || '').toLowerCase();
+if (!kk || text.indexOf(kk) < 0) return;
+score += title.indexOf(kk) >= 0 ? 3 : 1;
+if (hits.indexOf(k) < 0) hits.push(k);
+});
+return { score: score, hits: hits };
+}
+
+function swMatchNews(boards, names) {
+const list = (SW.news || []).map((item) => {
+const text = String(item.title || '') + ' ' + String(item.digest || '');
+const bad = swNewsBad(item);
+const boardHits = [];
+if (!bad) (boards || []).slice(0, 6).forEach((b) => {
+const m = swNewsMatchScore(item, b);
+if (m.score > 0) boardHits.push({ name: b.name, score: m.score, hits: m.hits });
+});
+boardHits.sort((a, b) => b.score - a.score);
+const stockHits = (names || []).filter((n, i, arr) => n && text.indexOf(n) >= 0 && arr.indexOf(n) === i);
+const score = bad ? 0 : ((boardHits[0] ? boardHits[0].score : 0) + stockHits.length * 4);
+return Object.assign({}, item, { boardHits: boardHits, stockHits: stockHits, score: score, bad: bad });
+});
+const byBoard = {};
+(boards || []).forEach((b) => {
+byBoard[b.name] = list.filter((x) => x.boardHits.some((h) => h.name === b.name))
+.sort((a, b) => (b.score - a.score) || (Date.parse(b.time) - Date.parse(a.time)));
+});
+return { items: list, byBoard: byBoard };
+}
+
+function swSaveCat() {
+try { localStorage.setItem('apanel_sw_cat', JSON.stringify(SW.cat || {})); } catch (e) { /* 忽略 */ }
+}
+
+function swApplyCatInputs() {
+Array.prototype.forEach.call(document.querySelectorAll('[data-sw-cat]'), (el) => {
+const k = el.getAttribute('data-sw-cat');
+const v = (SW.cat && SW.cat[k]) || '';
+el.value = v;
+el.title = v;
+});
+}
+
+/** 自动填催化：只覆盖空值或 [自动] 值，手动填写的内容保留 */
+function swAutoFillCatalysts(boards, matches) {
+SW.cat = SW.cat || {};
+let filled = 0;
+(boards || []).slice(0, 6).forEach((b) => {
+const prev = String(SW.cat[b.name] || '');
+const isAuto = prev.indexOf('[自动]') === 0;
+const arr = ((matches && matches.byBoard[b.name]) || [])
+.filter((x) => !x.bad && SW_AUTO_CAT_POS.test(x.title + x.digest)).slice(0, 2);
+if (!arr.length) {
+if (isAuto) { delete SW.cat[b.name]; filled++; }
+return;
+}
+if (prev && !isAuto) return;
+const txt = '[自动] ' + arr.map((x) => swNewsShortTime(x.time) + ' ' + x.title).join('；');
+SW.cat[b.name] = txt.slice(0, 220);
+filled++;
+});
+swSaveCat();
+swApplyCatInputs();
+return filled;
+}
+
+function swRenderNews(matches) {
+const el = $('swNewsList');
+const meta = $('swNewsMeta');
+const more = $('btnSwNewsMore');
+if (!el) return;
+const items = ((matches || SW.newsMatches || {}).items || []).slice()
+.sort((a, b) => (b.score - a.score) || (Date.parse(b.time) - Date.parse(a.time)));
+if (meta) meta.textContent = SW.newsAt ? ('快讯 ' + items.length + ' 条 · ' + swHm(SW.newsAt) + ' 更新') : '未抓取';
+if (!items.length) {
+el.innerHTML = '<div class="li"><span class="dot gray"></span><span>还没有新闻数据。点右上角「刷新新闻并填催化」。</span></div>';
+if (more) more.style.display = 'none';
+return;
+}
+const open = Math.max(8, SW.newsOpen || 8);
+const shown = items.slice(0, open);
+const matchedN = items.filter((x) => x.score > 0).length;
+const rows = shown.map((x) => {
+const age = swNewsAge(x.time);
+const fresh = Number.isFinite(age) ? (age <= 1.2 ? '新鲜' : age <= 3 ? '较新' : '旧闻') : '时间未知';
+const freshCls = fresh === '新鲜' ? 'gold' : fresh === '较新' ? 'blue' : 'gray';
+const review = /论市|收评|午评|早评|复盘|汇总|盘点|展望|策略会/.test(x.title);
+const sustained = (!x.bad && !review && /政策|国常会|部署|订单|中标|突破|量产|涨价|回购|增持|预增|签约|获批|重组|并购/.test(x.title + x.digest) &&
+!/未观察到|没有|否认|辟谣|不及预期|低于预期|放缓|下滑/.test(x.title + x.digest)) ? '可能持续' : (review ? '评论/复盘' : '事件性');
+const href = /^https?:\/\//i.test(x.url) ? x.url.replace(/^http:/i, 'https:') : '';
+const title = href ? '<a href="' + esc(href) + '" target="_blank" rel="noopener noreferrer">' + esc(x.title) + '</a>' : esc(x.title);
+const riskTag = x.bad ? '<span class="tag orange">风险扰动</span> ' : '';
+const boardTags = x.boardHits.slice(0, 2).map((h) => '<span class="tag gold">' + esc(h.name) + '</span>').join(' ');
+const stockTags = x.stockHits.slice(0, 2).map((n) => '<span class="tag blue">' + esc(n) + '</span>').join(' ');
+const digest = x.digest ? '<div class="hint" style="margin-top:3px;">' + esc(x.digest.slice(0, 110)) + '</div>' : '';
+return '<div class="li" style="align-items:flex-start;"><span class="dot ' + (x.bad ? 'orange' : x.score > 0 ? 'gold' : 'gray') + '"></span><span>' +
+title + ' ' + riskTag + '<span class="tag ' + freshCls + '">' + fresh + '</span> <span class="tag gray">' + sustained + '</span> ' +
+boardTags + (boardTags && stockTags ? ' ' : '') + stockTags +
+'<div class="hint" style="margin-top:3px;">' + esc(x.time) + ' · 东财快讯</div>' + digest + '</span></div>';
+}).join('');
+el.innerHTML = '<div class="hint" style="margin-bottom:4px;">共 ' + items.length + ' 条快讯 · 与主线/龙头相关 ' + matchedN +
+' 条 · 关键词规则匹配，非投资建议</div>' + rows;
+if (more) {
+more.style.display = items.length > 8 ? '' : 'none';
+more.textContent = open >= items.length ? '收起' : '展开更多（共 ' + items.length + ' 条）';
+}
+}
+
+async function swLoadNews(boards, autoFill, names) {
+const meta = $('swNewsMeta');
+if (meta) meta.textContent = '新闻抓取中…';
+try {
+const list = await swFetchNews();
+SW.news = list;
+SW.newsAt = Date.now();
+SW.newsErr = '';
+SW.newsNames = (names || []).slice();
+const matches = swMatchNews(boards || [], SW.newsNames);
+SW.newsMatches = matches;
+srcMark('news', true, '快讯 ' + list.length + ' 条');
+if (autoFill) swAutoFillCatalysts(boards || [], matches);
+swRenderNews(matches);
+if (SW.plan) swRenderReport(SW.plan);
+return matches;
+} catch (e) {
+SW.newsErr = e.message || '抓取失败';
+SW.newsMatches = null;
+srcMark('news', false, SW.newsErr);
+if (meta) meta.textContent = '抓取失败';
+const el = $('swNewsList');
+if (el) el.innerHTML = '<div class="li"><span class="dot orange"></span><span>新闻抓取失败：' + esc(SW.newsErr) +
+'（东财快讯接口可能被网络拦截，稍后重试；不影响行情与 K 线）</span></div>';
+return null;
+}
+}
+
 /** 一次完整扫描 */
 async function swScan() {
   const hint = $('swHint');
-  if (hint) hint.textContent = '正在抓取涨停结构…';
+if (hint) hint.textContent = '正在抓取涨停结构与新闻…';
   try {
     const p = await swPools();
     SW.data = p;
@@ -7547,7 +7785,12 @@ async function swScan() {
     await refreshQuotes().catch(() => {});
     const boards = swBoards(p);
     const mains = boards.filter((b) => b.share >= SW.cfg.boardVague).slice(0, SW.cfg.boardMax).map((b) => b.name);
+/* 新闻与个股过滤并行：新闻失败不影响扫描，成功则自动填催化 */
+const newsNames = [sent.topName].concat(boards.slice(0, 6).map((b) => b.leadName)).filter(Boolean);
+SW.newsNames = newsNames;
+const newsP = swLoadNews(boards, true, newsNames).catch(() => null);
     const cands = mains.length ? await swCandidates(p, mains) : [];
+await newsP;
     const capital = swCapital();
     const canByStage = sent.stage === 'start' || sent.stage === 'ferment';
     const tradable = canByStage && !sent.veto.hit && cands.some((r) => r.ok);
@@ -7569,7 +7812,7 @@ async function swScan() {
     swRenderPlan();
     swWriteLog(plan);
     swBindCatInputs();
-    if (hint) hint.textContent = '扫描完成 ' + nowHms() + ' · 交易日 ' + p.day + ' · 涨停 ' + p.zt.length + ' 家';
+if (hint) hint.textContent = '扫描完成 ' + nowHms() + ' · 交易日 ' + p.day + ' · 涨停 ' + p.zt.length + ' 家 · 新闻 ' + ((SW.news || []).length) + ' 条';
   } catch (e) {
     if (hint) hint.innerHTML = '<span class="orange">扫描失败：' + esc(e.message) + '（东财涨停池可能被网络拦截，稍后重试）</span>';
   }
@@ -7704,10 +7947,17 @@ seen[r.code] = 1;
         watch: r.ok ? '量能能否延续、均价线是否守住' : '未达标项：' + r.fails.join('、')
       });
     });
-    pool.innerHTML = '<thead><tr><th>名称</th><th>板块</th><th>涨幅</th><th>类型</th><th>参考思路</th><th>留意信号</th></tr></thead><tbody>' +
-      (items.length ? items.map((x) => '<tr><td class="name">' + esc(x.name) + ' <span class="dim">' + esc(dispCode(x.code)) + '</span></td><td class="dim">' + esc(x.board || '--') +
+pool.innerHTML = '<thead><tr><th>名称</th><th>K线</th><th>板块</th><th>涨幅</th><th>类型</th><th>参考思路</th><th>留意信号</th></tr></thead><tbody>' +
+(items.length ? items.map((x) => '<tr><td class="name">' + esc(x.name) + ' <span class="dim">' + esc(dispCode(x.code)) + '</span></td>' +
+'<td><button class="btn sm" data-pool-code="' + esc(x.code) + '" data-pool-name="' + esc(x.name) + '" style="white-space:nowrap;">载入K线</button></td>' +
+'<td class="dim">' + esc(x.board || '--') +
         '</td><td class="mono">' + (Number.isFinite(x.chg) ? sign(x.chg) + '%' : '--') + '</td><td><span class="tag ' + (x.type === '情绪龙头' ? 'gold' : x.type === '趋势标的' ? 'blue' : 'gray') + '">' + x.type +
-        '</span></td><td>' + esc(x.idea) + '</td><td class="dim">' + esc(x.watch) + '</td></tr>').join('') : '<tr><td colspan="6" class="muted">今日无入选个股（见上方原因）</td></tr>') + '</tbody>';
+'</span></td><td>' + esc(x.idea) + '</td><td class="dim">' + esc(x.watch) + '</td></tr>').join('') : '<tr><td colspan="7" class="muted">今日无入选个股（见上方原因）</td></tr>') + '</tbody>';
+Array.prototype.forEach.call(pool.querySelectorAll('[data-pool-code]'), (btn) => {
+btn.addEventListener('click', () => {
+loadCode(btn.getAttribute('data-pool-code'), { name: btn.getAttribute('data-pool-name'), period: 'day', scrollTo: 'sec-kline' });
+});
+});
   }
 /* 重点资讯整理：只汇总手动填写的催化，不编造新闻 */
 const nw = $('swNews');
@@ -7716,12 +7966,16 @@ const cat = SW.cat || {};
 const cats = P.boards.map((b) => ({ name: b.name, txt: (cat[b.name] || '').trim() })).filter((x) => x.txt);
 const fact = P.boards.slice(0, 3).map((b) => '<b>' + esc(b.name) + '</b> ' + b.count + ' 家涨停' +
 (b.leadName ? '，龙头 ' + esc(b.leadName) : '') + '，最高 ' + b.maxHeight + ' 板');
+const m = SW.newsMatches;
+const matched = P.boards.slice(0, 6).map((b) => b.name + ' ' + (((m && m.byBoard[b.name]) || []).length) + ' 条').join(' / ');
 const lines = [
-'<div class="li"><span class="dot gold"></span><span><b>手动催化（待核对）</b>：' +
-(cats.length ? cats.map((x) => '<b>' + esc(x.name) + '</b>：' + esc(x.txt)).join('；') : '尚未填写。本页未接新闻源，不生成或推测任何消息。') +
+'<div class="li"><span class="dot gold"></span><span><b>催化摘要（自动/手动，待核对）</b>：' +
+(cats.length ? cats.map((x) => '<b>' + esc(x.name) + '</b>：' + esc(x.txt)).join('；') : '暂无匹配催化；点右上角刷新新闻，或在板块表手动填写。') +
 '</span></div>',
+'<div class="li"><span class="dot blue"></span><span><b>新闻匹配</b>：' +
+(m ? '已检索 ' + (SW.news || []).length + ' 条；' + matched : '尚未抓取新闻（点右上角「刷新新闻并填催化」）。') + '</span></div>',
 '<div class="li"><span class="dot blue"></span><span><b>盘面主线事实（非新闻）</b>：' + (fact.length ? fact.join('；') : '暂无涨停板块数据') + '。</span></div>',
-'<div class="li"><span class="dot gray"></span><span><b>持续催化 / 无效旧闻</b>：工具无法自动判断。请核对发布时间与股价是否已提前大涨；已兑现的利好按旧闻处理，不计入加分。</span></div>'
+'<div class="li"><span class="dot gray"></span><span><b>新旧判断</b>：新闻条目标注「新鲜 / 较新 / 旧闻」是按发布时间做的规则判断；已兑现的利好按旧闻处理，不计入加分。</span></div>'
 ];
 nw.innerHTML = lines.join('');
 }
@@ -7820,9 +8074,17 @@ function swRenderLogs() {
 function swBindCatInputs() {
   SW.cat = SW.cat || {};
   Array.prototype.forEach.call(document.querySelectorAll('[data-sw-cat]'), (el) => {
+el.addEventListener('focus', () => {
+/* 用户一旦点进自动填写的催化，就转成手动内容，后续刷新新闻不再覆盖 */
+if (el.value.indexOf('[自动]') === 0) {
+el.value = el.value.replace(/^\[自动\]\s*/, '');
+SW.cat[el.getAttribute('data-sw-cat')] = el.value.trim();
+swSaveCat();
+}
+});
     el.addEventListener('input', () => {
       SW.cat[el.getAttribute('data-sw-cat')] = el.value.trim();
-      try { localStorage.setItem('apanel_sw_cat', JSON.stringify(SW.cat)); } catch (e) { /* 忽略 */ }
+swSaveCat();
 if (SW.plan) swRenderReport(SW.plan);
     });
   });
@@ -8929,6 +9191,18 @@ function bindEvents() {
   if ($('btnSwScan')) $('btnSwScan').addEventListener('click', () => swScan());
   if ($('btnSwVerify')) $('btnSwVerify').addEventListener('click', () => swFillVerify());
   if ($('btnSwCsv')) $('btnSwCsv').addEventListener('click', () => swExportCsv());
+if ($('btnSwNews')) $('btnSwNews').addEventListener('click', async () => {
+if (!SW.plan) { await swScan(); return; }
+const names = (SW.newsNames && SW.newsNames.length) ? SW.newsNames :
+[SW.plan.sent.topName].concat(SW.plan.boards.slice(0, 6).map((b) => b.leadName)).filter(Boolean);
+await swLoadNews(SW.plan.boards, true, names);
+swRenderReport(SW.plan);
+});
+if ($('btnSwNewsMore')) $('btnSwNewsMore').addEventListener('click', () => {
+const total = ((SW.newsMatches && SW.newsMatches.items) || []).length;
+SW.newsOpen = (SW.newsOpen || 8) >= total ? 8 : total;
+swRenderNews(SW.newsMatches);
+});
   if ($('btnMarketMinuteKline')) {
     $('btnMarketMinuteKline').addEventListener('click', () => {
       const code = UI.marketIndex || 'sh000001';
