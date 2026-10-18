@@ -808,7 +808,7 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
 <div class="card" style="margin-bottom:12px;">
 <div class="card-head">
 <div class="card-title">结论 2 · 重点资讯整理</div>
-<div class="card-sub">东方财富 7×24 快讯 · 关键词规则匹配主线，自动填催化</div>
+<div class="card-sub">东方财富快讯 / 财经早餐 · 关键词规则匹配主线，自动填催化</div>
 <div class="spacer"></div>
 <span class="hint" id="swNewsMeta">未抓取</span>
 <button class="btn sm" id="btnSwNews">刷新新闻并填催化</button>
@@ -816,7 +816,7 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
 <div class="list" id="swNewsList"><div class="li"><span class="dot gray"></span><span>点「开始扫描」或右上角「刷新新闻并填催化」，抓取最新快讯并按板块关键词匹配。</span></div></div>
 <button class="btn sm" id="btnSwNewsMore" style="display:none;margin-top:6px;">展开更多</button>
 <div class="list" id="swNews" style="margin-top:10px;"></div>
-<div class="hint" style="margin-top:6px;">标题 / 摘要 / 时间来自东方财富公开快讯，点击标题可回原站核对。自动催化只做关键词匹配，可能误配或漏配；已兑现的旧闻请手动删掉。</div>
+<div class="hint" style="margin-top:6px;">标题 / 摘要 / 时间来自东方财富公开快讯或财经早餐；7×24 接口不可达时自动退到财经早餐 JSONP。点击标题可回原站核对，自动催化只做关键词匹配，可能误配或漏配。</div>
 </div>
 
     <div class="card" style="margin-bottom:12px;">
@@ -7582,7 +7582,7 @@ const SW_BOARD_KW = {
 };
 
 /** 负向 / 地缘扰动新闻：可以展示，但不自动当作板块催化 */
-const SW_NEWS_BAD = /袭击|击落|空袭|爆炸|死亡|遇难|受伤|冲突|战争|制裁|断电|火灾|地震|洪水|台风|事故|坠毁|停运|停产|立案|调查|处罚|退市|减持|亏损|预亏|下调|暴跌|大跌|风险警示/;
+const SW_NEWS_BAD = /袭击|击落|空袭|爆炸|死亡|遇难|受伤|冲突|战争|制裁|断电|火灾|地震|洪水|台风|事故|坠毁|停运|停产|立案|调查|处罚|退市|减持|亏损|预亏|下调|暴跌|大跌|风险警示|停牌核查/;
 /** 自动填催化只认“像催化”的词，避免把普通产品新闻硬塞进板块 */
 const SW_AUTO_CAT_POS = /政策|国常会|部署|订单|中标|突破|量产|涨价|提价|预增|回购|增持|获批|签约|投产|扩产|补贴|支持|开工|招标|收购|重组|并购|研发|交付|首飞|试飞/;
 
@@ -7616,7 +7616,7 @@ return pad2(d.getHours()) + ':' + pad2(d.getMinutes());
 }
 
 /** 东财 7×24 快讯：返回 var ajaxResult={...}，用 script 注入绕过跨域 */
-async function swFetchNews() {
+async function swFetchNews724() {
 const url = 'https://newsapi.eastmoney.com/kuaixun/v1/getlist_102_ajaxResult_50_1_.html?_=' + Date.now();
 const json = await jsonpValue(url, 'ajaxResult', 'utf-8', 16000);
 const raw = (json && json.LivesList) || [];
@@ -7626,10 +7626,46 @@ title: String(x.title || x.simtitle || '').trim(),
 digest: String(x.digest || x.simdigest || '').replace(/^【[^】]*】/, '').trim(),
 time: String(x.showtime || x.ordertime || '').trim(),
 url: String(x.url_w || x.url_m || '').trim(),
-source: '东方财富'
+source: '东财快讯'
 })).filter((x) => x.title);
 if (!list.length) throw new Error('快讯返回为空');
 return list;
+}
+
+/** 公共站点兜底：东财“财经早餐”是标准 JSONP（callback=cb），不受 text/html 脚本拦截影响 */
+async function swFetchBreakfastNews() {
+const url = 'https://np-listapi.eastmoney.com/comm/web/getNewsByColumns?client=web&biz=web_news_col&column=1207&order=1&needInteractData=0&page_index=1&page_size=8&fields=code,showTime,title,mediaName,summary,image,url,uniqueUrl,Np_dst&types=1,20';
+const json = await fetchJsonpCb(url, 16000, 'callback');
+const raw = (json && json.data && json.data.list) || [];
+const list = [];
+raw.slice(0, 4).forEach((x) => {
+const summary = String(x.summary || '').replace(/^【[^】]*】/, '').trim();
+const parts = summary.split(/\s*\d+、/).map((s) => s.trim()).filter(Boolean);
+(parts.length ? parts.slice(0, 4) : [summary]).forEach((p, i) => {
+if (!p) return;
+list.push({
+id: String(x.code || '') + '_' + i,
+title: p.length > 68 ? p.slice(0, 68) + '…' : p,
+digest: p,
+time: String(x.showTime || '').trim(),
+url: String(x.uniqueUrl || x.url || '').trim(),
+source: '东财财经早餐'
+});
+});
+});
+if (!list.length) throw new Error('财经早餐返回为空');
+return list;
+}
+
+/** 先试 7×24 快讯；公共站点被 ORB / 广告拦截时自动退到财经早餐 JSONP */
+async function swFetchNews() {
+try {
+return await swFetchNews724();
+} catch (e724) {
+const list = await swFetchBreakfastNews();
+if (!list.length) throw e724;
+return list;
+}
 }
 
 function swNewsMatchScore(item, board) {
@@ -7736,7 +7772,7 @@ const digest = x.digest ? '<div class="hint" style="margin-top:3px;">' + esc(x.d
 return '<div class="li" style="align-items:flex-start;"><span class="dot ' + (x.bad ? 'orange' : x.score > 0 ? 'gold' : 'gray') + '"></span><span>' +
 title + ' ' + riskTag + '<span class="tag ' + freshCls + '">' + fresh + '</span> <span class="tag gray">' + sustained + '</span> ' +
 boardTags + (boardTags && stockTags ? ' ' : '') + stockTags +
-'<div class="hint" style="margin-top:3px;">' + esc(x.time) + ' · 东财快讯</div>' + digest + '</span></div>';
+'<div class="hint" style="margin-top:3px;">' + esc(x.time) + ' · ' + esc(x.source || '东财快讯') + '</div>' + digest + '</span></div>';
 }).join('');
 el.innerHTML = '<div class="hint" style="margin-bottom:4px;">共 ' + items.length + ' 条快讯 · 与主线/龙头相关 ' + matchedN +
 ' 条 · 关键词规则匹配，非投资建议</div>' + rows;
@@ -7769,7 +7805,7 @@ srcMark('news', false, SW.newsErr);
 if (meta) meta.textContent = '抓取失败';
 const el = $('swNewsList');
 if (el) el.innerHTML = '<div class="li"><span class="dot orange"></span><span>新闻抓取失败：' + esc(SW.newsErr) +
-'（东财快讯接口可能被网络拦截，稍后重试；不影响行情与 K 线）</span></div>';
+'（东财快讯与财经早餐接口都不可达，稍后重试；不影响行情与 K 线）</span></div>';
 return null;
 }
 }
