@@ -7843,7 +7843,9 @@ function ymdCompact(offsetDays) {
 async function ztPool(apiKey, size, sort, date) {
   const url = API[apiKey] + '?ut=' + ZT_UT + '&dpt=wz.ztzt&Pageindex=0&pagesize=' + (size || 200) +
     '&sort=' + encodeURIComponent(sort || 'fbt:asc') + '&date=' + (date || '') + '&_=' + Date.now();
-  const json = await jsonpParam(url, 'cb', 'UTF-8', 16000);
+  /* 东财涨停池是「回调式」JSONP：返回的是 cb({...})，必须先把 cb 定义成函数再读，
+     不能用 jsonpParam（那是给 var X=... 这类变量赋值式接口用的，回调式会报 jpXXX is not a function） */
+  const json = await fetchJsonpCb(url, 16000, 'cb');
   return (json && json.data) ? json.data : null;
 }
 
