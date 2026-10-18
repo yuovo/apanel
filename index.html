@@ -816,7 +816,7 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
 <div class="list" id="swNewsList"><div class="li"><span class="dot gray"></span><span>点「开始扫描」或右上角「刷新新闻并填催化」，抓取最新快讯并按板块关键词匹配。</span></div></div>
 <button class="btn sm" id="btnSwNewsMore" style="display:none;margin-top:6px;">展开更多</button>
 <div class="list" id="swNews" style="margin-top:10px;"></div>
-<div class="hint" style="margin-top:6px;">标题 / 摘要 / 时间来自东方财富公开快讯或财经早餐；7×24 接口不可达时自动退到财经早餐 JSONP。点击标题可回原站核对，自动催化只做关键词匹配，可能误配或漏配。</div>
+<div class="hint" style="margin-top:6px;">标题 / 摘要 / 时间来自东方财富公开快讯或财经早餐；7×24 被浏览器拦截时自动走文本镜像，再退到财经早餐。点击标题可回原站核对，自动催化只做关键词匹配，可能误配或漏配。</div>
 </div>
 
     <div class="card" style="margin-bottom:12px;">
@@ -7632,6 +7632,36 @@ if (!list.length) throw new Error('快讯返回为空');
 return list;
 }
 
+/** 公共站点兜底 2：通过文本镜像取同一份 7×24 快讯，绕开 text/html 脚本拦截 */
+async function swFetchNewsJina() {
+const ctl = (typeof AbortController === 'function') ? new AbortController() : null;
+const timer = setTimeout(() => { if (ctl) ctl.abort(); }, 12000);
+try {
+const r = await fetch('https://r.jina.ai/http://newsapi.eastmoney.com/kuaixun/v1/getlist_102_ajaxResult_50_1_.html?_=' + Date.now(), ctl ? { signal: ctl.signal, cache: 'no-store' } : { cache: 'no-store' });
+const text = await r.text();
+const i = text.indexOf('var ajaxResult=');
+if (i < 0) throw new Error('镜像未返回快讯');
+const body = text.slice(i + 15).trim();
+const start = body.indexOf('{');
+const end = body.lastIndexOf('}');
+if (start < 0 || end <= start) throw new Error('镜像格式异常');
+const json = JSON.parse(body.slice(start, end + 1));
+const raw = (json && json.LivesList) || [];
+const list = raw.map((x) => ({
+id: String(x.id || x.newsid || ''),
+title: String(x.title || x.simtitle || '').trim(),
+digest: String(x.digest || x.simdigest || '').replace(/^【[^】]*】/, '').trim(),
+time: String(x.showtime || x.ordertime || '').trim(),
+url: String(x.url_w || x.url_m || '').trim(),
+source: '东财快讯'
+})).filter((x) => x.title);
+if (!list.length) throw new Error('镜像快讯为空');
+return list;
+} finally {
+clearTimeout(timer);
+}
+}
+
 /** 公共站点兜底：东财“财经早餐”是标准 JSONP（callback=cb），不受 text/html 脚本拦截影响 */
 async function swFetchBreakfastNews() {
 const url = 'https://np-listapi.eastmoney.com/comm/web/getNewsByColumns?client=web&biz=web_news_col&column=1207&order=1&needInteractData=0&page_index=1&page_size=8&fields=code,showTime,title,mediaName,summary,image,url,uniqueUrl,Np_dst&types=1,20';
@@ -7662,9 +7692,13 @@ async function swFetchNews() {
 try {
 return await swFetchNews724();
 } catch (e724) {
+try {
+return await swFetchNewsJina();
+} catch (eJina) {
 const list = await swFetchBreakfastNews();
 if (!list.length) throw e724;
 return list;
+}
 }
 }
 
