@@ -7493,6 +7493,8 @@ function suggestRowHtml(it, key, on) {
 function hideSuggest() {
   const box = $('suggestBox');
   if (box) box.classList.remove('show');
+clearTimeout(SEARCH.timer);
+SEARCH.seq++;
   SEARCH.items = [];
   SEARCH.on = -1;
 }
