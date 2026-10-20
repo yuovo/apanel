@@ -316,6 +316,14 @@ canvas{display:block;width:100%;}
 .search-wrap{position:relative;flex:1 1 340px;min-width:250px;}
 .search-wrap{position:relative;flex:1 1 340px;min-width:250px;}
 .search-wrap .input{width:100%;}
+.search-history{display:flex;align-items:center;gap:8px;min-width:0;margin:0 0 9px;}
+.search-history-list{display:flex;align-items:center;gap:8px;flex:1;min-width:0;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:thin;}
+.search-history .chip{flex:none;cursor:pointer;white-space:nowrap;}
+.search-history .chip .x{margin-left:3px;}
+@media (max-width:760px){
+  .search-wrap{flex:1 1 200px;min-width:0;}
+  #btnLoad{flex:none;}
+}
 .suggest{
   position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:80;
   background:#101a28;border:1px solid var(--line2);border-radius:11px;
@@ -371,6 +379,35 @@ canvas{display:block;width:100%;}
 .price-plan .pr-k{width:96px;color:var(--muted);flex:none;}
 .price-plan .pr-v{font-family:Consolas,Menlo,monospace;font-weight:700;}
 .price-plan .pr-n{color:var(--dim);font-size:12px;}
+
+/* ---------- BOLL 布林交易纪律 ---------- */
+.boll-kline-note{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:7px;
+  margin:3px 0 8px;
+}
+.boll-kline-note .bi{
+  border:1px solid rgba(32,211,194,.22);border-radius:9px;padding:7px 9px;
+  background:rgba(32,211,194,.055);font-size:12px;color:var(--muted);line-height:1.5;
+}
+.boll-kline-note .bi b{display:block;color:var(--text);font-size:12.5px;margin-bottom:2px;}
+.boll-kline-note .bi.hot{border-color:rgba(255,77,94,.35);background:rgba(255,77,94,.07);}
+.boll-kline-note .bi.risk{border-color:rgba(18,196,106,.35);background:rgba(18,196,106,.07);}
+.boll-dashboard{border-color:rgba(32,211,194,.28);background:linear-gradient(135deg,rgba(32,211,194,.075),rgba(15,22,34,.9));}
+.boll-rule-grid{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));}
+.boll-rule{
+  border:1px dashed var(--line2);border-radius:10px;padding:8px 10px;
+  background:rgba(9,13,20,.48);font-size:12.5px;line-height:1.55;
+}
+.boll-rule.trigger{border-style:solid;border-color:rgba(255,77,94,.5);background:rgba(255,77,94,.08);}
+.boll-rule.warn{border-style:solid;border-color:rgba(240,183,63,.45);background:rgba(240,183,63,.07);}
+.boll-rule.risk{border-style:solid;border-color:rgba(18,196,106,.45);background:rgba(18,196,106,.07);}
+.boll-rule .br-k{font-weight:700;color:var(--text);margin-right:5px;}
+.boll-rule .br-s{font-weight:700;}
+.boll-quote{
+  margin-top:10px;padding:9px 11px;border-radius:9px;border:1px solid rgba(240,183,63,.25);
+  background:rgba(240,183,63,.06);font-size:13px;font-weight:700;color:var(--gold);line-height:1.65;
+}
+.boll-live{border-color:rgba(32,211,194,.4);color:#4de0d2;background:rgba(32,211,194,.08);}
 
 /* ---------- 响应式 ---------- */
 @media (max-width:760px){
@@ -468,9 +505,10 @@ table.tbl tbody tr.clickable:hover{background:rgba(240,183,63,.10);}
 #sec-analyze{display:flex;flex-direction:column;}
 #sec-analyze>.panel-head{order:0;}
 #sec-analyze>#plainAdvice{order:1;margin-top:0 !important;}
-#sec-analyze>.ord-score{order:2;}
-#sec-analyze>.ord-advice{order:3;}
-#sec-analyze>.ord-ind{order:4;}
+#sec-analyze>.ord-boll{order:2;}
+#sec-analyze>.ord-score{order:3;}
+#sec-analyze>.ord-advice{order:4;}
+#sec-analyze>.ord-ind{order:5;}
 
 .note{border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,rgba(17,24,39,.75),rgba(11,17,27,.75));padding:0 15px;}
 .note>summary{cursor:pointer;list-style:none;padding:12px 0;font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
@@ -641,10 +679,11 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
           <div class="card-head"><div class="card-title">怎么用这一页</div><div class="card-sub">三个高频动作</div></div>
           <div class="list">
             <div class="li"><span class="dot gold"></span><span><b>搜标的（③）</b>：搜索框支持中文名（贵州茅台）、拼音首字母（gzmt）、代码片段（5103）、主题＋品种（白酒ETF / 券商ETF）；下拉里点一下就能出 K 线与买卖分析。</span></div>
+<div class="li"><span class="dot blue"></span><span><b>最近搜索</b>：③ 搜索框下方保留最近 10 个标的；点标签重新载入，点 × 删除单个，右侧「清空」全部清除。历史保存在本机浏览器。</span></div>
             <div class="li"><span class="dot blue"></span><span><b>点表格行＝载入</b>：⑧排行榜、⑦热点龙虎榜、⑨连板梯队、⑬ETF 榜、⑫自选股，点任意一行都会把它载入③，并在④自动生成分析。</span></div>
             <div class="li"><span class="dot gold"></span><span><b>①指数分时随点随换</b>：①A股大盘 的 8 张指数卡片，点任意一张就把下面那张分时图切成它（选中的卡片会亮起来，选择会记住），分时图带<b>十字线</b>与<b>量能（含量能MA5）</b>；右上角「<b>载入 K 线图分析</b>」会把当前这个指数送进 ③ 做日线技术分析。</span></div>
 <div class="li"><span class="dot blue"></span><span><b>新闻催化 + 一键K线</b>：② 机会雷达 的「结论 2」会自动抓取东财 7×24 快讯，按板块关键词匹配后把「<b>[自动] 时间 标题</b>」填进主线板块的催化列；观察池每只股票旁边有「<b>载入K线</b>」，点一下直接进 ③ 看日线与全套指标。</span></div>
-            <div class="li"><span class="dot orange"></span><span><b>看图</b>：在 K 线主图上移动鼠标（手机按住拖动）会出现十字光标与浮层：日期、开高低收、涨跌幅、量额、MA5/10/20/60、MACD、KDJ、RSI、量比与当日综合评分。</span></div>
+            <div class="li"><span class="dot orange"></span><span><b>看图</b>：在 K 线主图上移动鼠标（手机按住拖动）会出现十字光标与浮层：日期、开高低收、涨跌幅、量额、MA5/10/20/60、BOLL 上中下轨、MACD、KDJ、RSI、量比与当日综合评分。主图默认叠加 BOLL(20,2) 布林带，个股买卖分析会按六条布林纪律给出“可做 / 低吸 / 进攻 / 止盈 / 止损”口径。</span></div>
             <div class="li"><span class="dot gold"></span><span><b>自选</b>：③ 图上方有「＋加入自选／－移出自选」；⑫ 自选页每行、每张卡片都能单独移除，并带当日分时图与今日点评。</span></div>
             <div class="li"><span class="dot blue"></span><span><b>亚太也能看图</b>：⑤全球市场 的「亚太市场 · 大盘情况」左侧是<b>专门的分时图</b>，点上面的指数标签即可切换（日经225 / 韩国KOSPI / 澳洲标普200 / 台湾加权 / 新加坡STI / 印度NIFTY50 / 新西兰NZ50 / 恒生系）；点右侧表格任意一行，或者点「看K线分析」，就会在 ③ 载入它的 K 线并生成完整技术分析（日线 / 周线 / 月线都支持）。</span></div>
             <div class="li"><span class="dot gold"></span><span><b>分时的三个附加指标</b>：③ 切到「分时」后，主图自动标注 <span class="orange">分时顶 / 底</span>（局部极值点，出现背离时标「顶背离 / 底背离」），下面多出两块面板：<b>MACDFS（分时 MACD 12,26,9）</b>与<b>大单金额（每分钟净额）</b>——红柱＝大单+超大单净流入、绿柱＝净流出、蓝线＝主力当日累计净额；鼠标移动时三块图十字线同步。</span></div>
@@ -921,6 +960,11 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
       <span class="hint">快捷：</span>
       <span id="quickChips" style="display:flex;gap:8px;flex-wrap:wrap;"></span>
     </div>
+<div class="search-history" id="searchHistoryBar" style="display:none;">
+<span class="hint" style="flex:none;">最近搜索</span>
+<div class="search-history-list" id="searchHistoryChips"></div>
+<button class="btn sm" id="btnClearHistory" title="清空搜索历史">清空</button>
+</div>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
       <span class="hint">ETF 快捷：</span>
       <span id="etfChips" style="display:flex;gap:8px;flex-wrap:wrap;"></span>
@@ -945,6 +989,7 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
     </div>
 
     <div class="chart-legend" id="klLegend"></div>
+    <div class="boll-kline-note" id="bollKlineNote"></div>
     <div class="chart-wrap">
       <canvas id="chartPrice" height="340"></canvas>
       <div class="tip" id="chartTip"></div>
@@ -975,7 +1020,7 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
       </div>
     </div>
     <div class="hint" style="margin-top:8px;" id="klHint">--</div>
-    <div class="hint" style="margin-top:4px;">在主图上移动鼠标（手机按住拖动）可看逐根的日期、开高低收、涨跌幅、量额、MA、MACD、KDJ、RSI、量比与当日综合评分。</div>
+    <div class="hint" style="margin-top:4px;">在主图上移动鼠标（手机按住拖动）可看逐根的日期、开高低收、涨跌幅、量额、MA、BOLL、MACD、KDJ、RSI、量比与当日综合评分。</div>
     <div class="hint" style="margin-top:4px;">「分时」模式下：主图会标注 <b>顶 / 底</b> 极值点（出现背离时标出顶背离 / 底背离），下方两块面板分别是 <b>MACDFS</b>（分时 MACD）与 <b>大单金额</b>（每分钟大单+超大单净额，蓝线为主力累计）。</div>
   </section>
 
@@ -985,7 +1030,7 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
       <h2><span class="num">④</span>个股买卖分析（基于日线实时计算）</h2>
       <span class="tag gold" id="analyzeStockTag">--</span>
       <span class="tag blue" id="analyzeTypeTag" style="display:none;">--</span>
-      <span class="hint">趋势 / MACD / KDJ / RSI / 支撑压力 / 仓位节奏</span>
+      <span class="hint">趋势 / BOLL / MACD / KDJ / RSI / 支撑压力 / 仓位节奏</span>
       <div class="spacer"></div>
       <span class="hint" id="analyzeBarsHint">指标基于完整历史计算，与图表显示根数无关</span>
     </div>
@@ -998,12 +1043,23 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
       <div class="card">
         <div class="card-head">
           <div class="card-title">支撑 / 压力位自动识别</div>
-          <div class="card-sub">近期极值 + 均线 + 整数关口</div>
+          <div class="card-sub">近期极值 + BOLL 上中下轨 + 均线 + 整数关口</div>
         </div>
         <div class="tbl-wrap" style="max-height:250px;">
           <table class="tbl" id="srTable"></table>
         </div>
       </div>
+    </div>
+
+    <div class="card boll-dashboard ord-boll" style="margin-bottom:14px;">
+      <div class="card-head">
+        <div class="card-title">BOLL 布林交易规则（20, 2）</div>
+        <div class="card-sub">只把 BOLL 当趋势过滤器，消息与板块强弱决定是否进攻</div>
+        <div class="spacer"></div>
+        <span class="tag boll-live" id="bollLiveTag">--</span>
+      </div>
+      <div class="boll-rule-grid" id="bollRuleGrid"></div>
+      <div class="boll-quote">口诀：中轨向上才做多，破了中轨赶紧走；上轨承压就止盈，张口突破看加速。</div>
     </div>
     <div class="grid g3 ord-ind">
       <div class="card">
@@ -1652,12 +1708,38 @@ function calcRSI(closes, n = 14) {
   return out;
 }
 
+/** BOLL(20,2)：中轨=MA20，上下轨=中轨±2倍标准差 */
+function calcBOLL(closes, n = 20, mult = 2) {
+  const mid = calcMA(closes, n);
+  const upper = [], lower = [], width = [], pctB = [];
+  for (let i = 0; i < closes.length; i++) {
+    if (i < n - 1 || mid[i] == null) {
+      upper.push(null); lower.push(null); width.push(null); pctB.push(null);
+      continue;
+    }
+    let variance = 0;
+    for (let j = i - n + 1; j <= i; j++) {
+      const d = closes[j] - mid[i];
+      variance += d * d;
+    }
+    const sd = Math.sqrt(variance / n);
+    const up = mid[i] + mult * sd;
+    const lo = mid[i] - mult * sd;
+    upper.push(up);
+    lower.push(lo);
+    width.push(mid[i] > 0 ? (up - lo) / mid[i] : null);
+    pctB.push(up > lo ? (closes[i] - lo) / (up - lo) : 0.5);
+  }
+  return { mid: mid, upper: upper, lower: lower, width: width, pctB: pctB };
+}
+
 /** 一次性计算全套指标 */
 function calcAll(candles) {
   const closes = candles.map((c) => c.close);
   const vols = candles.map((c) => c.volume);
   const m = calcMACD(closes);
   const kdj = calcKDJ(candles);
+  const boll = calcBOLL(closes, 20, 2);
   return {
     closes: closes, vols: vols,
     ma5: calcMA(closes, 5), ma10: calcMA(closes, 10),
@@ -1665,7 +1747,9 @@ function calcAll(candles) {
     volMa5: calcMA(vols, 5),
     dif: m.dif, dea: m.dea, hist: m.hist,
     k: kdj.k, d: kdj.d, j: kdj.j,
-    rsi: calcRSI(closes, 14)
+    rsi: calcRSI(closes, 14),
+    bollMid: boll.mid, bollUpper: boll.upper, bollLower: boll.lower,
+    bollWidth: boll.width, pctB: boll.pctB
   };
 }
 
@@ -1774,6 +1858,178 @@ function rsiState(ind) {
 }
 
 /**
+ * BOLL 交易状态（20,2）。
+ * 规则不是“碰到上轨就卖、碰到下轨就买”，而是先看中轨方向，再结合量能、
+ * 收口/张口、回踩确认与收盘有效性；消息催化和主线地位仍需另行确认。
+ */
+function bollState(candles, ind) {
+  const n = candles.length;
+  if (n < 21 || !ind || !ind.bollMid) {
+    return {
+      ready: false, action: '数据不足', tone: '', title: 'BOLL 数据不足',
+      text: '至少需要 21 根历史 K 线才能判断 BOLL。', rules: []
+    };
+  }
+  const last = candles[n - 1], prev = candles[n - 2] || last;
+  const mid = at(ind.bollMid), prevMid = at(ind.bollMid, 1);
+  const upper = at(ind.bollUpper), lower = at(ind.bollLower);
+  const prevUpper = at(ind.bollUpper, 1), prevLower = at(ind.bollLower, 1);
+  const width = at(ind.bollWidth), prevWidth = at(ind.bollWidth, 1);
+  const mid5 = at(ind.bollMid, 5) || mid;
+  if (![mid, upper, lower, width].every(Number.isFinite)) {
+    return {
+      ready: false, action: '数据不足', tone: '', title: 'BOLL 数据不足',
+      text: 'BOLL 参数尚未形成完整窗口。', rules: []
+    };
+  }
+
+  const slope = mid5 > 0 ? (mid / mid5 - 1) * 100 : 0;
+  const direction = slope > 0.08 ? 'up' : slope < -0.08 ? 'down' : 'flat';
+  const dirText = direction === 'up' ? '中轨向上' : direction === 'down' ? '中轨向下' : '中轨走平';
+  const volMa = at(ind.volMa5) || last.volume;
+  const volRatio = volMa > 0 ? last.volume / volMa : 1;
+  const dayChg = prev.close > 0 ? (last.close / prev.close - 1) * 100 : 0;
+
+  const validWidths = ind.bollWidth.filter(Number.isFinite);
+  const recentWidths = validWidths.slice(-60);
+  const baseWidths = recentWidths.slice(0, Math.max(5, recentWidths.length - 10));
+  const avgBase = baseWidths.length ? baseWidths.reduce((x, y) => x + y, 0) / baseWidths.length : width;
+  const prior10 = validWidths.slice(Math.max(0, validWidths.length - 10), Math.max(0, validWidths.length - 1));
+  const recentMin = prior10.length ? Math.min.apply(null, prior10) : width;
+  const prev3 = [prevWidth, at(ind.bollWidth, 2), at(ind.bollWidth, 3)].filter(Number.isFinite);
+  const prev3Avg = prev3.length ? prev3.reduce((x, y) => x + y, 0) / prev3.length : width;
+  const squeeze = recentMin <= avgBase * 0.9 || width <= prevWidth * 0.92;
+  const opening = width > prev3Avg * 1.06;
+  const upperZone = last.close >= upper * 0.985 || last.high >= upper * 0.995;
+  const lowerZone = last.close <= lower * 1.015 || last.low <= lower * 1.002;
+  const upperBreak = last.close > upper * 1.002;
+  const breakout = upperBreak && dayChg > 0 && volRatio >= 1.25 &&
+    (prev.close <= (prevUpper || upper) * 1.006 || last.close > upper * 1.018);
+  const openingBreakout = breakout && opening && squeeze;
+  const upperStall = upperZone && !openingBreakout && volRatio >= 1.25 &&
+    (last.close <= upper * 1.012 && (last.close < last.open || dayChg < 0.9));
+  const pullbackHold = direction === 'up' && last.low <= mid * 1.015 &&
+    last.close >= mid * 0.997 && last.close >= last.open && last.close >= prev.close * 0.995;
+  const belowMid = last.close < mid;
+  const breakMid = belowMid && last.close < mid * 0.995 &&
+    ((prev.close != null && prevMid != null && prev.close < prevMid * 0.999) || last.close < mid * 0.99);
+  const crossingDown = belowMid && !breakMid;
+
+  let action, tone, title;
+  if (breakMid) {
+    action = '止损离场'; tone = 'down'; title = '有效跌破中轨';
+  } else if (upperStall) {
+    action = '止盈 / 不追'; tone = 'warn'; title = '上轨放量滞涨';
+  } else if (direction === 'down') {
+    action = '不做多'; tone = 'down'; title = '中轨向下';
+  } else if (openingBreakout) {
+    action = '进攻（打板接力）'; tone = 'up'; title = '收口后张口突破';
+  } else if (breakout) {
+    action = '突破上轨，等确认'; tone = 'warn'; title = '放量上破上轨';
+  } else if (pullbackHold) {
+    action = '回踩低吸观察'; tone = 'up'; title = '中轨回踩稳住';
+  } else if (lowerZone) {
+    action = direction === 'up' ? '仅主线龙头低吸观察' : '不低吸（中轨未向上）';
+    tone = 'warn'; title = direction === 'up' ? '触及下轨' : '下轨但中轨未向上';
+  } else if (upperBreak) {
+    action = '持股观察，防滞涨'; tone = 'warn'; title = '运行在上轨上方';
+  } else if (direction === 'up') {
+    action = '趋势可做，等回踩'; tone = 'up'; title = '中轨向上';
+  } else {
+    action = '等待方向'; tone = ''; title = '中轨走平';
+  }
+
+  const rules = [
+    {
+      k: '1', name: '中轨方向',
+      status: direction === 'up' ? '✓ 可做多' : direction === 'down' ? '✗ 不做多' : '· 方向未定',
+      tone: direction === 'up' ? 'trigger' : direction === 'down' ? 'risk' : ''
+    },
+    {
+      k: '2', name: '回踩中轨稳住 + 利好题材',
+      status: pullbackHold ? '✓ 技术满足，待消息确认' : '· 未回踩稳住',
+      tone: pullbackHold ? 'trigger' : ''
+    },
+    {
+      k: '3', name: '收口张口 + 放量突破上轨',
+      status: openingBreakout ? '✓ 进攻 / 打板接力' : breakout ? '△ 已放量上破，收口/张口确认不足' : '· 未触发',
+      tone: openingBreakout ? 'trigger' : breakout ? 'warn' : ''
+    },
+    {
+      k: '4', name: '上轨 + 放量滞涨',
+      status: upperStall ? '✓ 止盈，不追高' : '· 未触发',
+      tone: upperStall ? 'warn' : ''
+    },
+    {
+      k: '5', name: '有效跌破中轨',
+      status: breakMid ? '✓ 止损离场' : crossingDown ? '△ 收盘首次跌破，待确认' : '· 未有效跌破',
+      tone: breakMid ? 'risk' : crossingDown ? 'warn' : ''
+    },
+    {
+      k: '6', name: '下轨低吸',
+      status: lowerZone ? (direction === 'up' ? '△ 只做主线人气股，杂毛不吸' : '✗ 中轨未向上，不低吸') : '· 未到下轨',
+      tone: lowerZone ? 'warn' : ''
+    }
+  ];
+
+  const pctB = at(ind.pctB);
+  const rangeText = '上轨 ' + fmt(upper, 2) + ' / 中轨 ' + fmt(mid, 2) + ' / 下轨 ' + fmt(lower, 2);
+  return {
+    ready: true, mid, upper, lower, width, pctB, slope, direction, dirText,
+    squeeze, opening, breakout, openingBreakout, upperStall, pullbackHold,
+    breakMid, crossingDown, belowMid, upperZone, lowerZone, volRatio,
+    action, tone, title, rules,
+    summary: dirText + '（5 期 ' + sign(slope) + '%），' + rangeText +
+      '；带宽' + (squeeze ? '收口' : opening ? '张口' : '常态') + '，现价位于布林带 ' +
+      (Number.isFinite(pctB) ? fmt(pctB * 100, 0) + '%' : '--') + ' 位置。',
+    text: title + '：' + action + '。' + rangeText + '，' + dirText + '。'
+  };
+}
+
+/** K线面板里的 BOLL 即时状态条 */
+function bollSnapshotHtml(b) {
+  if (!b || !b.ready) return '<div class="bi"><b>BOLL · 数据不足</b>等待更多 K 线</div>';
+  const cls = b.tone === 'up' ? 'hot' : b.tone === 'down' ? 'risk' : '';
+  return '<div class="bi ' + cls + '"><b>' + esc(b.title) + '</b>' + esc(b.action) + '</div>' +
+    '<div class="bi"><b>中轨（趋势开关）</b>' + fmtP(b.mid) + ' · ' + esc(b.dirText) + '</div>' +
+    '<div class="bi"><b>布林带位置</b>' +
+      '<span class="down">下 ' + fmtP(b.lower) + '</span> / <span class="gold">上 ' + fmtP(b.upper) + '</span>' +
+      '<br>' + (b.squeeze ? '带宽收口' : b.opening ? '带宽张口' : '带宽常态') +
+      ' · 带内位置 ' + (Number.isFinite(b.pctB) ? fmt(b.pctB * 100, 0) + '%' : '--') + '</div>' +
+    '<div class="bi"><b>执行口径</b>' +
+      (b.breakMid ? '先止损，站回中轨前不做多' :
+        b.upperStall ? '上轨放量滞涨，优先兑现' :
+          b.openingBreakout ? '可进入打板接力观察，需题材与承接' :
+            b.pullbackHold ? '技术可低吸，仍要利好题材确认' :
+              b.lowerZone ? '只做主线人气股，杂毛不吸' :
+                b.direction === 'down' ? '中轨向下，不做多' : '等中轨方向与量能确认') +
+      '</div>';
+}
+
+/** 个股分析里的 BOLL 六条规则实时判定 */
+function renderBollRules(b) {
+  const tag = $('bollLiveTag'), grid = $('bollRuleGrid');
+  if (tag) {
+    tag.className = 'tag ' + (b && b.tone === 'down' ? 'gray' : 'boll-live');
+    tag.textContent = b && b.ready ? b.title + ' · ' + b.action : 'BOLL 数据不足';
+  }
+  if (!grid) return;
+  if (!b || !b.ready) {
+    grid.innerHTML = '<div class="boll-rule">需要至少 21 根历史 K 线，暂不能判断 BOLL。</div>';
+    return;
+  }
+  grid.innerHTML = b.rules.map((r) =>
+    '<div class="boll-rule ' + (r.tone || '') + '">' +
+      '<span class="br-k">' + r.k + '. ' + esc(r.name) + '</span>' +
+      '<span class="br-s">' + esc(r.status) + '</span>' +
+    '</div>').join('') +
+    '<div class="boll-rule" style="grid-column:1/-1;">' +
+      '<span class="br-k">当前综合口径</span>' + esc(b.summary) +
+      '<br><span class="muted">新闻题材、板块主线、涨停梯队与次日承接不在 BOLL 计算内，必须作为额外门槛人工确认。</span>' +
+    '</div>';
+}
+
+/**
  * 支撑压力识别：
  * 1) 近20/60根K线的低点与高点
  * 2) MA20 / MA60 均线
@@ -1787,13 +2043,18 @@ function supportResistance(candles, ind) {
   const low60 = Math.min.apply(null, seg60.map((c) => c.low));
   const high60 = Math.max.apply(null, seg60.map((c) => c.high));
   const ma20 = at(ind.ma20) || price, ma60 = at(ind.ma60) || price;
+  const bollMid = at(ind.bollMid) || ma20;
+  const bollUpper = at(ind.bollUpper) || high20;
+  const bollLower = at(ind.bollLower) || low20;
   const unit = price > 300 ? 50 : price > 100 ? 10 : price > 30 ? 5 : price > 10 ? 1 : 0.5;
   const round = Math.round(price / unit) * unit;
   const rows = [
     { name: '近20日高点', price: high20, type: '压力' },
     { name: '近60日高点', price: high60, type: '压力' },
-    { name: 'MA20 均线', price: ma20, type: '中性' },
+    { name: 'BOLL 上轨', price: bollUpper, type: '压力' },
+    { name: 'BOLL 中轨 / MA20', price: bollMid, type: '中性' },
     { name: 'MA60 均线', price: ma60, type: '中性' },
+    { name: 'BOLL 下轨', price: bollLower, type: '支撑' },
     { name: '近20日低点', price: low20, type: '支撑' },
     { name: '近60日低点', price: low60, type: '支撑' },
     { name: '整数关口', price: round, type: price > round ? '支撑' : '压力' }
@@ -1860,6 +2121,7 @@ function scoreDetail(candles, ind, extras) {
     return { total: 0, parts: [], reason: 'K线不足 30 根，无法给出综合评分' };
   }
   const ms = macdState(ind), ks = kdjState(ind), rs = rsiState(ind), ts = trendState(candles, ind);
+  const bs = bollState(candles, ind);
   const ma20 = at(ind.ma20), ma60 = at(ind.ma60);
   const parts = [];
 
@@ -1878,6 +2140,12 @@ function scoreDetail(candles, ind, extras) {
   }
   if (ma20 != null) { if (price > ma20) tr += 0.1; else { tr -= 0.1; trN.push('价格在 MA20 下方'); } }
   if (ma60 != null) { if (price > ma60) tr += 0.1; else { tr -= 0.1; trN.push('价格在 MA60 下方'); } }
+  if (bs.ready) {
+    if (bs.direction === 'up') { tr += 0.12; trN.push('BOLL 中轨向上'); }
+    else if (bs.direction === 'down') { tr -= 0.2; trN.push('BOLL 中轨向下（不做多过滤）'); }
+    if (bs.breakMid) { tr -= 0.22; trN.push('BOLL 有效跌破中轨'); }
+    else if (bs.pullbackHold) { tr += 0.08; trN.push('BOLL 中轨回踩后稳住'); }
+  }
   parts.push({ name: '趋势结构', max: 24, score: Math.round(clamp1(tr) * 24), note: trN.join('；') });
 
   /* 2) 动能：DIF/DEA 相对位置、零轴位置、交叉、柱体变化 */
@@ -2022,6 +2290,7 @@ function scoreAdvice(sc, sig, plan) {
   const inv = [];
   if (plan && Number.isFinite(plan.stop)) inv.push('跌破止损位 ' + fmtP(plan.stop));
   if (Number.isFinite(sc.ma20)) inv.push('跌回 MA20（' + fmtP(sc.ma20) + '）下方且收不回来');
+  if (sig && sig.boll && sig.boll.ready) inv.push('有效跌破 BOLL 中轨（' + fmtP(sig.boll.mid) + '）');
   if (sig && sig.vol && sig.vol.ratio != null) inv.push('出现放量下跌（量比 ≥ 1.5 且收阴）');
   if (Number.isFinite(sc.fromHi) && sc.fromHi > -0.02) inv.push('冲高后无法站稳 60 日高点');
   out.push('<b>什么情况这个评分就作废：</b>' + (inv.length ? inv.join('；') + '。' : '出现明显放量反向突破时。'));
@@ -2039,6 +2308,24 @@ function tradeAdvice(a) {
   const shortList = [];
   const midList = [];
 
+  if (a.boll && a.boll.ready) {
+    const bo = a.boll;
+    if (bo.breakMid) {
+      shortList.push('BOLL 已有效跌破中轨 ' + fmt(bo.mid, 2) + '，按纪律先止损离场；未重新站回中轨前不做多。');
+    } else if (bo.direction === 'down') {
+      shortList.push('BOLL 中轨向下（5期 ' + sign(bo.slope) + '%），按口诀“中轨向下不做多”，不接反弹、不摊平。');
+    } else if (bo.openingBreakout) {
+      shortList.push('BOLL 收口后张口并放量突破上轨 ' + fmt(bo.upper, 2) + '，可进入进攻观察；打板接力仍需新闻催化、板块主线和次日承接同时确认。');
+    } else if (bo.upperStall) {
+      shortList.push('价格触及 BOLL 上轨 ' + fmt(bo.upper, 2) + ' 且放量滞涨，优先止盈或减仓，不追高。');
+    } else if (bo.pullbackHold) {
+      shortList.push('回踩 BOLL 中轨 ' + fmt(bo.mid, 2) + ' 后稳住，属于低吸形态；只有出现利好题材才执行，消息不确认就继续观察。');
+    } else if (bo.lowerZone) {
+      shortList.push('已到 BOLL 下轨区域：只允许主线人气龙头做低吸，杂毛股不抄底，且跌破下轨继续止损。');
+    } else if (bo.direction === 'up') {
+      shortList.push('BOLL 中轨向上，趋势过滤通过；等回踩中轨 ' + fmt(bo.mid, 2) + ' 稳住，或收口张口放量突破上轨再出手。');
+    }
+  }
   if (a.macdZone === '水上' && (a.macdCross === 'gold' || a.dif > a.dea)) {
     shortList.push('MACD 水上多头，短线可在回踩 5 日线/10 日线不破时轻仓跟进，跌破 10 日线减仓。');
   } else if (a.macdZone === '水下' && a.dif > a.dea) {
@@ -2060,6 +2347,11 @@ function tradeAdvice(a) {
   else midList.push('均线缠绕震荡，中线等待放量突破 ' + fmt(res, 2) + ' 后确认趋势，再逐步加仓。');
   if (a.macdZone === '水上') midList.push('MACD 保持在零轴上方，中线属于多头格局，回踩 ' + fmt(a.ma20, 2) + ' 附近是较优的加仓区域。');
   else midList.push('MACD 仍在零轴下方，中线建议控制总仓位，待 DIF 上穿零轴转为水上再提升仓位。');
+  if (a.boll && a.boll.ready) {
+    midList.push('BOLL 过滤器：' + (a.boll.direction === 'down' || a.boll.breakMid
+      ? '中轨向下 / 已跌破中轨，中线不新增仓位；先站回中轨 ' + fmt(a.boll.mid, 2) + ' 并让中轨拐头向上。'
+      : '中轨在 ' + fmt(a.boll.mid, 2) + '，不破可沿趋势持有；中轨是全部 BOLL 规则的总开关。'));
+  }
   midList.push('仓位节奏：' + (a.score >= 25 ? '底仓 3 成 + 突破加仓 2 成，总仓位不超过 7 成' : a.score > -5 ? '底仓 2 成以内，突破确认后再加仓' : '仓位控制在 1-2 成以内，以观察为主') + '。');
   midList.push('止盈止损：中线止损参考 ' + fmt(midStop, 2) + '（取 MA60 下方 3% 与关键支撑下方 2% 的更低者），到达 ' + fmt(tp2, 2) + ' 附近可分批止盈。');
 
@@ -2073,7 +2365,9 @@ function tradeAdvice(a) {
 /** 全球/大盘指标组合成一句“状态总结” */
 function indicatorSummary(ind) {
   const ms = macdState(ind), ks = kdjState(ind), rs = rsiState(ind);
-  return { macd: ms, kdj: ks, rsi: rs };
+  return { macd: ms, kdj: ks, rsi: rs, boll: ind && ind.bollMid ? {
+    mid: at(ind.bollMid), upper: at(ind.bollUpper), lower: at(ind.bollLower)
+  } : null };
 }
 
 /* ---- Canvas 图表引擎 ---- */
@@ -2109,7 +2403,7 @@ const CLR = {
   cross: 'rgba(240,183,63,.55)'
 };
 
-/** 绘制K线主图：K线 + 四条均线 + 最新价虚线 + 可选成交量副图 */
+/** 绘制K线主图：K线 + BOLL 布林带 + 均线 + 最新价虚线 + 可选成交量副图 */
 function drawKline(cv, candles, ind, opt) {
   const o = Object.assign({ height: 340, showVol: true, active: null }, opt || {});
   const box = setupCanvas(cv, o.height);
@@ -2123,10 +2417,11 @@ function drawKline(cv, candles, ind, opt) {
   const stepX = plotW / n;
   const cw = Math.max(1.5, stepX * 0.62);
 
-  // ---- 价格区间（把四条均线也纳入，避免均线跑出画布） ----
+  // ---- 价格区间（把 BOLL 与均线都纳入，避免指标跑出画布） ----
   let hi = -Infinity, lo = Infinity;
   for (let i = 0; i < n; i++) { hi = Math.max(hi, candles[i].high); lo = Math.min(lo, candles[i].low); }
-  [ind.ma5, ind.ma10, ind.ma20, ind.ma60].forEach((arr) => {
+  [ind.ma5, ind.ma10, ind.ma20, ind.ma60, ind.bollUpper, ind.bollLower].forEach((arr) => {
+    if (!arr) return;
     arr.forEach((v) => { if (v != null) { hi = Math.max(hi, v); lo = Math.min(lo, v); } });
   });
   const padRange = (hi - lo) * 0.06 || 1;
@@ -2145,6 +2440,47 @@ function drawKline(cv, candles, ind, opt) {
     const price = hi - ((hi - lo) / 4) * i;
     ctx.fillStyle = CLR.text;
     ctx.fillText(fmtP(price), padL + plotW + 6, y + 3.5);
+  }
+
+  // ---- BOLL 布林带：浅色带 + 上下轨虚线 + 中轨实线 ----
+  if (o.showBoll !== false && ind.bollUpper && ind.bollLower && ind.bollMid) {
+    const first = ind.bollUpper.findIndex((v) => v != null);
+    if (first >= 0) {
+      ctx.save();
+      ctx.beginPath();
+      for (let i = first; i < n; i++) {
+        const v = ind.bollUpper[i];
+        if (v == null) continue;
+        if (i === first) ctx.moveTo(xOf(i), yOf(v));
+        else ctx.lineTo(xOf(i), yOf(v));
+      }
+      for (let i = n - 1; i >= first; i--) {
+        const v = ind.bollLower[i];
+        if (v == null) continue;
+        ctx.lineTo(xOf(i), yOf(v));
+      }
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(32,211,194,.055)';
+      ctx.fill();
+      const drawBandLine = (arr, color, dash) => {
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.25;
+        ctx.setLineDash(dash || []);
+        let started = false;
+        for (let i = first; i < n; i++) {
+          const v = arr[i];
+          if (v == null) continue;
+          if (!started) { ctx.moveTo(xOf(i), yOf(v)); started = true; }
+          else ctx.lineTo(xOf(i), yOf(v));
+        }
+        ctx.stroke();
+      };
+      drawBandLine(ind.bollUpper, 'rgba(32,211,194,.78)', [5, 4]);
+      drawBandLine(ind.bollLower, 'rgba(32,211,194,.78)', [5, 4]);
+      drawBandLine(ind.bollMid, '#20d3c2', []);
+      ctx.restore();
+    }
   }
 
   // ---- K线（红涨绿跌，与A股习惯一致） ----
@@ -2172,7 +2508,6 @@ function drawKline(cv, candles, ind, opt) {
   const mas = [
     { arr: ind.ma5, color: CLR.gold, name: 'MA5' },
     { arr: ind.ma10, color: CLR.blue, name: 'MA10' },
-    { arr: ind.ma20, color: CLR.purple, name: 'MA20' },
     { arr: ind.ma60, color: CLR.white, name: 'MA60' }
   ];
   mas.forEach((m) => {
@@ -3439,6 +3774,7 @@ const UI = {
   kline: { code: 'sh000001', period: 'min', active: null, bars: 250, count: 0 },
   analyzeCode: 'sh000001',
   watch: [],
+searchHistory: [],
   asiaMin: '',            // 亚太分时图当前选中的指数代码（apN225 / hkHSI …）
   asiaMinData: null,
   asiaMinName: '',
@@ -3454,6 +3790,7 @@ const UI = {
   lastKline: 0,
   minuteIndex: null
 };
+const SEARCH_HISTORY_KEY = 'apanel_search_history_v1';
 
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const nowHms = () => { const d = bjNow(); return pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds()); };
@@ -4504,6 +4841,7 @@ function analyzeStockReal(code, candles, period) {
   const divergence = detectDivergence(candles, ind.hist);
   const ms = macdState(ind), ks = kdjState(ind), rs = rsiState(ind);
   const ts = trendState(candles, ind);
+  const bs = bollState(candles, ind);
   const sr = supportResistance(candles, ind);
   const score = scoreStock(candles, ind, { divergence: divergence });
   const st = scoreText(score);
@@ -4524,6 +4862,7 @@ function analyzeStockReal(code, candles, period) {
     macdBar: ms.bar, macdTitle: ms.title, macdText: ms.text,
     k: ks.k, d: ks.d, j: ks.j, kdjCross: ks.cross, kdjZone: ks.zone, kdjTitle: ks.title, kdjText: ks.text,
     rsi: rs.rsi, rsiZone: rs.zone, rsiTitle: rs.title, rsiText: rs.text,
+    boll: bs, bollTitle: bs.title, bollText: bs.text, bollAction: bs.action,
     trendName: ts.name, trendDesc: ts.desc, bullStack: ts.bullStack, bearStack: ts.bearStack,
     divergence: divergence, sr: sr, volRatio: volRatio,
     nearSupport: nearSupport, nearResist: nearResist, costBasis: price
@@ -4544,20 +4883,23 @@ async function renderAnalyze() {
     const plan = buildBuyPlan(candles, a.ind, sig, bv, code);
     const sc = scoreDetail(candles, a.ind, { divergence: a.divergence });
     const info = instInfo(code, a.name);
+    renderBollRules(a.boll);
     if (tag) { tag.className = 'tag ' + (a.score >= 25 ? 'red' : a.score <= -25 ? 'green' : 'gold'); tag.textContent = a.name + ' ' + dispCode(code); }
     setTypeTag('analyzeTypeTag', code, a.name);
     const card = $('adviceCard');
-    card.className = 'advice ' + (a.score >= 25 ? 'opp' : a.score <= -25 ? 'risk' : 'neutral');
-    $('adviceTitle').textContent = a.ratingLabel + '（综合评分 ' + a.score + '）';
+    card.className = 'advice ' + (bv.bollVeto ? 'risk' : a.score >= 25 ? 'opp' : a.score <= -25 ? 'risk' : 'neutral');
+    $('adviceTitle').textContent = a.ratingLabel + '（综合评分 ' + a.score + '）' +
+      (bv.bollVeto ? ' · ' + bv.verdict : '');
     $('adviceSub').textContent = a.name + ' ' + dispCode(code) + ' · ' + info.type + ' · 现价 ' + fmtP(a.price) + ' · ' + sign(a.chgPct) + '% · 趋势：' + a.trendName;
     $('adviceList').innerHTML = liHtml([
       '<b>趋势：</b>' + a.trendDesc,
+      '<b>BOLL：</b>' + a.bollText,
       '<b>MACD：</b>' + a.macdText,
       '<b>KDJ：</b>' + a.kdjText,
       '<b>RSI：</b>' + a.rsiText,
       '<b>量能：</b>最新成交量是5日均量的 ' + fmt(a.volRatio, 2) + ' 倍，' + (a.volRatio > 1.5 ? '明显放量' : a.volRatio < 0.7 ? '明显缩量' : '量能平稳'),
       '<b>背离：</b>' + a.divergence.text
-    ], ['gold', 'blue', 'gold', 'blue', 'gold', 'orange']);
+    ], ['gold', 'blue', 'gold', 'blue', 'gold', 'orange', 'blue']);
     $('srTable').innerHTML = '<thead><tr><th>位置</th><th>价格</th><th>类型</th><th>距现价</th></tr></thead><tbody>' +
       a.sr.map((r) => '<tr><td class="name">' + esc(r.name) + '</td><td class="mono">' + fmtP(r.price) + '</td>' +
         '<td class="' + (r.type === '压力' ? 'down' : 'up') + '">' + r.type + '</td>' +
@@ -4566,6 +4908,7 @@ async function renderAnalyze() {
       '<tr><td>MACD</td><td class="mono">DIF ' + fmt(a.dif, 2) + ' / DEA ' + fmt(a.dea, 2) + '</td><td class="' + (a.dif > a.dea ? 'up' : 'down') + '">' + esc(a.macdTitle) + '</td></tr>' +
       '<tr><td>KDJ</td><td class="mono">K ' + fmt(a.k, 1) + ' / D ' + fmt(a.d, 1) + ' / J ' + fmt(a.j, 1) + '</td><td class="gold">' + esc(a.kdjTitle) + '</td></tr>' +
       '<tr><td>RSI(14)</td><td class="mono">' + fmt(a.rsi, 1) + '</td><td class="blue">' + esc(a.rsiTitle) + '</td></tr>' +
+      '<tr><td>BOLL(20,2)</td><td class="mono">上 ' + fmt(a.boll.upper, 2) + ' / 中 ' + fmt(a.boll.mid, 2) + ' / 下 ' + fmt(a.boll.lower, 2) + '</td><td class="' + (a.boll.tone === 'up' ? 'up' : a.boll.tone === 'down' ? 'down' : 'gold') + '">' + esc(a.boll.title) + ' · ' + esc(a.boll.action) + '</td></tr>' +
       '<tr><td>均线</td><td class="mono">MA20 ' + fmtP(a.ma20) + '</td><td class="' + (a.price > a.ma20 ? 'up' : 'down') + '">' + (a.price > a.ma20 ? '价格在MA20上方' : '价格在MA20下方') + '</td></tr>' +
       '<tr><td>综合评分</td><td class="mono">' + a.score + '</td><td class="' + a.ratingCls + '">' + esc(a.ratingLabel) + '</td></tr>' +
       '</tbody>';
@@ -4603,6 +4946,7 @@ async function renderAnalyze() {
     if ($('checkSum')) {
       $('checkSum').innerHTML = '规则判定：<b class="' + (bv.tone === 'up' ? 'up' : bv.tone === 'down' ? 'down' : 'gold') + '">' + esc(bv.verdict) + '</b>' +
         '（支持 ' + bv.good.length + ' 条 / 反对 ' + bv.bad.length + ' 条，净分 ' + sign(bv.score, 0) + '）· 门槛：净分 ≥ +3 可以买、≤ -2 不建议买、其余观望。' +
+        (bv.bollVeto ? ' BOLL 一票过滤：' + esc(bv.bollVeto) + '，即使其他指标偏多也不做多。' : '') +
         ' 风险等级 ' + esc(plan.riskLevel) + '，' + (plan.rr != null ? '盈亏比 ' + fmt(plan.rr, 2) + ':1。' : '暂无明确盈亏比。');
     }
     /* 白话买卖建议书 */
@@ -4618,6 +4962,7 @@ async function renderAnalyze() {
     $('srTable').innerHTML = '';
     $('indTable').innerHTML = '';
     $('shortList').innerHTML = ''; $('midList').innerHTML = '';
+    renderBollRules(null);
     clearPlain();
   }
 }
@@ -5010,6 +5355,7 @@ function sigOf(candles, ind, quote) {
       dry: ratio != null && ratio <= 0.7,
       trend: (v5 > 0 && v10 > 0) ? v5 / v10 : null
     },
+    boll: bollState(candles, ind),
     box: findBreakout(candles, ind),
     ma: { ma5: ind.ma5[i], ma10: ind.ma10[i], ma20: ma20, ma60: ind.ma60[i] },
     ma20Slope: ma20Slope
@@ -5077,9 +5423,45 @@ function buyVerdict(sig) {
     bad.push('缩量（量比 ' + fmt(v.ratio, 2) + '），突破和反弹的可信度都要打折');
   }
 
-  const verdict = score >= 3 ? '可以买（关注）' : score <= -2 ? '不建议买' : '观望';
-  const tone = score >= 3 ? 'up' : score <= -2 ? 'down' : '';
-  return { verdict: verdict, tone: tone, score: score, good: good, bad: bad };
+  /* BOLL：中轨方向是一票过滤条件；上轨滞涨和有效跌破中轨直接改变操作结论 */
+  const bo = sig.boll;
+  let bollVeto = '';
+  if (bo && bo.ready) {
+    if (bo.breakMid) {
+      score -= 4;
+      bollVeto = 'BOLL 已有效跌破中轨 ' + fmt(bo.mid, 2);
+      bad.push(bollVeto + '，按纪律止损离场');
+    } else if (bo.direction === 'down') {
+      score -= 2;
+      bollVeto = 'BOLL 中轨向下（5期 ' + sign(bo.slope) + '%）';
+      bad.push(bollVeto + '，按规则不做多');
+    } else if (bo.openingBreakout) {
+      score += 2;
+      good.push('BOLL 收口后张口并放量突破上轨 ' + fmt(bo.upper, 2) + '，可观察打板接力');
+    } else if (bo.breakout) {
+      score += 1;
+      good.push('BOLL 放量上破上轨 ' + fmt(bo.upper, 2) + '，但收口后张口条件不完整，等待确认');
+    } else if (bo.upperStall) {
+      score -= 2;
+      bad.push('价格触及 BOLL 上轨 ' + fmt(bo.upper, 2) + ' 且放量滞涨，优先止盈');
+    } else if (bo.pullbackHold) {
+      score += 1;
+      good.push('回踩 BOLL 中轨 ' + fmt(bo.mid, 2) + ' 后稳住，低吸技术条件成立（仍需利好题材）');
+    } else if (bo.direction === 'up') {
+      score += 1;
+      good.push('BOLL 中轨向上，趋势过滤通过');
+    }
+    if (bo.lowerZone) bad.push('已到 BOLL 下轨：只允许主线人气股低吸，杂牌股不抄底');
+  }
+
+  let verdict = score >= 3 ? '可以买（关注）' : score <= -2 ? '不建议买' : '观望';
+  let tone = score >= 3 ? 'up' : score <= -2 ? 'down' : '';
+  if (bollVeto) {
+    score = Math.min(score, -3);
+    verdict = bo.breakMid ? '止损离场（BOLL 跌破中轨）' : '不做多（BOLL 中轨向下）';
+    tone = 'down';
+  }
+  return { verdict: verdict, tone: tone, score: score, good: good, bad: bad, bollVeto: bollVeto };
 }
 
 /* ---------------- 买入计划：进场 / 止损 / 目标 / 盈亏比 / 仓位 ---------------- */
@@ -5107,9 +5489,9 @@ function buildBuyPlan(candles, ind, sig, bv, code) {
   if (fresh) {
     plan.stop = bx.found.boxHi * 0.99;
     plan.stopReason = '跌破箱体上沿 ' + fmt(bx.found.boxHi, 2) + '（突破失败）就走';
-  } else if (ind.ma20[i] != null && b.close > ind.ma20[i]) {
-    plan.stop = ind.ma20[i] * 0.97;
-    plan.stopReason = 'MA20（' + fmt(ind.ma20[i], 2) + '）再下 3% 作为保护位';
+  } else if (ind.bollMid && ind.bollMid[i] != null && b.close > ind.bollMid[i]) {
+    plan.stop = ind.bollMid[i] * 0.99;
+    plan.stopReason = 'BOLL 中轨 / MA20（' + fmt(ind.bollMid[i], 2) + '）再下 1%，有效跌破即离场';
   } else if (ind.ma60[i] != null && b.close > ind.ma60[i]) {
     plan.stop = Math.max(ind.ma60[i] * 0.98, b.close * 0.92);
     plan.stopReason = '用 MA60 与 -8% 里更近的那个（宽止损，仓位要更小）';
@@ -5136,6 +5518,11 @@ function buildBuyPlan(candles, ind, sig, bv, code) {
     plan.entryLow = bx.box.hi;
     plan.entryHigh = bx.box.hi * 1.012;
     plan.entryNote = '现在还在横盘箱体里（上沿 ' + fmt(bx.box.hi, 2) + '），等放量收上它再买，别提前埋伏。';
+  } else if (sig.boll && sig.boll.ready && sig.boll.pullbackHold) {
+    plan.entryLow = Math.max(sig.boll.mid * 0.997, b.close * 0.985);
+    plan.entryHigh = b.close * 1.003;
+    plan.entryNote = 'BOLL 中轨回踩稳住：只有利好题材确认后，才在 ' + fmt(plan.entryLow, 2) +
+      ' ~ ' + fmt(plan.entryHigh, 2) + ' 小仓低吸；中轨失守就放弃。';
   } else if (bv && bv.tone === 'up') {
     const m5 = ind.ma5[i] != null ? ind.ma5[i] : b.close * 0.98;
     plan.entryLow = Math.max(m5, b.close * 0.965);
@@ -5163,7 +5550,8 @@ function buildBuyPlan(candles, ind, sig, bv, code) {
   /* 兜底：进场位明显低于现价（例如箱体上沿在下方很深的位置）→ 只算「观察位」，不给盈亏比 */
   plan.entryFar = plan.entryHigh != null && plan.entryHigh < b.close * 0.92;
   if (plan.entryFar) plan.entryNote += '（该价位距现价较远，属于「等它回来再看」的观察位，不是当前可执行买点）';
-  const actionable = !plan.entryFar && ((bv && bv.tone === 'up') || fresh || (bx.inBox && !bx.found));
+  const actionable = !plan.entryFar && ((bv && bv.tone === 'up') || fresh ||
+    (bx.inBox && !bx.found) || (sig.boll && sig.boll.pullbackHold));
   if (actionable && plan.stop != null && plan.target != null && plan.entryLow != null) {
     const risk = plan.entryLow - plan.stop, rew = plan.target - plan.entryLow;
     if (risk > 0 && rew > 0) plan.rr = rew / risk;
@@ -6481,7 +6869,7 @@ function drawMinute(cv, m, quote, opt) {
 }
 
 function setIndVisible(show) {
-  ['indWrapVol', 'indWrapMacd', 'indWrapKdj', 'indWrapRsi'].forEach((id) => {
+  ['indWrapVol', 'indWrapMacd', 'indWrapKdj', 'indWrapRsi', 'bollKlineNote'].forEach((id) => {
     const el = $(id);
     if (el) el.style.display = show ? '' : 'none';
   });
@@ -6610,6 +6998,7 @@ function setKlineUnavailable(msg) {
     b.ctx.clearRect(0, 0, b.w, b.h);
   });
   $('klLegend').innerHTML = '';
+  if ($('bollKlineNote')) $('bollKlineNote').innerHTML = '';
   $('klHint').innerHTML = '<span class="orange">' + esc(msg) + '</span>';
   ['volTag', 'macdTag', 'kdjTag', 'rsiTag'].forEach((id) => { const e = $(id); if (e) e.textContent = '--'; });
 }
@@ -6629,6 +7018,7 @@ function setAnalyzeUnavailable(msg) {
   $('indTable').innerHTML = '';
   $('shortList').innerHTML = '';
   $('midList').innerHTML = '';
+  renderBollRules(null);
   clearPlain();
 }
 
@@ -6734,12 +7124,16 @@ async function renderKlinePanel(keepActive) {
     const vr = last.volume / (at(ind.volMa5) || last.volume);
     $('volTag').innerHTML = '最新量 ' + fmtVol(last.volume) + ' · 5日均量比 <b class="' + (vr > 1.3 ? 'up' : vr < 0.8 ? 'down' : 'flat') + '">' + fmt(vr, 2) + '</b>';
     const ms = macdState(ind), ks = kdjState(ind), rs = rsiState(ind);
+    const bs = bollState(candles, ind);
     $('macdTag').innerHTML = 'DIF ' + fmt(ms.dif, 3) + ' / DEA ' + fmt(ms.dea, 3) + ' · ' + esc(ms.title);
     $('kdjTag').innerHTML = 'K ' + fmt(ks.k, 1) + ' / D ' + fmt(ks.d, 1) + ' / J ' + fmt(ks.j, 1) + ' · ' + esc(ks.zone);
     $('rsiTag').innerHTML = 'RSI ' + fmt(rs.rsi, 1) + ' · ' + esc(rs.zone);
     $('klLegend').innerHTML = '<span><i style="background:#ff4d5e"></i>阳线</span><span><i style="background:#12c46a"></i>阴线</span>' +
       '<span><i style="background:#f0b73f"></i>MA5</span><span><i style="background:#4a9eff"></i>MA10</span>' +
-      '<span><i style="background:#b06bff"></i>MA20</span><span><i style="background:#cfd8e8"></i>MA60</span>';
+      '<span><i style="background:#20d3c2"></i>BOLL中轨/MA20</span>' +
+      '<span><i style="background:rgba(32,211,194,.72)"></i>BOLL上/下轨</span>' +
+      '<span><i style="background:#cfd8e8"></i>MA60</span>';
+    $('bollKlineNote').innerHTML = bollSnapshotHtml(bs);
     const label = period === 'day' ? '日线' : period === 'week' ? '周线' : '月线';
     $('klHint').textContent = label + (asiaDefOf(code) ? '数据（CNBC，指数不复权，日线由官方收盘价构成）' : '前复权数据（腾讯财经）') +
       '· 显示最近 ' + candles.length + ' 根（可切换 60/120/250），指标按完整 ' +
@@ -6752,6 +7146,7 @@ async function renderKlinePanel(keepActive) {
       b.ctx.clearRect(0, 0, b.w, b.h);
     });
     $('klLegend').innerHTML = '';
+    if ($('bollKlineNote')) $('bollKlineNote').innerHTML = '';
     $('klHint').innerHTML = '<span class="orange">' + esc(e.message) + '（请确认代码是否正确，沪市6开头、深市0/3开头、北交所4/8/92开头）</span>';
   }
 }
@@ -6864,6 +7259,71 @@ function forceSyncSearchBox(code, nameMaybe) {
   const nm = nameMaybe || codeName(code);
   if (!nm || nm === code || nm === dispCode(code)) return;
   inp.value = dispCode(code) + ' ' + nm;
+}
+
+/* ---------------- E1.5 搜索历史（K线技术面板） ---------------- */
+
+function searchHistoryLabel(code, nameMaybe) {
+const codeN = normalizeCode(code) || String(code || '');
+const nm = String(nameMaybe || codeName(codeN) || '').trim();
+return (nm && nm !== codeN && nm !== dispCode(codeN)) ? dispCode(codeN) + ' ' + nm : dispCode(codeN);
+}
+
+function loadSearchHistory() {
+try {
+const raw = JSON.parse(localStorage.getItem(SEARCH_HISTORY_KEY) || '[]');
+const list = Array.isArray(raw) ? raw : [];
+UI.searchHistory = list.map((x) => {
+const code = normalizeCode(typeof x === 'string' ? x : (x && x.code));
+if (!code) return null;
+return { code: code, name: String((x && x.name) || codeName(code) || '').trim(), at: Number(x && x.at) || 0 };
+}).filter(Boolean).filter((x, i, arr) => arr.findIndex((y) => y.code === x.code) === i).slice(0, 10);
+} catch (e) { UI.searchHistory = []; }
+renderSearchHistory();
+}
+
+function saveSearchHistory() {
+try { localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify((UI.searchHistory || []).slice(0, 10))); } catch (e) { /* 忽略 */ }
+}
+
+function renderSearchHistory() {
+const bar = $('searchHistoryBar');
+const chips = $('searchHistoryChips');
+if (!bar || !chips) return;
+const list = UI.searchHistory || [];
+bar.style.display = list.length ? 'flex' : 'none';
+chips.innerHTML = list.map((x) => {
+const label = searchHistoryLabel(x.code, x.name);
+return '<span class="chip search-history-chip" data-history-code="' + esc(x.code) + '" data-history-name="' + esc(x.name || '') + '" title="点击重新载入 ' + esc(label) + '">' +
+esc(label) + '<span class="x" data-history-remove="' + esc(x.code) + '" title="从历史中删除">×</span></span>';
+}).join('');
+}
+
+function recordSearchHistory(code, nameMaybe) {
+const codeN = normalizeCode(code);
+if (!codeN) return;
+const old = (UI.searchHistory || []).find((x) => x.code === codeN);
+const nmRaw = String(nameMaybe || '').trim();
+const nm = (nmRaw && nmRaw !== codeN && nmRaw !== dispCode(codeN)) ? nmRaw : ((old && old.name) || '');
+UI.searchHistory = [{ code: codeN, name: nm, at: Date.now() }]
+.concat((UI.searchHistory || []).filter((x) => x.code !== codeN))
+.slice(0, 10);
+saveSearchHistory();
+renderSearchHistory();
+}
+
+function removeSearchHistory(code) {
+const codeN = normalizeCode(code);
+if (!codeN) return;
+UI.searchHistory = (UI.searchHistory || []).filter((x) => x.code !== codeN);
+saveSearchHistory();
+renderSearchHistory();
+}
+
+function clearSearchHistory() {
+UI.searchHistory = [];
+saveSearchHistory();
+renderSearchHistory();
 }
 
 /* ---------------- E2. 中文搜索：本地索引 + 腾讯联想接口 ---------------- */
@@ -8541,15 +9001,19 @@ function plainModel(a, sig, bv, plan, sc) {
   const tp1 = Number.isFinite(plan.target) ? plan.target : null;
   const tp2 = (tp1 != null && stop != null) ? Math.max(tp1 * 1.08, a.price + (a.price - stop)) : (tp1 != null ? tp1 * 1.08 : null);
   const rr = plan.rr;
+  const bo = a.boll && a.boll.ready ? a.boll : null;
 
   /* 一句话结论 */
-  const verdictWord = up ? '可以买（但别追高）' : down ? '现在不建议买' : '先别急着买，等信号';
+  const bollBlocked = !!(bo && (bo.breakMid || bo.direction === 'down'));
+  const verdictWord = bollBlocked ? (bo.breakMid ? '先止损，不做多' : '不做多，等中轨拐头') :
+    up ? '可以买（但别追高）' : down ? '现在不建议买' : '先别急着买，等信号';
   let lead = '<span class="' + (up ? 'up' : down ? 'down' : 'gold') + '">' + verdictWord + '</span> · ' +
     a.name + ' ' + dispCode(a.code) + ' 现价 ' + p(a.price) + '（' + sign(a.chgPct) + '%）· 综合评分 ' + sc.total + ' 分（' + esc(a.ratingLabel) + '）';
   if (up && entryHigh != null && !plan.entryFar) lead += '。计划：' + p(entryLow) + ' ~ ' + p(entryHigh) + ' 分批买，跌破 ' + p(stop) + ' 认错离场。';
   else if (up) lead += '。但注意：现价已经远离合理买点（现价 ' + p(a.price) + '），现在追进去性价比差，等回踩再说。';
   else if (down) lead += '。做法：手里有票的逢反弹减仓，空仓的不要接刀——它现在属于「下跌趋势里找一个反弹点」的品种。';
   else lead += '。做法：等下面两个触发条件之一出现再动手，现在买就是在猜。';
+  if (bo && bollBlocked) lead += ' BOLL 当前是“' + esc(bo.title) + '”，中轨 ' + p(bo.mid) + '，这是硬过滤：未站回中轨并让中轨拐头前，不新增仓位。';
 
   /* 四宫格 */
   const grid = [];
@@ -8565,7 +9029,8 @@ function plainModel(a, sig, bv, plan, sc) {
   const ma10 = a.ma10, ma20 = a.ma20;
   const ref = addBuyRef(a);                       /* 加仓参考位：现价下方的均线，否则改用条件式表述 */
   let hold;
-  if (a.price < ma20) hold = '走势已经跌破 MA20（' + p(ma20) + '），反弹到 MA20 附近先把仓位减一半，剩下的用 MA20 当止损线，站不回去就不要留。';
+  if (bo && bo.breakMid) hold = 'BOLL 已有效跌破中轨 ' + p(bo.mid) + '（与 MA20 同值），按你的纪律先止损离场；除非重新放量站回中轨，否则不接回。';
+  else if (a.price < ma20) hold = '走势已经跌破 MA20 / BOLL 中轨（' + p(ma20) + '），反弹到中轨附近先把仓位减一半，站不回去就不要留。';
   else if (a.bullStack) hold = '拿住就行：沿着 MA10（' + p(ma10) + '）持有，收盘跌破 MA10 减一半，跌破 MA20（' + p(ma20) + '）清仓；不破就不动，别被日内波动晃出去。';
   else hold = '震荡结构，用高抛低吸：靠近 ' + p(resRef) + ' 减一点，回到 ' + p(a.nearSupport.price) + ' 附近再捡回来；不做差价就别纠结日内波动。';
   grid.push({ t: '手里已经有票', v: hold });
@@ -8580,14 +9045,15 @@ function plainModel(a, sig, bv, plan, sc) {
       '或者等它重新整理出新的箱体、放量收上 ' + p(resRef) + ' 之后再进。' +
       (plan.entryNote ? '<br><span class="muted">' + esc(plan.entryNote) + '</span>' : '');
   } else {
-    buy = '现在不买。要参与就等下面两个条件之一：<br>① <b>放量收上 ' + p(resRef) + '</b>（压力位/箱体上沿），且第二天不回落；<br>③ <b>回踩 ' + p(a.nearSupport.price) + ' 附近缩量止跌</b>，出现带下影线的阳线。<br>两个都没出现，就把它放进自选股看着。';
+    buy = '现在不买。要参与就等下面两个条件之一：<br>① <b>放量收上 ' + p(resRef) + '</b>（压力位/箱体上沿），且第二天不回落；<br>② <b>回踩 BOLL 中轨 ' + (bo ? p(bo.mid) : p(a.nearSupport.price)) + ' 稳住</b>，同时有利好题材；或收口后放量突破上轨。两个都没出现，就放进自选股看着。' +
+      (bo && bo.lowerZone ? '<br><span class="down">已经到下轨也只能吸主线人气龙头，杂毛股不碰。</span>' : '');
   }
   grid.push({ t: '手里没有票，怎么买', v: buy });
 
   grid.push({
     t: '什么情况必须走（先想好再买）',
     v: (stop != null ? '硬止损：<b>' + p(stop) + '</b>，理由——' + esc(plan.stopReason || '保护本金') + '。<br>' : '') +
-      '另外两种情况不管亏多少都先出来：<br>① 出现放量长阴（量比 ≥1.5 且跌幅 &gt; 5%）；<br>③ 连续 3 天收不回 MA20（' + p(ma20) + '）。'
+      '另外两种情况不管亏多少都先出来：<br>① 出现放量长阴（量比 ≥1.5 且跌幅 &gt; 5%）；<br>② 有效跌破 BOLL 中轨 / MA20（' + p(ma20) + '）且收不回来。'
   });
 
   /* 价格与仓位表 */
@@ -8614,6 +9080,15 @@ function plainModel(a, sig, bv, plan, sc) {
   why.push('<b>趋势：</b>' + (a.bullStack ? '5/10/20 日均线从上到下依次排列（多头排列），意思是最近买的人大多在赚钱，回调时容易有人接盘。'
     : a.bearStack ? '5/10/20 日均线从上到下依次往下走（空头排列），上方每条均线都是压力，反弹容易被打回来。'
       : '均线互相缠绕没有方向，这种结构里追涨杀跌最容易两头挨打。') + '（' + esc(a.trendName) + '）');
+  why.push('<b>BOLL：</b>' + esc(a.bollText) +
+    (bo ? '。执行口径：' + (bo.breakMid ? '有效跌破中轨，先止损，不做补仓摊平。'
+      : bo.direction === 'down' ? '中轨向下，规则是一票否决，不做多。'
+        : bo.openingBreakout ? '收口张口且放量突破上轨，可进入打板接力观察，但必须同时看利好题材、板块主线和次日承接。'
+          : bo.pullbackHold ? '中轨回踩技术条件成立，仍需利好题材确认后才能低吸。'
+            : bo.upperStall ? '上轨放量滞涨，先止盈，不追最后一棒。'
+              : bo.lowerZone ? '下轨低吸只做主线人气股，杂牌不吸。'
+                : bo.direction === 'up' ? '中轨向上，趋势允许做，等回踩或张口突破再动手。'
+                  : '方向不明朗，先等中轨选择方向。') : ''));
   why.push('<b>动能：</b>' + esc(a.macdText) + '。<span class="muted">说人话就是：' +
     (a.dif > 0 ? '中期资金还在往上推，' : '中期仍是往下压，') + (a.dif > a.dea ? '短期比中期更积极。' : '短期已经比中期弱。') + '</span>');
   why.push('<b>量能：</b>今天成交量是 5 日均量的 ' + fmt(a.volRatio, 2) + ' 倍，' +
@@ -8972,7 +9447,7 @@ function showTip(html, clientX, clientY, tipEl) {
   placeTip(clientX, clientY, tip);
 }
 
-/** K线浮层内容：OHLC + 涨跌 + 量额 + 四条均线 + MACD/KDJ/RSI + 评分 */
+/** K线浮层内容：OHLC + 涨跌 + 量额 + 均线 + BOLL/MACD/KDJ/RSI + 评分 */
 function klineTipHtml(candles, ind, idx) {
   const b = candles[idx];
   const prev = idx > 0 ? candles[idx - 1].close : b.open;
@@ -8993,6 +9468,13 @@ function klineTipHtml(candles, ind, idx) {
     row('MA20', maV(ind.ma20), 'purple') + row('MA60', maV(ind.ma60), 'white');
   const ma20 = ind.ma20[idx];
   if (ma20 != null) h += row('相对MA20', fmt((b.close / ma20 - 1) * 100, 2) + '%', b.close >= ma20 ? 'up' : 'down');
+  if (ind.bollMid && ind.bollUpper && ind.bollLower) {
+    const bm = ind.bollMid[idx], bu = ind.bollUpper[idx], bl = ind.bollLower[idx];
+    if ([bm, bu, bl].every(Number.isFinite)) {
+      h += row('BOLL上/中/下', fmtP(bu) + ' / ' + fmtP(bm) + ' / ' + fmtP(bl), b.close >= bm ? 'up' : 'down') +
+        row('BOLL位置', Number.isFinite(ind.pctB[idx]) ? fmt(ind.pctB[idx] * 100, 0) + '%' : '--', b.close >= bu ? 'orange' : b.close <= bl ? 'blue' : '');
+    }
+  }
   h += '<div class="tip-sep"></div>';
   if (ind.dif[idx] != null) {
     h += row('MACD', 'DIF ' + fmt(ind.dif[idx], 3) + ' / DEA ' + fmt(ind.dea[idx], 3), ind.dif[idx] > ind.dea[idx] ? 'up' : 'down') +
@@ -9128,7 +9610,9 @@ async function loadCode(raw, opts) {
   const o = opts || {};
   const code = normalizeCode(raw);
   if (!code) return;
+hideSuggest();
   if (o.name) rememberName(code, o.name);
+recordSearchHistory(code, o.name || codeName(code));
   syncSearchBox(code, o.name);          /* 搜索框立刻跟着当前标的走 */
   UI.kline.code = code; UI.analyzeCode = code; UI.kline.active = null;
   if (o.period && (o.period !== 'min' || minuteCapable(code))) UI.kline.period = o.period;
@@ -9139,6 +9623,7 @@ async function loadCode(raw, opts) {
     Object.assign(DATA.quotes, q);
     if (q[code] && q[code].name) {
       rememberName(code, q[code].name);
+recordSearchHistory(code, q[code].name);
       syncSearchBox(code, q[code].name);  /* 用接口返回的正式名称再校正一次 */
     }
   } catch (e) { /* 行情失败也能继续画K线 */ }
@@ -9235,6 +9720,24 @@ function bindEvents() {
       }
     });
   }
+/* ---- ③ 搜索历史：点标签重新载入，点×删除单项，右侧清空 ---- */
+const histChips = $('searchHistoryChips');
+if (histChips) histChips.addEventListener('click', (ev) => {
+const rm = ev.target.closest('[data-history-remove]');
+if (rm) {
+ev.preventDefault();
+ev.stopPropagation();
+removeSearchHistory(rm.getAttribute('data-history-remove'));
+return;
+}
+const chip = ev.target.closest('[data-history-code]');
+if (!chip) return;
+const code = chip.getAttribute('data-history-code');
+const name = chip.getAttribute('data-history-name') || '';
+forceSyncSearchBox(code, name);
+loadCode(code, { name: name, scrollTo: 'sec-kline' });
+});
+if ($('btnClearHistory')) $('btnClearHistory').addEventListener('click', clearSearchHistory);
   /* ---- ⑨ 连板股 / ⑬ ETF 专区 的刷新按钮 ---- */
   const refreshBtn = (btnId, task, idle) => {
     const btn = $(btnId);
@@ -9647,6 +10150,7 @@ async function init() {
   buildQuickChips();
   buildEtfChips();
   loadWatch();
+loadSearchHistory();
   importWatchFromUrl();
   loadMarketIndex();
   swLoadLogs();
