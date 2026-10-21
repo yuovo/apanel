@@ -476,6 +476,51 @@ canvas{display:block;width:100%;}
   .cloud-legend i{width:20px;}
 }
 
+/* ---------- ⑯ 未来30天财经日历 ---------- */
+.cal-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;}
+.cal-filters{display:flex;gap:6px;flex-wrap:wrap;}
+.cal-filter{border:1px solid var(--line2);background:rgba(140,156,182,.06);color:var(--muted);border-radius:8px;padding:5px 9px;font-size:11.5px;cursor:pointer;}
+.cal-filter:hover{border-color:var(--gold);color:var(--gold);}
+.cal-filter.on{border-color:var(--gold);color:var(--gold);background:var(--gold-bg);}
+.cal-high{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-left:auto;}
+.cal-list{border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+.cal-row{display:grid;grid-template-columns:92px minmax(0,1fr);gap:11px;padding:11px 12px;border-bottom:1px solid var(--line);}
+.cal-row:last-child{border-bottom:0;}
+.cal-row.soon{background:linear-gradient(90deg,rgba(240,183,63,.075),rgba(240,183,63,.015));}
+.cal-date{display:flex;flex-direction:column;align-items:flex-start;gap:1px;border-right:1px solid var(--line);padding-right:9px;}
+.cal-date b{font-family:Consolas,Menlo,monospace;font-size:16px;color:var(--text);line-height:1.2;}
+.cal-date span{font-size:11.5px;color:var(--muted);}
+.cal-date em{font-style:normal;font-size:10.5px;color:var(--gold);font-family:Consolas,Menlo,monospace;}
+.cal-main{min-width:0;}
+.cal-title-line{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.cal-title{font-size:13.5px;font-weight:800;color:var(--text);}
+.cal-stars{font-size:11px;color:var(--gold);letter-spacing:1px;white-space:nowrap;}
+.cal-desc{font-size:12px;line-height:1.65;color:var(--muted);margin-top:3px;}
+.cal-sector-line{font-size:11.5px;color:var(--muted);margin-top:5px;}
+.cal-sector-line b{color:var(--blue);font-weight:700;}
+.cal-stocks{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.cal-stock{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line2);background:rgba(140,156,182,.06);border-radius:7px;padding:3px 7px;font-size:11px;color:var(--muted);cursor:pointer;}
+.cal-stock:hover{border-color:var(--gold);color:var(--gold);}
+.cal-stock b{font-family:Consolas,Menlo,monospace;color:var(--dim);font-size:10px;font-weight:600;}
+.cal-empty{padding:24px 16px;text-align:center;color:var(--muted);font-size:12.5px;line-height:1.7;}
+.cal-watch-grid{display:flex;gap:7px;flex-wrap:wrap;}
+.cal-watch-chip{display:inline-flex;align-items:baseline;gap:5px;border:1px solid var(--line2);border-radius:8px;padding:5px 8px;background:rgba(140,156,182,.06);font-size:12px;color:var(--text);cursor:pointer;}
+.cal-watch-chip:hover{border-color:var(--gold);color:var(--gold);}
+.cal-watch-chip span{font-size:10px;color:var(--dim);}
+@media (max-width:760px){
+  .cal-toolbar{padding:9px 10px;}
+  .cal-high{margin-left:0;}
+  #calSummary{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:8px !important;}
+  #calSummary .card{padding:8px 9px !important;}
+  #calSummary .price{font-size:17px !important;}
+  .cal-row{grid-template-columns:66px minmax(0,1fr);gap:8px;padding:10px 9px;}
+  .cal-date{padding-right:6px;}
+  .cal-date b{font-size:14px;}
+  .cal-title{font-size:12.5px;}
+  .cal-desc{font-size:11.5px;}
+  .cal-stock{font-size:10.5px;padding:3px 6px;}
+}
+
 /* ---------- 视觉细节打磨 ---------- */
 .card{box-shadow:0 6px 18px rgba(0,0,0,.20);transition:border-color .18s ease,box-shadow .18s ease;}
 .card:hover{border-color:var(--line2);box-shadow:0 8px 22px rgba(0,0,0,.26);}
@@ -702,7 +747,8 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
 <a href="#sec-watch">⑬ 自选股</a>
 <a href="#sec-etf">⑭ ETF 专区</a>
 <a href="#sec-method">⑮ 交易方法</a>
-<a href="#sec-risk">⑯ 风险提示</a>
+<a href="#sec-calendar">⑯ 财经日历</a>
+<a href="#sec-risk">⑰ 风险提示</a>
   </nav>
 </div>
 
@@ -721,6 +767,7 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
 <div class="li"><span class="dot blue"></span><span><b>点表格行＝载入</b>：⑨排行榜、⑧热点龙虎榜、⑩连板梯队、⑭ETF 榜、⑬自选股，点任意一行都会把它载入④，并在⑤自动生成分析。</span></div>
 <div class="li"><span class="dot gold"></span><span><b>①指数分时随点随换</b>：①A股大盘 的 8 张指数卡片，点任意一张就把下面那张分时图切成它（选中的卡片会亮起来，选择会记住），分时图带<b>十字线</b>与<b>量能（含量能MA5）</b>；右上角「<b>载入 K 线图分析</b>」会把当前这个指数送进 ④ 做日线技术分析。</span></div>
 <div class="li"><span class="dot gold"></span><span><b>大盘云图（②）</b>：按行业把全市场个股铺成热力图；面积可切换总市值 / 流通市值 / 成交额，颜色越深涨跌越大。悬浮看详情，单击选中，双击直接载入 ④ 的日线K线。</span></div>
+<div class="li"><span class="dot blue"></span><span><b>未来30天财经日历（⑯）</b>：按日期、星期列出国内外重要事件，标注确认/预计/待官宣、催化板块和个股观察；点个股标签可直接载入④的日线K线。可筛未来7天、国内、海外、产业、财报和消费。</span></div>
 <div class="li"><span class="dot blue"></span><span><b>新闻催化 + 一键K线</b>：③ 机会雷达 的「结论 2」会自动抓取东财 7×24 快讯，按板块关键词匹配后把「<b>[自动] 时间 标题</b>」填进主线板块的催化列；观察池每只股票旁边有「<b>载入K线</b>」，点一下直接进 ④ 看日线与全套指标。</span></div>
             <div class="li"><span class="dot orange"></span><span><b>看图</b>：在 K 线主图上移动鼠标（手机按住拖动）会出现十字光标与浮层：日期、开高低收、涨跌幅、量额、MA5/10/20/60、BOLL 上中下轨、MACD、KDJ、RSI、量比与当日综合评分。主图默认叠加 BOLL(20,2) 布林带，个股买卖分析会按六条布林纪律给出“可做 / 低吸 / 进攻 / 止盈 / 止损”口径。</span></div>
 <div class="li"><span class="dot gold"></span><span><b>自选</b>：④ 图上方有「＋加入自选／－移出自选」；⑬ 自选页每行、每张卡片都能单独移除，并带当日分时图与今日点评。</span></div>
@@ -1678,7 +1725,59 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
     </div>
   </details>
 
-<!-- ===================== ⑯ 风险提示 ===================== -->
+<!-- ===================== ⑯ 未来30天财经日历 ===================== -->
+<section class="panel" id="sec-calendar">
+<div class="panel-head">
+<h2><span class="num">⑯</span>未来30天财经日历</h2>
+<span class="tag gold" id="calRangeTag">--</span>
+<span class="tag blue">日期 · 星期 · 事件 · 催化板块 · 个股观察</span>
+<div class="spacer"></div>
+<button class="btn primary" id="btnCalRefresh">重新计算</button>
+</div>
+
+<div class="advice neutral" style="margin-bottom:12px;">
+<div class="big" id="calHeadline">未来30天重要财经时间</div>
+<div class="muted" id="calSub" style="margin-top:4px;">按日期和星期排列；红色高重要度事件优先看。日期标「预计 / 待官宣」的，必须等官方最终公告。</div>
+</div>
+
+<div class="grid g4" id="calSummary" style="margin-bottom:12px;"></div>
+
+<div class="card cal-toolbar" style="margin-bottom:12px;">
+<div class="cal-filters" id="calFilters">
+<button class="cal-filter on" data-cal-filter="all">全部30天</button>
+<button class="cal-filter" data-cal-filter="week">未来7天</button>
+<button class="cal-filter" data-cal-filter="domestic">国内数据·政策</button>
+<button class="cal-filter" data-cal-filter="overseas">海外</button>
+<button class="cal-filter" data-cal-filter="industry">产业·展会</button>
+<button class="cal-filter" data-cal-filter="earnings">财报·业绩</button>
+<button class="cal-filter" data-cal-filter="consumer">消费·商业</button>
+</div>
+<label class="cal-high"><input type="checkbox" id="calHighOnly" /> 只看高重要度</label>
+<span class="hint" id="calHint">点击个股标签可直接载入日线K线</span>
+</div>
+
+<div class="card" style="margin-bottom:12px;">
+<div class="card-head">
+<div class="card-title">重要事件时间轴</div>
+<div class="card-sub" id="calListSub">按日期升序</div>
+<div class="spacer"></div>
+<span class="hint">★★★ 重点 · ★★ 关注 · ★ 参考</span>
+</div>
+<div class="cal-list" id="calList"></div>
+</div>
+
+<div class="card" style="margin-bottom:12px;">
+<div class="card-head">
+<div class="card-title">事件驱动观察池</div>
+<div class="card-sub">同一只股票在多个事件中出现时排在前面；仅作观察，不是推荐</div>
+</div>
+<div class="cal-watch-grid" id="calWatch"></div>
+</div>
+
+<div class="hint">事件日期来自公开日历/官方公告与固定发布规则；标「预计 / 待官宣」的日期可能调整。个股为事件映射观察示例，不构成投资建议，须结合板块强度、量价和公告再筛选。</div>
+</section>
+
+<!-- ===================== ⑰ 风险提示 ===================== -->
   <section class="risk-box" id="sec-risk">
     <h2>⚠ 风险提示（永久展示）</h2>
     <ol>
@@ -7923,6 +8022,249 @@ cloudRender();
 });
 }
 
+/* ---------------- ⑯ 未来30天财经日历 ---------------- */
+
+const CAL_EVENTS = [
+{
+date: '2026-10-22', end: '2026-10-31', title: 'A股三季报密集披露期', cat: '财报', status: '进行中', importance: 2,
+desc: '10月31日前完成三季报披露。业绩预增、超预期和高景气方向容易在披露前后获得资金关注，同时要防“利好兑现”。',
+sectors: ['业绩预增', '半导体', 'AI算力', '新能源'],
+stocks: [{ code: '300308', name: '中际旭创' }, { code: '002371', name: '北方华创' }, { code: '300750', name: '宁德时代' }, { code: '603259', name: '药明康德' }]
+},
+{
+date: '2026-10-23', title: '三季报业绩快报 / 预告高峰', cat: '财报', status: '进行中', importance: 2,
+desc: '周末前后业绩公告集中，周一容易围绕“超预期、扭亏、预增”做事件交易；纯概念、无业绩支撑的票分歧会加大。',
+sectors: ['业绩预增', 'PCB', '光模块', '医药'],
+stocks: [{ code: '002475', name: '立讯精密' }, { code: '002463', name: '沪电股份' }, { code: '300274', name: '阳光电源' }, { code: '300760', name: '迈瑞医疗' }]
+},
+{
+date: '2026-10-27', title: '中国9月规模以上工业企业利润', cat: '国内数据', status: '预计', importance: 2,
+desc: '观察上游资源、化工、装备制造的利润修复斜率；数据强弱会影响顺周期和“反内卷/涨价”方向的情绪。',
+sectors: ['工业母机', '化工', '有色', '电力'],
+stocks: [{ code: '002371', name: '北方华创' }, { code: '300124', name: '汇川技术' }, { code: '601899', name: '紫金矿业' }, { code: '600900', name: '长江电力' }]
+},
+{
+date: '2026-10-27', end: '2026-10-28', title: '美联储 FOMC 利率决议', cat: '海外', status: '确认', importance: 3,
+desc: '会议声明、点阵图/发布会措辞影响美元、美债收益率和全球成长股估值。A股重点映射黄金、半导体和AI算力。',
+sectors: ['黄金', '半导体', 'AI算力', '港股科技'],
+stocks: [{ code: '600547', name: '山东黄金' }, { code: '688981', name: '中芯国际' }, { code: '300308', name: '中际旭创' }, { code: '601899', name: '紫金矿业' }]
+},
+{
+date: '2026-10-29', title: '美国三季度 GDP 初值', cat: '海外', status: '预计', importance: 2,
+desc: '增长与降息预期的再定价；数据强弱会通过美元和风险偏好影响出口链、黄金与有色。',
+sectors: ['出口链', '黄金', '有色', '跨境电商'],
+stocks: [{ code: '600415', name: '小商品城' }, { code: '603128', name: '华贸物流' }, { code: '601899', name: '紫金矿业' }, { code: '600547', name: '山东黄金' }]
+},
+{
+date: '2026-10-30', title: '10月底政治局会议窗口', cat: '政策', status: '待官宣', importance: 3,
+desc: '月底政策窗口，关注稳增长、地产、消费、化债和资本市场表述；没有正式公告前按预期处理，不提前把预期当事实。',
+sectors: ['地产', '消费', '基建', '券商', '化债'],
+stocks: [{ code: '600048', name: '保利发展' }, { code: '001979', name: '招商蛇口' }, { code: '600030', name: '中信证券' }, { code: '601668', name: '中国建筑' }]
+},
+{
+date: '2026-10-31', title: '中国10月官方 PMI', cat: '国内数据', status: '确认', importance: 3,
+desc: '荣枯线50是市场最直接的经济温度计；关注新订单、生产、出厂价格和中小企业分项。',
+sectors: ['机械', '建材', '消费', '顺周期'],
+stocks: [{ code: '600031', name: '三一重工' }, { code: '000425', name: '徐工机械' }, { code: '600585', name: '海螺水泥' }, { code: '000333', name: '美的集团' }]
+},
+{
+date: '2026-10-31', title: 'A股三季报披露截止', cat: '财报', status: '确认', importance: 3,
+desc: '最后一批公司集中披露，业绩雷和高增长会同时出现；次日容易看到业绩驱动的高低切。',
+sectors: ['业绩超预期', '高景气成长', '半导体', '新能源'],
+stocks: [{ code: '300308', name: '中际旭创' }, { code: '002371', name: '北方华创' }, { code: '300750', name: '宁德时代' }, { code: '300760', name: '迈瑞医疗' }]
+},
+{
+date: '2026-11-02', end: '2026-11-05', title: '世界互联网大会乌镇峰会', cat: '产业', status: '确认', importance: 3,
+desc: '主题聚焦开源开放、智能互联、6G、量子通信、AI应用和网络安全；会期内容容易形成主题催化。',
+sectors: ['数据要素', '算力', '6G', '网络安全', 'AI应用'],
+stocks: [{ code: '600536', name: '中国软件' }, { code: '002368', name: '太极股份' }, { code: '300502', name: '新易盛' }, { code: '002439', name: '启明星辰' }]
+},
+{
+date: '2026-11-03', title: '美国中期选举', cat: '海外', status: '确认', importance: 3,
+desc: '选举结果影响能源、关税、财政和地缘预期；黄金、军工、能源和出口链可能出现事件波动。',
+sectors: ['黄金', '军工', '能源', '出口链'],
+stocks: [{ code: '600547', name: '山东黄金' }, { code: '600760', name: '中航沈飞' }, { code: '601899', name: '紫金矿业' }, { code: '600415', name: '小商品城' }]
+},
+{
+date: '2026-11-05', end: '2026-11-10', title: '第九届中国国际进口博览会', cat: '产业', status: '确认', importance: 3,
+desc: '国家级进口展会，关注跨境电商、物流、免税、医疗器械、消费和上海本地会展经济。',
+sectors: ['跨境电商', '物流', '免税', '医疗器械', '消费'],
+stocks: [{ code: '002889', name: '东方嘉盛' }, { code: '603128', name: '华贸物流' }, { code: '600415', name: '小商品城' }, { code: '601888', name: '中国中免' }, { code: '300760', name: '迈瑞医疗' }]
+},
+{
+date: '2026-11-06', title: '美国10月非农就业', cat: '海外', status: '确认', importance: 3,
+desc: '就业和失业率影响美联储路径；数据公布后美元、黄金、美股期货和A股成长风格常出现联动。',
+sectors: ['黄金', '美股映射', 'AI算力', '出口链'],
+stocks: [{ code: '600547', name: '山东黄金' }, { code: '300308', name: '中际旭创' }, { code: '600415', name: '小商品城' }, { code: '601899', name: '紫金矿业' }]
+},
+{
+date: '2026-11-09', title: '中国10月 CPI / PPI', cat: '国内数据', status: '预计', importance: 2,
+desc: 'CPI看消费和猪价，PPI看化工、有色、建材和上游利润；价格回升方向更容易获得顺周期资金。',
+sectors: ['消费', '农业', '化工', '有色'],
+stocks: [{ code: '600519', name: '贵州茅台' }, { code: '000858', name: '五粮液' }, { code: '002714', name: '牧原股份' }, { code: '600309', name: '万华化学' }]
+},
+{
+date: '2026-11-09', title: '中国10月进出口数据', cat: '国内数据', status: '预计', importance: 2,
+desc: '观察出口韧性和进口需求；跨境电商、港口、物流和出口链对数据更敏感。',
+sectors: ['跨境电商', '港口', '物流', '出口链'],
+stocks: [{ code: '600415', name: '小商品城' }, { code: '603128', name: '华贸物流' }, { code: '000088', name: '盐田港' }, { code: '002889', name: '东方嘉盛' }]
+},
+{
+date: '2026-11-10', title: '美国10月 CPI', cat: '海外', status: '确认', importance: 3,
+desc: '通胀超预期会压制降息交易和成长股估值；低于预期则利好黄金、科技成长和出口链。',
+sectors: ['黄金', '有色', '科技成长', '出口链'],
+stocks: [{ code: '600547', name: '山东黄金' }, { code: '601899', name: '紫金矿业' }, { code: '300308', name: '中际旭创' }, { code: '600415', name: '小商品城' }]
+},
+{
+date: '2026-11-10', end: '2026-11-15', title: '中国10月金融数据（社融 / 信贷）', cat: '国内数据', status: '预计', importance: 2,
+desc: '观察社融、企业中长贷和居民信贷；数据强弱影响银行、券商、地产和基建链。',
+sectors: ['银行', '券商', '地产', '基建'],
+stocks: [{ code: '600036', name: '招商银行' }, { code: '600030', name: '中信证券' }, { code: '600048', name: '保利发展' }, { code: '601668', name: '中国建筑' }]
+},
+{
+date: '2026-11-11', title: '双十一电商大促', cat: '消费', status: '商业事件', importance: 2,
+desc: '观察美妆、家电、食品、物流的预售和成交数据；容易形成消费和电商主题的短线脉冲。',
+sectors: ['电商', '美妆', '家电', '物流', '食品'],
+stocks: [{ code: '000333', name: '美的集团' }, { code: '603605', name: '珀莱雅' }, { code: '300783', name: '三只松鼠' }, { code: '002352', name: '顺丰控股' }]
+},
+{
+date: '2026-11-13', title: '美国10月 PPI', cat: '海外', status: '确认', importance: 2,
+desc: '上游价格与通胀链的补充验证；和CPI一起影响黄金、有色、化工和出口链。',
+sectors: ['黄金', '有色', '化工', '出口链'],
+stocks: [{ code: '600547', name: '山东黄金' }, { code: '601899', name: '紫金矿业' }, { code: '600309', name: '万华化学' }, { code: '600415', name: '小商品城' }]
+},
+{
+date: '2026-11-16', title: '中国10月工业增加值 / 社零 / 固投', cat: '国内数据', status: '预计', importance: 3,
+desc: '一组月度经济数据同时公布，直接影响消费、机械、建材、地产链和顺周期的定价。',
+sectors: ['消费', '机械', '建材', '地产链'],
+stocks: [{ code: '000333', name: '美的集团' }, { code: '600031', name: '三一重工' }, { code: '600585', name: '海螺水泥' }, { code: '600048', name: '保利发展' }]
+},
+{
+date: '2026-11-18', end: '2026-11-19', title: 'APEC 领导人非正式会议（深圳）', cat: '政策', status: '公开报道', importance: 3,
+desc: '深圳举办的亚太经合组织领导人非正式会议，关注开放、联通、跨境贸易、物流、会展和深圳本地股。最终议程以官方为准。',
+sectors: ['深圳本地', '跨境支付', '物流', '港口', '会展'],
+stocks: [{ code: '000006', name: '深振业A' }, { code: '000011', name: '深物业A' }, { code: '000088', name: '盐田港' }, { code: '001872', name: '招商港口' }, { code: '603128', name: '华贸物流' }]
+},
+{
+date: '2026-11-18', end: '2026-11-20', title: '英伟达 FY2027 Q3 财报', cat: '海外', status: '预计', importance: 3,
+desc: 'AI资本开支和算力需求的风向标；财报与指引会影响光模块、PCB、服务器、半导体和AI应用。具体日期以公司公告为准。',
+sectors: ['AI算力', '光模块', 'PCB', '服务器', '半导体'],
+stocks: [{ code: '300308', name: '中际旭创' }, { code: '300502', name: '新易盛' }, { code: '002463', name: '沪电股份' }, { code: '601138', name: '工业富联' }, { code: '688256', name: '寒武纪' }]
+},
+{
+date: '2026-11-20', title: '中国11月 LPR 报价', cat: '国内数据', status: '确认', importance: 2,
+desc: '观察1年和5年期以上LPR是否调整；影响银行、地产、基建和券商，也是稳增长预期的重要窗口。',
+sectors: ['银行', '地产', '基建', '券商'],
+stocks: [{ code: '600036', name: '招商银行' }, { code: '600048', name: '保利发展' }, { code: '601668', name: '中国建筑' }, { code: '600030', name: '中信证券' }]
+}
+];
+
+const CAL_STATE = { filter: 'all', highOnly: false };
+const CAL_FILTERS = {
+all: () => true,
+week: (e) => e.days <= 7,
+domestic: (e) => e.cat === '国内数据' || e.cat === '政策',
+overseas: (e) => e.cat === '海外',
+industry: (e) => e.cat === '产业',
+earnings: (e) => e.cat === '财报',
+consumer: (e) => e.cat === '消费'
+};
+
+function calDayNum(date) {
+const p = String(date || '').split('-').map(Number);
+return p.length === 3 ? Date.UTC(p[0], p[1] - 1, p[2]) : NaN;
+}
+function calTodayNum() {
+const b = bjNow();
+return Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+}
+function calWeekday(date) {
+const p = String(date || '').split('-').map(Number);
+if (p.length !== 3) return '';
+return ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][new Date(Date.UTC(p[0], p[1] - 1, p[2])).getUTCDay()];
+}
+function calMD(date) {
+return String(date || '').slice(5);
+}
+function calCatCls(cat) {
+return cat === '海外' ? 'orange' : cat === '财报' ? 'red' : cat === '产业' ? 'green' : cat === '消费' ? 'gold' : 'blue';
+}
+function calStatusCls(status) {
+return status === '确认' || status === '进行中' ? 'green' : status === '公开报道' ? 'blue' : 'orange';
+}
+function calStars(n) {
+return '★'.repeat(Math.max(1, Math.min(3, Number(n) || 1))) + '☆'.repeat(3 - Math.max(1, Math.min(3, Number(n) || 1)));
+}
+
+function renderCalendar() {
+const listEl = $('calList');
+const watchEl = $('calWatch');
+const summaryEl = $('calSummary');
+if (!listEl || !watchEl || !summaryEl) return;
+const today = calTodayNum();
+const rangeEnd = today + 30 * 86400000;
+const all = CAL_EVENTS.map((e) => Object.assign({}, e, {
+startNum: calDayNum(e.date),
+endNum: calDayNum(e.end || e.date),
+days: Math.max(0, Math.round((calDayNum(e.date) - today) / 86400000))
+})).filter((e) => e.startNum <= rangeEnd && e.endNum >= today)
+.sort((a, b) => a.startNum - b.startNum || b.importance - a.importance);
+const filtered = all.filter((e) => (CAL_FILTERS[CAL_STATE.filter] || CAL_FILTERS.all)(e))
+.filter((e) => !CAL_STATE.highOnly || e.importance >= 3);
+const startMD = new Date(today).toISOString().slice(5, 10);
+const endMD = new Date(rangeEnd).toISOString().slice(5, 10);
+const range = $('calRangeTag'), headline = $('calHeadline'), sub = $('calSub'), listSub = $('calListSub');
+if (range) range.textContent = startMD + ' → ' + endMD;
+const nearest = all[0];
+if (headline) headline.textContent = '未来30天 · ' + all.length + ' 个重要财经事件';
+if (sub) sub.textContent = '范围 ' + startMD + ' → ' + endMD + (nearest ? ' · 最近：' + calMD(nearest.date) + ' ' + calWeekday(nearest.date) + ' ' + nearest.title : '') + ' · 更新 ' + nowHms();
+if (listSub) listSub.textContent = '显示 ' + filtered.length + ' 个事件 · 按日期升序 · 点击个股标签载入日线';
+
+const weekCount = all.filter((e) => e.days <= 7).length;
+const highCount = all.filter((e) => e.importance >= 3).length;
+const sectorCount = new Set(all.flatMap((e) => e.sectors || [])).size;
+if (summaryEl) {
+summaryEl.innerHTML = [
+['未来30天事件', all.length, '个'],
+['未来7天', weekCount, '个'],
+['高重要度', highCount, '个'],
+['覆盖催化板块', sectorCount, '个']
+].map((x) => '<div class="card" style="padding:10px 11px;"><div class="hint">' + x[0] + '</div><div class="price" style="font-size:20px;margin-top:2px;">' + x[1] + '<span class="dim" style="font-size:11px;"> ' + x[2] + '</span></div></div>').join('');
+}
+
+if (!filtered.length) {
+listEl.innerHTML = '<div class="cal-empty">当前筛选下没有事件。切换筛选或取消「只看高重要度」。</div>';
+} else {
+listEl.innerHTML = filtered.map((e) => {
+const dateTxt = e.end ? calMD(e.date) + ' → ' + calMD(e.end) : calMD(e.date);
+const dday = e.startNum <= today && e.endNum >= today ? '进行中' : (e.days === 0 ? '今天' : 'D-' + e.days);
+const sectors = (e.sectors || []).map((s) => '<span class="tag gray">' + esc(s) + '</span>').join(' ');
+const stocks = (e.stocks || []).map((s) => '<button class="cal-stock" data-cal-code="' + esc(s.code) + '" data-cal-name="' + esc(s.name) + '" title="载入 ' + esc(s.name) + ' 日线K线">' + esc(s.name) + ' <b>' + esc(s.code) + '</b></button>').join('');
+return '<div class="cal-row' + (e.days <= 7 ? ' soon' : '') + '">' +
+'<div class="cal-date"><b>' + dateTxt + '</b><span>' + calWeekday(e.date) + '</span><em>' + dday + '</em></div>' +
+'<div class="cal-main"><div class="cal-title-line"><span class="cal-title">' + esc(e.title) + '</span>' +
+'<span class="tag ' + calCatCls(e.cat) + '">' + esc(e.cat) + '</span>' +
+'<span class="tag ' + calStatusCls(e.status) + '">' + esc(e.status) + '</span>' +
+'<span class="cal-stars" title="重要度">' + calStars(e.importance) + '</span></div>' +
+'<div class="cal-desc">' + esc(e.desc) + '</div>' +
+'<div class="cal-sector-line"><b>催化板块：</b>' + sectors + '</div>' +
+'<div class="cal-stocks">' + stocks + '</div></div></div>';
+}).join('');
+}
+
+const pool = {};
+filtered.forEach((e) => {
+(e.stocks || []).forEach((s) => {
+const key = s.code;
+const x = pool[key] || (pool[key] = { code: s.code, name: s.name, count: 0, imp: 0 });
+x.count++;
+x.imp += e.importance;
+});
+});
+const picks = Object.keys(pool).map((k) => pool[k]).sort((a, b) => b.count - a.count || b.imp - a.imp).slice(0, 16);
+watchEl.innerHTML = picks.length ? picks.map((x) => '<button class="cal-watch-chip" data-cal-code="' + esc(x.code) + '" data-cal-name="' + esc(x.name) + '" title="载入 ' + esc(x.name) + ' 日线K线">' + esc(x.name) + ' <span>' + esc(x.code) + ' · ' + x.count + ' 个事件</span></button>').join('') : '<div class="cal-empty">当前没有可汇总的个股观察。</div>';
+}
+
 /**
  * 搜索框与当前标的保持同步。
  * 不管是从排行榜 / 连板梯队 / ETF榜 / 自选股 / 龙虎榜点进来的，还是搜索载入的，
@@ -8429,7 +8771,8 @@ const MOB_SECTIONS = [
 ['sec-market', '① 大盘'], ['sec-cloud', '② 云图'], ['sec-strategy', '③ 雷达'], ['sec-kline', '④ K线'],
 ['sec-analyze', '⑤ 分析'], ['sec-global', '⑥ 全球'], ['sec-flow', '⑦ 资金'], ['sec-dragon', '⑧ 热点'],
 ['sec-rank', '⑨ 排行'], ['sec-zt', '⑩ 连板'], ['sec-pick', '⑪ 选股'], ['sec-review', '⑫ 复盘'],
-['sec-watch', '⑬ 自选'], ['sec-etf', '⑭ ETF'], ['sec-method', '⑮ 方法'], ['sec-risk', '⑯ 风险']
+['sec-watch', '⑬ 自选'], ['sec-etf', '⑭ ETF'], ['sec-method', '⑮ 方法'], ['sec-calendar', '⑯ 日历'],
+['sec-risk', '⑰ 风险']
 ];
 let MOB_CUR = 'sec-market';
 
@@ -8468,6 +8811,7 @@ else if (id === 'sec-cloud') { cloudBuildLayout(); cloudRender(); }
     else if (id === 'sec-review') { renderReview(); }
     else if (id === 'sec-watch') { renderWatch(); redrawWatchPanel(); }
     else if (id === 'sec-etf') { renderEtf(); }
+else if (id === 'sec-calendar') { renderCalendar(); }
   } catch (e) { /* 单块失败不影响其它模块 */ }
 }
 
@@ -10641,6 +10985,24 @@ swRenderNews(SW.newsMatches);
       drawGauge($('gaugeGlobal'), globalModel().score);
     }, 260);
   });
+if ($('sec-calendar')) $('sec-calendar').addEventListener('click', (ev) => {
+const filter = ev.target.closest('[data-cal-filter]');
+if (filter) {
+CAL_STATE.filter = filter.getAttribute('data-cal-filter') || 'all';
+Array.prototype.forEach.call(document.querySelectorAll('[data-cal-filter]'), (b) => b.classList.toggle('on', b === filter));
+renderCalendar();
+return;
+}
+const stock = ev.target.closest('[data-cal-code]');
+if (stock) {
+loadCode(stock.getAttribute('data-cal-code'), { name: stock.getAttribute('data-cal-name') || '', period: 'day', scrollTo: 'sec-kline' });
+}
+});
+if ($('calHighOnly')) $('calHighOnly').addEventListener('change', (ev) => {
+CAL_STATE.highOnly = !!ev.target.checked;
+renderCalendar();
+});
+if ($('btnCalRefresh')) $('btnCalRefresh').addEventListener('click', renderCalendar);
 cloudBind();
 }
 
@@ -10849,6 +11211,7 @@ async function init() {
   buildEtfChips();
   loadWatch();
 loadSearchHistory();
+renderCalendar();
   importWatchFromUrl();
   loadMarketIndex();
   swLoadLogs();
