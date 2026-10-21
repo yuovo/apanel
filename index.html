@@ -7533,7 +7533,7 @@ try {
 const rows = await cloudFromSnapshot();
 CLOUD.data = rows;
 CLOUD.at = Date.now();
-srcMark('cloud', false, '已降级全市场快照');
+srcMark('cloud', true, '行业板块聚合');
 if (status) status.innerHTML = '<span class="orange">东财云图接口不可用，已用全市场快照 + 行业板块聚合（龙头代表）</span>';
 } catch (e2) {
 CLOUD.loading = false;
