@@ -439,6 +439,43 @@ canvas{display:block;width:100%;}
 .idx-card.on{border-color:var(--gold);box-shadow:0 0 0 1px rgba(240,183,63,.45) inset;}
 .idx-card.on .card-title{color:var(--gold);}
 
+/* ---------- ② 大盘云图 ---------- */
+.cloud-layout{display:grid;grid-template-columns:minmax(0,1fr) 292px;gap:12px;align-items:start;}
+.cloud-toolbar{padding:11px 13px;}
+.cloud-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.cloud-controls label{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);}
+.cloud-controls select{min-width:118px;}
+.cloud-stats{display:flex;gap:7px 16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:9px;}
+.cloud-stats b{font-family:Consolas,Menlo,monospace;color:var(--text);}
+.cloud-map-card{overflow:hidden;}
+.cloud-canvas-wrap{position:relative;width:100%;height:548px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0b111b;}
+#cloudCanvas{display:block;width:100%;height:100%;cursor:crosshair;touch-action:manipulation;}
+.cloud-tip{position:absolute;display:none;pointer-events:none;z-index:30;max-width:248px;padding:7px 9px;border:1px solid var(--line2);border-radius:8px;background:rgba(8,13,21,.97);box-shadow:0 10px 28px rgba(0,0,0,.55);font-size:12px;line-height:1.55;color:var(--text);}
+.cloud-tip b{color:#fff;}
+.cloud-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;background:rgba(11,17,27,.72);color:var(--muted);font-size:13px;line-height:1.7;z-index:5;}
+.cloud-legend{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px;font-size:11px;color:var(--muted);}
+.cloud-legend i{display:inline-block;width:24px;height:9px;border-radius:2px;border:1px solid rgba(255,255,255,.08);}
+.cloud-side .card{margin-bottom:12px;}
+.cloud-side .card:last-child{margin-bottom:0;}
+.cloud-details{font-size:12.5px;line-height:1.72;}
+.cloud-details .big{font-size:18px;font-weight:800;}
+.cloud-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px;}
+.cloud-side .li{align-items:flex-start;}
+@media (max-width:900px){
+  .cloud-layout{grid-template-columns:1fr;}
+  .cloud-canvas-wrap{height:500px;}
+}
+@media (max-width:760px){
+  .cloud-toolbar{padding:10px 11px;}
+  .cloud-controls{gap:8px;}
+  .cloud-controls label{flex:1 1 136px;}
+  .cloud-controls select{flex:1;min-width:0;}
+  .cloud-stats{font-size:11px;gap:6px 12px;}
+  .cloud-canvas-wrap{height:430px;}
+  .cloud-legend{font-size:10px;}
+  .cloud-legend i{width:20px;}
+}
+
 /* ---------- 视觉细节打磨 ---------- */
 .card{box-shadow:0 6px 18px rgba(0,0,0,.20);transition:border-color .18s ease,box-shadow .18s ease;}
 .card:hover{border-color:var(--line2);box-shadow:0 8px 22px rgba(0,0,0,.26);}
@@ -651,20 +688,21 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
 
   <nav class="navbar" id="mainNav">
     <a href="#sec-market">① A股大盘</a>
-    <a href="#sec-strategy">② 机会雷达</a>
-    <a href="#sec-kline">③ K线技术面板</a>
-    <a href="#sec-analyze">④ 个股买卖分析</a>
-    <a href="#sec-global">⑤ 全球市场</a>
-    <a href="#sec-flow">⑥ 资金流向</a>
-    <a href="#sec-dragon">⑦ 热点·龙虎榜·异动</a>
-    <a href="#sec-rank">⑧ 每日排行榜</a>
-    <a href="#sec-zt">⑨ 连板股</a>
-    <a href="#sec-pick">⑩ 选股推荐</a>
-    <a href="#sec-review">⑪ 每日复盘</a>
-    <a href="#sec-watch">⑫ 自选股</a>
-    <a href="#sec-etf">⑬ ETF 专区</a>
-    <a href="#sec-method">⑭ 交易方法</a>
-    <a href="#sec-risk">⑮ 风险提示</a>
+<a href="#sec-cloud">② 大盘云图</a>
+<a href="#sec-strategy">③ 机会雷达</a>
+<a href="#sec-kline">④ K线技术面板</a>
+<a href="#sec-analyze">⑤ 个股买卖分析</a>
+<a href="#sec-global">⑥ 全球市场</a>
+<a href="#sec-flow">⑦ 资金流向</a>
+<a href="#sec-dragon">⑧ 热点·龙虎榜·异动</a>
+<a href="#sec-rank">⑨ 每日排行榜</a>
+<a href="#sec-zt">⑩ 连板股</a>
+<a href="#sec-pick">⑪ 选股推荐</a>
+<a href="#sec-review">⑫ 每日复盘</a>
+<a href="#sec-watch">⑬ 自选股</a>
+<a href="#sec-etf">⑭ ETF 专区</a>
+<a href="#sec-method">⑮ 交易方法</a>
+<a href="#sec-risk">⑯ 风险提示</a>
   </nav>
 </div>
 
@@ -678,23 +716,24 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
         <div class="card">
           <div class="card-head"><div class="card-title">怎么用这一页</div><div class="card-sub">三个高频动作</div></div>
           <div class="list">
-            <div class="li"><span class="dot gold"></span><span><b>搜标的（③）</b>：搜索框支持中文名（贵州茅台）、拼音首字母（gzmt）、代码片段（5103）、主题＋品种（白酒ETF / 券商ETF）；下拉里点一下就能出 K 线与买卖分析。</span></div>
-<div class="li"><span class="dot blue"></span><span><b>最近搜索</b>：③ 搜索框下方保留最近 10 个标的；点标签重新载入，点 × 删除单个，右侧「清空」全部清除。历史保存在本机浏览器。</span></div>
-            <div class="li"><span class="dot blue"></span><span><b>点表格行＝载入</b>：⑧排行榜、⑦热点龙虎榜、⑨连板梯队、⑬ETF 榜、⑫自选股，点任意一行都会把它载入③，并在④自动生成分析。</span></div>
-            <div class="li"><span class="dot gold"></span><span><b>①指数分时随点随换</b>：①A股大盘 的 8 张指数卡片，点任意一张就把下面那张分时图切成它（选中的卡片会亮起来，选择会记住），分时图带<b>十字线</b>与<b>量能（含量能MA5）</b>；右上角「<b>载入 K 线图分析</b>」会把当前这个指数送进 ③ 做日线技术分析。</span></div>
-<div class="li"><span class="dot blue"></span><span><b>新闻催化 + 一键K线</b>：② 机会雷达 的「结论 2」会自动抓取东财 7×24 快讯，按板块关键词匹配后把「<b>[自动] 时间 标题</b>」填进主线板块的催化列；观察池每只股票旁边有「<b>载入K线</b>」，点一下直接进 ③ 看日线与全套指标。</span></div>
+<div class="li"><span class="dot gold"></span><span><b>搜标的（④）</b>：搜索框支持中文名（贵州茅台）、拼音首字母（gzmt）、代码片段（5103）、主题＋品种（白酒ETF / 券商ETF）；下拉里点一下就能出 K 线与买卖分析。</span></div>
+<div class="li"><span class="dot blue"></span><span><b>最近搜索</b>：④ 搜索框下方保留最近 10 个标的；点标签重新载入，点 × 删除单个，右侧「清空」全部清除。历史保存在本机浏览器。</span></div>
+<div class="li"><span class="dot blue"></span><span><b>点表格行＝载入</b>：⑨排行榜、⑧热点龙虎榜、⑩连板梯队、⑭ETF 榜、⑬自选股，点任意一行都会把它载入④，并在⑤自动生成分析。</span></div>
+<div class="li"><span class="dot gold"></span><span><b>①指数分时随点随换</b>：①A股大盘 的 8 张指数卡片，点任意一张就把下面那张分时图切成它（选中的卡片会亮起来，选择会记住），分时图带<b>十字线</b>与<b>量能（含量能MA5）</b>；右上角「<b>载入 K 线图分析</b>」会把当前这个指数送进 ④ 做日线技术分析。</span></div>
+<div class="li"><span class="dot gold"></span><span><b>大盘云图（②）</b>：按行业把全市场个股铺成热力图；面积可切换总市值 / 流通市值 / 成交额，颜色越深涨跌越大。悬浮看详情，单击选中，双击直接载入 ④ 的日线K线。</span></div>
+<div class="li"><span class="dot blue"></span><span><b>新闻催化 + 一键K线</b>：③ 机会雷达 的「结论 2」会自动抓取东财 7×24 快讯，按板块关键词匹配后把「<b>[自动] 时间 标题</b>」填进主线板块的催化列；观察池每只股票旁边有「<b>载入K线</b>」，点一下直接进 ④ 看日线与全套指标。</span></div>
             <div class="li"><span class="dot orange"></span><span><b>看图</b>：在 K 线主图上移动鼠标（手机按住拖动）会出现十字光标与浮层：日期、开高低收、涨跌幅、量额、MA5/10/20/60、BOLL 上中下轨、MACD、KDJ、RSI、量比与当日综合评分。主图默认叠加 BOLL(20,2) 布林带，个股买卖分析会按六条布林纪律给出“可做 / 低吸 / 进攻 / 止盈 / 止损”口径。</span></div>
-            <div class="li"><span class="dot gold"></span><span><b>自选</b>：③ 图上方有「＋加入自选／－移出自选」；⑫ 自选页每行、每张卡片都能单独移除，并带当日分时图与今日点评。</span></div>
-            <div class="li"><span class="dot blue"></span><span><b>亚太也能看图</b>：⑤全球市场 的「亚太市场 · 大盘情况」左侧是<b>专门的分时图</b>，点上面的指数标签即可切换（日经225 / 韩国KOSPI / 澳洲标普200 / 台湾加权 / 新加坡STI / 印度NIFTY50 / 新西兰NZ50 / 恒生系）；点右侧表格任意一行，或者点「看K线分析」，就会在 ③ 载入它的 K 线并生成完整技术分析（日线 / 周线 / 月线都支持）。</span></div>
-            <div class="li"><span class="dot gold"></span><span><b>分时的三个附加指标</b>：③ 切到「分时」后，主图自动标注 <span class="orange">分时顶 / 底</span>（局部极值点，出现背离时标「顶背离 / 底背离」），下面多出两块面板：<b>MACDFS（分时 MACD 12,26,9）</b>与<b>大单金额（每分钟净额）</b>——红柱＝大单+超大单净流入、绿柱＝净流出、蓝线＝主力当日累计净额；鼠标移动时三块图十字线同步。</span></div>
+<div class="li"><span class="dot gold"></span><span><b>自选</b>：④ 图上方有「＋加入自选／－移出自选」；⑬ 自选页每行、每张卡片都能单独移除，并带当日分时图与今日点评。</span></div>
+<div class="li"><span class="dot blue"></span><span><b>亚太也能看图</b>：⑥全球市场 的「亚太市场 · 大盘情况」左侧是<b>专门的分时图</b>，点上面的指数标签即可切换（日经225 / 韩国KOSPI / 澳洲标普200 / 台湾加权 / 新加坡STI / 印度NIFTY50 / 新西兰NZ50 / 恒生系）；点右侧表格任意一行，或者点「看K线分析」，就会在 ④ 载入它的 K 线并生成完整技术分析（日线 / 周线 / 月线都支持）。</span></div>
+<div class="li"><span class="dot gold"></span><span><b>分时的三个附加指标</b>：④ 切到「分时」后，主图自动标注 <span class="orange">分时顶 / 底</span>（局部极值点，出现背离时标「顶背离 / 底背离」），下面多出两块面板：<b>MACDFS（分时 MACD 12,26,9）</b>与<b>大单金额（每分钟净额）</b>——红柱＝大单+超大单净流入、绿柱＝净流出、蓝线＝主力当日累计净额；鼠标移动时三块图十字线同步。</span></div>
           </div>
         </div>
         <div class="card">
           <div class="card-head"><div class="card-title">数据源与口径</div><div class="card-sub">看到「已降级」时看这里</div></div>
           <div class="list">
-<div class="li"><span class="dot blue"></span><span><b>数据源</b>：腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（龙虎榜 / 涨停池 / 每分钟大单资金流 / 7×24 快讯）、东财 push2 或 CNBC（亚太指数行情 / 分时 / K线）。顶部状态依次为<b>正常 / 待连接 / 已降级 / 异常</b>。</span></div>
-            <div class="li"><span class="dot orange"></span><span><b>已降级</b>：可能出现在两个地方。①「东财·涨停池」——该域名在当前网络被拦截时，⑨ 连板股会自动改用「全市场快照＋日线」本地推算涨停与连板高度；③「亚太·指数」——东财 push2 与 CNBC 都不可达时，⑤ 亚太市场自动退回腾讯口径（港股指数 + 富时A50期货 + 日经225期货，此时没有日经 / 韩国 / 台湾的现货指数与分时K线）。两处都会明确标注当前口径。</span></div>
-            <div class="li"><span class="dot gray"></span><span><b>美股也能看分时</b>：③ 顶部周期切到「分时」即可看美股个股与美股指数的当日分时（腾讯 usMinute 接口，横轴为美股当地 09:30-16:00）；但公开接口不提供美股个股的历史K线，所以日线技术分析仍只对A股 / ETF / 港股 / 美股指数开放。</span></div>
+<div class="li"><span class="dot blue"></span><span><b>数据源</b>：腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（龙虎榜 / 涨停池 / 每分钟大单资金流 / 7×24 快讯 / 全市场云图）、东财 push2 或 CNBC（亚太指数行情 / 分时 / K线）。顶部状态依次为<b>正常 / 待连接 / 已降级 / 异常</b>。</span></div>
+<div class="li"><span class="dot orange"></span><span><b>已降级</b>：可能出现在两个地方。①「东财·涨停池」——该域名在当前网络被拦截时，⑩ 连板股会自动改用「全市场快照＋日线」本地推算涨停与连板高度；③「亚太·指数」——东财 push2 与 CNBC 都不可达时，⑥ 全球市场自动退回腾讯口径（港股指数 + 富时A50期货 + 日经225期货，此时没有日经 / 韩国 / 台湾的现货指数与分时K线）。两处都会明确标注当前口径。</span></div>
+<div class="li"><span class="dot gray"></span><span><b>美股也能看分时</b>：④ 顶部周期切到「分时」即可看美股个股与美股指数的当日分时（腾讯 usMinute 接口，横轴为美股当地 09:30-16:00）；但公开接口不提供美股个股的历史K线，所以日线技术分析仍只对A股 / ETF / 港股 / 美股指数开放。</span></div>
             <div class="li"><span class="dot gold"></span><span><b>ETF 的 T+0 / T+1</b>：名称后的标签是交易规则备注——T+0＝当天买当天能卖（债券、货币、黄金/商品、跨境类 ETF）；T+1＝次日才能卖（境内股票型 ETF）。按代码段＋名称关键词推定，个别产品以券商与基金公告为准。</span></div>
             <div class="li"><span class="dot gray"></span><span><b>非交易时段</b>：显示最近一个交易日的收盘数据；所有指标、评分、买卖建议都是按固定规则计算，不预测涨跌，也不构成投资建议。</span></div>
           </div>
@@ -813,10 +852,80 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
     </div>
   </section>
 
+<!-- ===================== ② 大盘云图（参考 dapanyuntu.com 的行业×市值热力图） ===================== -->
+<section class="panel" id="sec-cloud">
+<div class="panel-head">
+<h2><span class="num">②</span>大盘云图</h2>
+<span class="tag gold" id="cloudModeTag">面积 = 总市值 · 颜色 = 涨跌</span>
+<div class="spacer"></div>
+<a class="btn sm" href="https://dapanyuntu.com" target="_blank" rel="noopener noreferrer">参考站 ↗</a>
+<button class="btn primary" id="btnCloudRefresh">刷新云图</button>
+</div>
+
+<div class="advice neutral" style="margin-bottom:12px;">
+<div class="big" id="cloudHeadline">正在加载全市场云图…</div>
+<div class="muted" id="cloudSub" style="margin-top:4px;">按行业分组，方块面积代表规模，颜色代表涨跌幅。点击方块查看个股，双击载入K线。</div>
+</div>
+
+<div class="card cloud-toolbar" style="margin-bottom:12px;">
+<div class="cloud-controls">
+<label>市场范围 <select class="input" id="cloudScope">
+<option value="all">全部 A 股</option>
+<option value="sh">沪市</option>
+<option value="sz">深市</option>
+<option value="gem">创业板</option>
+<option value="star">科创板</option>
+<option value="bj">北交所</option>
+</select></label>
+<label>面积口径 <select class="input" id="cloudMetric">
+<option value="mktCap">总市值</option>
+<option value="floatCap">流通市值</option>
+<option value="amount">成交额</option>
+</select></label>
+<span class="hint" id="cloudStatus">东财全市场 · 等待加载</span>
+</div>
+<div class="cloud-stats" id="cloudStats"></div>
+</div>
+
+<div class="cloud-layout">
+<div class="card cloud-map-card">
+<div class="card-head">
+<div class="card-title">A股全市场行业云图</div>
+<div class="card-sub" id="cloudMapSub">行业 → 个股；方块面积代表规模</div>
+<div class="spacer"></div>
+<span class="hint">悬浮看详情 · 点击选中 · 双击看K线</span>
+</div>
+<div class="cloud-canvas-wrap" id="cloudCanvasWrap">
+<canvas id="cloudCanvas"></canvas>
+<div class="cloud-tip" id="cloudTip"></div>
+<div class="cloud-empty" id="cloudEmpty">正在加载全市场行情…</div>
+</div>
+<div class="cloud-legend" id="cloudLegend"></div>
+</div>
+
+<div class="cloud-side">
+<div class="card">
+<div class="card-head"><div class="card-title">选中个股</div><div class="card-sub">点击云图方块</div></div>
+<div class="cloud-details" id="cloudDetails"><div class="muted">点击云图中的个股方块，这里显示名称、行业、涨跌、市值和成交额。</div></div>
+<div class="cloud-actions">
+<button class="btn sm" id="cloudLoadKline" disabled>载入K线</button>
+<button class="btn sm" id="cloudAddWatch" disabled>加入自选</button>
+<button class="btn sm" id="cloudClearSel" disabled>取消选中</button>
+</div>
+</div>
+<div class="card">
+<div class="card-head"><div class="card-title">行业强弱</div><div class="card-sub">按面积权重排序</div></div>
+<div class="list" id="cloudTopGroups"></div>
+</div>
+</div>
+</div>
+<div class="hint" style="margin-top:8px;">自建云图：数据来自东方财富全市场行情；行业分组与面积口径仅用于盘面观察，不构成投资建议。参考站：<a href="https://dapanyuntu.com" target="_blank" rel="noopener noreferrer">dapanyuntu.com</a>。</div>
+</section>
+
   <!-- ===================== ★ 尾盘机会雷达（14:30 决策，独立一页） ===================== -->
   <section class="panel" id="sec-strategy">
     <div class="panel-head">
-<h2><span class="num">②</span>机会雷达</h2>
+<h2><span class="num">③</span>机会雷达</h2>
       <span class="tag gold">14:30 决策 · 次日 9:15–10:00 卖出</span>
       <div class="spacer"></div>
       <span class="hint" id="swHint">点「开始扫描」按当前数据跑一遍规则</span>
@@ -923,14 +1032,14 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
       </div>
       <div class="tbl-wrap" style="max-height:360px;"><table class="tbl" id="swLogs"></table></div>
       <div id="swVerifyBox" style="margin-top:10px;"></div>
-      <div class="hint" id="swLogHint" style="margin-top:6px;">日志存在本机浏览器（各设备独立，可用 ⑫ 的同步码思路手动搬）。</div>
+<div class="hint" id="swLogHint" style="margin-top:6px;">日志存在本机浏览器（各设备独立，可用 ⑬ 的同步码思路手动搬）。</div>
     </div>
   </section>
 
-  <!-- ===================== ③ K线技术面板 ===================== -->
+<!-- ===================== ④ K线技术面板 ===================== -->
   <section class="panel" id="sec-kline">
     <div class="panel-head">
-      <h2><span class="num">③</span>K线技术面板</h2>
+<h2><span class="num">④</span>K线技术面板</h2>
       <span class="tag gold" id="klStockTag">--</span>
       <span class="tag blue" id="klTypeTag" style="display:none;">--</span>
       <span class="tag blue">分时 / 日线 / 周线 / 月线</span>
@@ -1027,7 +1136,7 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
   <!-- ===================== ④ 个股买卖分析 ===================== -->
   <section class="panel" id="sec-analyze">
     <div class="panel-head">
-      <h2><span class="num">④</span>个股买卖分析（基于日线实时计算）</h2>
+<h2><span class="num">⑤</span>个股买卖分析（基于日线实时计算）</h2>
       <span class="tag gold" id="analyzeStockTag">--</span>
       <span class="tag blue" id="analyzeTypeTag" style="display:none;">--</span>
       <span class="hint">趋势 / BOLL / MACD / KDJ / RSI / 支撑压力 / 仓位节奏</span>
@@ -1109,10 +1218,10 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
     </div>
   </section>
 
-  <!-- ===================== ⑤ 全球市场 ===================== -->
+<!-- ===================== ⑥ 全球市场 ===================== -->
   <section class="panel" id="sec-global">
     <div class="panel-head">
-      <h2><span class="num">⑤</span>全球市场参考</h2>
+<h2><span class="num">⑥</span>全球市场参考</h2>
       <span class="tag blue">美股 · 港股 · 亚太 · 国际商品</span>
       <span class="tag gold">点击指数卡片 → 载入K线并分析</span>
       <div class="spacer"></div>
@@ -1167,7 +1276,7 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
           </div>
           <div class="chart-legend" id="asiaMinLegend"></div>
           <div class="asia-chips" id="asiaMinChips" style="margin-top:8px;"></div>
-          <div class="hint" id="asiaMinHint" style="margin-top:8px;">点上面的指数切换分时图；点右侧表格任意一行，会在 ③ 载入它的K线与技术分析。</div>
+<div class="hint" id="asiaMinHint" style="margin-top:8px;">点上面的指数切换分时图；点右侧表格任意一行，会在 ④ 载入它的K线与技术分析。</div>
         </div>
         <div class="asia-panel">
           <div class="tbl-wrap" style="max-height:none;">
@@ -1194,11 +1303,10 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
     </div>
   </section>
 
-  <!-- ===================== ⑥ 每日排行榜 ===================== -->
-  <!-- ===================== ⑥ 资金流向 ===================== -->
+<!-- ===================== ⑦ 资金流向 ===================== -->
   <section class="panel" id="sec-flow">
     <div class="panel-head">
-      <h2><span class="num">⑥</span>资金流向（每日流入 / 流出）</h2>
+<h2><span class="num">⑦</span>资金流向（每日流入 / 流出）</h2>
       <span class="tag blue">主动买卖盘口径</span>
       <span class="tag orange">样本估算，非交易所口径</span>
       <div class="spacer"></div>
@@ -1222,10 +1330,10 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
     </div>
   </section>
 
-  <!-- ===================== ⑦ 热点板块 · 龙虎榜 · 个股异动 ===================== -->
+<!-- ===================== ⑧ 热点板块 · 龙虎榜 · 个股异动 ===================== -->
   <section class="panel" id="sec-dragon">
     <div class="panel-head">
-      <h2><span class="num">⑦</span>热点板块 · 龙虎榜 · 个股异动</h2>
+<h2><span class="num">⑧</span>热点板块 · 龙虎榜 · 个股异动</h2>
       <span class="tag gold">点击任意个股可载入K线与分析</span>
       <div class="spacer"></div>
       <span class="hint" id="hotHint">--</span>
@@ -1271,10 +1379,10 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
     </div>
   </section>
 
-  <!-- ===================== ⑧ 每日排行榜 ===================== -->
+<!-- ===================== ⑨ 每日排行榜 ===================== -->
   <section class="panel" id="sec-rank">
     <div class="panel-head">
-      <h2><span class="num">⑧</span>每日排行榜（全市场实时）</h2>
+<h2><span class="num">⑨</span>每日排行榜（全市场实时）</h2>
       <span class="tag blue">涨幅 · 跌幅 · 成交额 · 换手 · 行业 · 概念</span>
       <div class="spacer"></div>
       <span class="hint" id="rankHint">--</span>
@@ -1289,10 +1397,10 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
     </div>
   </section>
 
-  <!-- ===================== ⑨ 连板股 · 涨停梯队 ===================== -->
+<!-- ===================== ⑩ 连板股 · 涨停梯队 ===================== -->
   <section class="panel" id="sec-zt">
     <div class="panel-head">
-      <h2><span class="num">⑨</span>连板股 · 涨停梯队</h2>
+<h2><span class="num">⑩</span>连板股 · 涨停梯队</h2>
       <span class="tag red">连板高度</span>
       <span class="tag gold">封板资金</span>
       <span class="tag blue">晋级率 / 炸板率</span>
@@ -1339,10 +1447,10 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
     </div>
   </section>
 
-  <!-- ===================== ⑩ 选股推荐 ===================== -->
+<!-- ===================== ⑪ 选股推荐 ===================== -->
   <section class="panel" id="sec-pick">
     <div class="panel-head">
-      <h2><span class="num">⑩</span>选股推荐 · 能不能买</h2>
+<h2><span class="num">⑪</span>选股推荐 · 能不能买</h2>
       <span class="tag orange">规则判定 · 非荐股</span>
       <span class="tag blue">给出理由、买入时机、止损与盈亏比</span>
       <div class="spacer"></div>
@@ -1384,10 +1492,10 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
     <div id="recoSkipped" style="margin-top:12px;"></div>
   </section>
 
-  <!-- ===================== ⑪ 每日复盘 ===================== -->
+<!-- ===================== ⑫ 每日复盘 ===================== -->
   <section class="panel" id="sec-review">
     <div class="panel-head">
-      <h2><span class="num">⑪</span>每日复盘</h2>
+<h2><span class="num">⑫</span>每日复盘</h2>
       <span class="tag blue">基于实时全市场数据自动生成</span>
     </div>
     <div class="grid g2">
@@ -1410,10 +1518,10 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
     </div>
   </section>
 
-  <!-- ===================== ⑨ 自选股 ===================== -->
+<!-- ===================== ⑬ 自选股 ===================== -->
   <section class="panel" id="sec-watch">
     <div class="panel-head">
-      <h2><span class="num">⑫</span>自选股管理</h2>
+<h2><span class="num">⑬</span>自选股管理</h2>
       <span class="tag blue">点击自选直接加载K线与全套指标</span>
       <span class="tag gold">含当日分时图 + 今日点评</span>
       <span class="tag gray">每行 / 每张卡片都有单独的「移出自选」</span>
@@ -1450,10 +1558,10 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
     <div class="grid g3" id="watchCards"></div>
   </section>
 
-  <!-- ===================== ⑬ ETF / 场内基金专区 ===================== -->
+<!-- ===================== ⑭ ETF / 场内基金专区 ===================== -->
   <section class="panel" id="sec-etf">
     <div class="panel-head">
-      <h2><span class="num">⑬</span>ETF / 场内基金专区</h2>
+<h2><span class="num">⑭</span>ETF / 场内基金专区</h2>
       <span class="tag gold">K线 · 买卖分析 全支持</span>
       <span class="tag blue" id="etfCountTag">--</span>
       <div class="spacer"></div>
@@ -1476,8 +1584,8 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
       </div>
     </div>
     <div class="hint" style="margin-top:10px;">
-      名称后的 <span class="tag gold">T+0</span> / <span class="tag gray">T+1</span> 是交易规则备注；榜单已剔除波动≈0 的货币 / 债券类 ETF（需要看它们时直接用③搜索）。
-      点任意一行载入③＋④分析，口径与个股完全一致。
+名称后的 <span class="tag gold">T+0</span> / <span class="tag gray">T+1</span> 是交易规则备注；榜单已剔除波动≈0 的货币 / 债券类 ETF（需要看它们时直接用④搜索）。
+点任意一行载入④＋⑤分析，口径与个股完全一致。
     </div>
     <details class="note" style="margin-top:14px;">
       <summary>ETF 交易规则 · 怎么用本页分析 · 常见坑<span class="hint">（点击展开／收起）</span></summary>
@@ -1515,9 +1623,9 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
     </details>
   </section>
 
-  <!-- ===================== ⑭ 交易方法 ===================== -->
+<!-- ===================== ⑮ 交易方法 ===================== -->
   <details class="panel" id="sec-method">
-    <summary><span class="num">⑭</span>交易方法专栏（点击展开 · 6 套常用技术战法）</summary>
+<summary><span class="num">⑮</span>交易方法专栏（点击展开 · 6 套常用技术战法）</summary>
     <div class="grid g3" style="margin-top:12px;">
       <div class="card method-card">
         <div class="m-title">① MACD：水上做多，水下不重仓</div>
@@ -1570,14 +1678,14 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
     </div>
   </details>
 
-  <!-- ===================== ⑪ 风险提示 ===================== -->
+<!-- ===================== ⑯ 风险提示 ===================== -->
   <section class="risk-box" id="sec-risk">
     <h2>⚠ 风险提示（永久展示）</h2>
     <ol>
       <li>所有技术指标均存在<b>滞后性</b>，指标信号可能失真、出现骗线（假金叉/假死叉/假突破）。</li>
       <li>突发消息、政策变化、地缘冲突、外围市场大幅波动，均可能直接打破既有技术形态。</li>
       <li>方向概率推演仅为技术模型的推演结果，<b>不能保证准确</b>，历史规律不代表未来表现。</li>
-<li>本页行情数据来自腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（涨停池 / 连板 / 龙虎榜 / 7×24 快讯）以及东方财富 push2 或 CNBC（亚太指数）的<b>公开接口</b>，为程序直接抓取，可能存在延迟、缺失或与交易所官方数据不一致的情况；免费接口也可能随时调整或不可用，请以券商交易软件为准。</li>
+<li>本页行情数据来自腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（涨停池 / 连板 / 龙虎榜 / 7×24 快讯 / 全市场云图）以及东方财富 push2 或 CNBC（亚太指数）的<b>公开接口</b>，为程序直接抓取，可能存在延迟、缺失或与交易所官方数据不一致的情况；免费接口也可能随时调整或不可用，请以券商交易软件为准。</li>
       <li>「<b>大单金额</b>」为东方财富资金流口径（按单笔成交额分档的钱），每分钟净额由该分钟的<b>累计值做差</b>得到，与交易所逐笔成交口径、各券商软件的主力资金统计<b>会有差异</b>；该口径只覆盖 A股 / ETF / 北交所 / 指数，港股与美股、亚太指数没有对应数据（页面会退化为「每分钟成交额」并明确标注）。</li>
       <li>「<b>分时顶底</b>」是按分时价格序列的局部极值规则标注的（前后若干分钟都不超过它），「顶 / 底背离」是用分时 MACD 的 DIF 与相邻两个极值点比较得出的，属于<b>规则化标注</b>，不是预测，也不代表后续一定反转。</li>
       <li>ETF / 场内基金与个股的规则不同（T+0 或 T+1、涨跌幅 ±10% 或 ±20%、有折溢价），本页已按品种自动套用相应口径，但<b>折溢价率、跟踪指数、成分股</b>仍需自行在基金页面核对。</li>
@@ -2947,6 +3055,8 @@ const SINA_NODE = { ashare: 'hs_a', etf: 'etf_hq_fund' };
 const ZT_UT = '7eea3edcaed734bea9cbfc24409ed989';
 /** 东方财富资金流接口的公开 ut 参数（与行情页一致） */
 const EM_FLOW_UT = 'fa5fd1943c7b386f172d6893dbfba10b';
+/** 东方财富全市场列表的公开 ut 参数（云图用） */
+const CLOUD_UT = '13697a1cc677c8bfa9a496437bfef419';
 
 /** 全局数据仓库（只放真实抓取到的数据，抓不到就保持为空，绝不生成假数据） */
 const DATA = {
@@ -2973,7 +3083,8 @@ const SRC_LABEL = {
   bigorder: '东财·大单资金',
   board: '新浪·板块',
 asia: '亚太·指数',
-news: '东财·快讯'
+news: '东财·快讯',
+cloud: '东财·云图'
 };
 
 const CONCURRENCY = 6;
@@ -3791,6 +3902,13 @@ searchHistory: [],
   minuteIndex: null
 };
 const SEARCH_HISTORY_KEY = 'apanel_search_history_v1';
+
+const CLOUD = {
+data: null, at: 0, loading: false, scope: 'all', metric: 'mktCap',
+selected: null, hover: null, groups: [], tiles: [], base: null,
+w: 0, h: 0, dpr: 1, capScale: 1, fallbackMode: false
+};
+const CLOUD_CACHE_KEY = 'apanel_cloud_cache_v1';
 
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const nowHms = () => { const d = bjNow(); return pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds()); };
@@ -5223,7 +5341,7 @@ const POOL_META = {
   turnover: { name: '换手率榜', note: '按换手率排序，代表当日交易最活跃的个股' },
   down: { name: '跌幅榜', note: '按当日跌幅排序，已剔除跌停附近个股，适合找超跌反弹' },
   etf: { name: 'ETF 成交额榜', note: '场内基金按成交额排序，ETF 无个股暴雷风险，趋势信号更干净' },
-  watch: { name: '我的自选股', note: '使用⑫自选股列表作为候选池' }
+watch: { name: '我的自选股', note: '使用⑬自选股列表作为候选池' }
 };
 
 /** 按选定模式构造候选池 */
@@ -5638,7 +5756,7 @@ async function runScan() {
   if (mode === 'etf' && !DATA.etf) loadEtfData(false).catch(() => {});
   const pool = buildScanPool(mode, size);
   if (!pool.length) {
-    $('scanText').textContent = mode === 'watch' ? '自选股为空，请先在⑫添加自选股'
+$('scanText').textContent = mode === 'watch' ? '自选股为空，请先在⑬添加自选股'
       : mode === 'etf' ? 'ETF 行情正在加载中，请等 10 秒左右再点一次「开始扫描」'
         : '候选池为空，请稍后重试';
     return;
@@ -7230,6 +7348,566 @@ function renderChartNameLine(code, q) {
   }
 }
 
+/* ---------------- ② 大盘云图（全市场行业 × 个股热力图） ---------------- */
+
+const CLOUD_SCOPE_LABEL = {
+all: '全部 A 股', sh: '沪市', sz: '深市', gem: '创业板', star: '科创板', bj: '北交所'
+};
+const CLOUD_METRIC_LABEL = { mktCap: '总市值', floatCap: '流通市值', amount: '成交额' };
+
+function cloudFullCode(row) {
+const c = String((row && row.code) || '');
+if (/^(4|8|9)/.test(c)) return 'bj' + c;
+return (Number(row && row.market) === 1 ? 'sh' : 'sz') + c;
+}
+
+function cloudInScope(row) {
+const c = String((row && row.code) || '');
+if (CLOUD.scope === 'all') return true;
+if (CLOUD.scope === 'sh') return /^6/.test(c);
+if (CLOUD.scope === 'sz') return /^[03]/.test(c);
+if (CLOUD.scope === 'gem') return /^30/.test(c);
+if (CLOUD.scope === 'star') return /^(68|69)/.test(c);
+if (CLOUD.scope === 'bj') return /^(4|8|9)/.test(c);
+return true;
+}
+
+function cloudMetricVal(row) {
+const v = CLOUD.metric === 'amount' ? row.amount : CLOUD.metric === 'floatCap' ? row.floatCap : row.mktCap;
+return Number.isFinite(v) && v > 0 ? v : 0;
+}
+
+function cloudFmtCap(v) {
+return fmtAmt(Number(v) * (Number(CLOUD.capScale) || 1));
+}
+
+function cloudFmtValue(v) {
+return (CLOUD.metric === 'amount' || CLOUD.fallbackMode) ? fmtAmt(v) : cloudFmtCap(v);
+}
+
+function cloudColor(chg) {
+const v = Number(chg);
+if (!Number.isFinite(v) || Math.abs(v) < 0.02) return 'rgba(90,106,128,.42)';
+const t = Math.min(1, Math.abs(v) / 5);
+const a = 0.20 + t * 0.72;
+return v > 0 ? 'rgba(255,77,94,' + a.toFixed(3) + ')' : 'rgba(18,196,106,' + a.toFixed(3) + ')';
+}
+
+function cloudFitText(ctx, text, maxW) {
+let s = String(text == null ? '' : text);
+if (ctx.measureText(s).width <= maxW) return s;
+while (s.length > 1 && ctx.measureText(s + '…').width > maxW) s = s.slice(0, -1);
+return s + '…';
+}
+
+async function cloudFetchEast(onProgress) {
+const fs = 'm:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23,m:0+t:81+s:2048';
+const base = 'https://push2.eastmoney.com/api/qt/clist/get?po=1&np=1&fltt=2&invt=2&fid=f3&ut=' + CLOUD_UT +
+'&fs=' + encodeURIComponent(fs) + '&fields=f2,f3,f6,f12,f13,f14,f20,f21,f100';
+const getPage = async (pn) => {
+let lastErr = null;
+for (let attempt = 0; attempt < 3; attempt++) {
+try {
+const json = await fetchJsonpCb(base + '&pn=' + pn + '&pz=100&_=' + Date.now() + '_' + attempt, 20000, 'cb');
+const diff = json && json.data && json.data.diff;
+const arr = Array.isArray(diff) ? diff : (diff && typeof diff === 'object' ? Object.keys(diff).map((k) => diff[k]) : []);
+return { arr: arr, total: toNum(json && json.data && json.data.total) };
+} catch (e) {
+lastErr = e;
+await sleep(300 + attempt * 500);
+}
+}
+throw lastErr || new Error('云图分页失败');
+};
+const first = await getPage(1);
+const total = Number.isFinite(first.total) && first.total > 0 ? first.total : first.arr.length;
+const pages = Math.min(80, Math.max(1, Math.ceil(total / 100)));
+const results = new Array(pages);
+results[0] = first.arr;
+let next = 2, done = 1;
+const worker = async () => {
+for (;;) {
+const p = next++;
+if (p > pages) return;
+await sleep(80 + (p % 3) * 45);
+try {
+const r = await getPage(p);
+results[p - 1] = r.arr;
+} catch (e) { results[p - 1] = []; }
+done++;
+if (onProgress) onProgress(done, pages);
+}
+};
+const workers = [];
+for (let i = 0; i < Math.min(3, Math.max(0, pages - 1)); i++) workers.push(worker());
+await Promise.all(workers);
+const arr = [];
+results.forEach((part) => { if (part && part.length) arr.push.apply(arr, part); });
+const rows = arr.map((x) => {
+const code = String(x.f12 || '').trim();
+const name = String(x.f14 || '').trim();
+const price = toNum(x.f2);
+let chg = toNum(x.f3);
+if (Math.abs(chg) > 30) chg = chg / 100;
+const amount = toNum(x.f6);
+let mktCap = toNum(x.f20);
+let floatCap = toNum(x.f21);
+return {
+code: code, market: toNum(x.f13), name: name, price: price, chgPct: chg, amount: amount,
+mktCap: mktCap, floatCap: floatCap,
+industry: String(x.f100 || '其他').trim() || '其他'
+};
+}).filter((x) => x.code && x.name && Number.isFinite(x.price) && x.price > 0 && Number.isFinite(x.chgPct));
+if (!rows.length) throw new Error('云图接口没有返回个股');
+if (rows.length < 3000) throw new Error('云图分页返回不完整（' + rows.length + ' 只）');
+const maxCap = rows.reduce((m, x) => Math.max(m, Number.isFinite(x.mktCap) ? x.mktCap : 0), 0);
+CLOUD.capScale = maxCap > 1e9 ? 1 : maxCap > 1e5 ? 1e4 : maxCap > 0 ? 1e8 : 1;
+CLOUD.fallbackMode = false;
+return rows;
+}
+
+async function cloudFromSnapshot() {
+if (!DATA.snapshot || !DATA.snapshot.list || !DATA.snapshot.list.length) await refreshMarketData(false);
+if (!DATA.boards || !DATA.boards.industry || !DATA.boards.industry.length) await refreshBoards();
+const list = (DATA.snapshot && DATA.snapshot.list) || [];
+const rows = list.map((x) => {
+const sym = String(x.symbol || x.code || '');
+const code = sym.replace(/^(sh|sz|bj)/i, '');
+const market = /^sh/i.test(sym) || /^6/.test(code) ? 1 : 0;
+return {
+code: code, market: market, name: x.name || '', price: x.price,
+chgPct: x.chgPct, amount: x.amount, mktCap: x.mktCap, floatCap: x.floatCap,
+industry: '全市场'
+};
+}).filter((x) => x.code && x.name && Number.isFinite(x.price) && x.price > 0 && Number.isFinite(x.chgPct));
+const maxCap = rows.reduce((m, x) => Math.max(m, Number.isFinite(x.mktCap) ? x.mktCap : 0), 0);
+CLOUD.capScale = maxCap > 1e9 ? 1 : maxCap > 1e5 ? 1e4 : maxCap > 0 ? 1e8 : 1;
+CLOUD.fallbackMode = true;
+if (!rows.length) throw new Error('全市场快照没有可用个股');
+return rows;
+}
+
+async function loadCloudData(force) {
+if (CLOUD.loading) return;
+if (!force && CLOUD.data && Date.now() - CLOUD.at < 120000) {
+cloudBuildLayout();
+cloudRender();
+return;
+}
+if (!force) {
+try {
+const cached = JSON.parse(sessionStorage.getItem(CLOUD_CACHE_KEY) || 'null');
+if (cached && cached.at && Date.now() - cached.at < 120000 && Array.isArray(cached.data) && cached.data.length) {
+CLOUD.data = cached.data;
+CLOUD.at = cached.at;
+CLOUD.capScale = Number(cached.capScale) || 1;
+CLOUD.fallbackMode = !!cached.fallbackMode;
+if (CLOUD.fallbackMode && (!DATA.boards || !DATA.boards.industry || !DATA.boards.industry.length)) await refreshBoards();
+const s0 = $('cloudStatus');
+if (s0) s0.textContent = '缓存全市场 ' + cached.data.length + ' 只 · ' + new Date(cached.at).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+srcMark('cloud', true, '缓存 ' + cached.data.length + ' 只');
+cloudBuildLayout();
+cloudRender();
+return;
+}
+} catch (e) { /* 缓存不可用就正常抓取 */ }
+}
+CLOUD.loading = true;
+const status = $('cloudStatus');
+const empty = $('cloudEmpty');
+if (status) status.textContent = '正在抓取全市场云图数据…';
+if (empty) {
+empty.style.display = 'flex';
+empty.textContent = '正在抓取全市场行情…';
+}
+try {
+const rows = await cloudFetchEast((done, total) => {
+if (status) status.textContent = '正在抓取全市场云图… ' + done + '/' + total + ' 页';
+});
+CLOUD.data = rows;
+CLOUD.at = Date.now();
+srcMark('cloud', true, '全市场 ' + rows.length + ' 只');
+if (status) status.textContent = '东财全市场 ' + rows.length + ' 只 · ' + nowHms();
+} catch (e) {
+try {
+const rows = await cloudFromSnapshot();
+CLOUD.data = rows;
+CLOUD.at = Date.now();
+srcMark('cloud', false, '已降级全市场快照');
+if (status) status.innerHTML = '<span class="orange">东财云图接口不可用，已用全市场快照 + 行业板块聚合（龙头代表）</span>';
+} catch (e2) {
+CLOUD.loading = false;
+if (status) status.innerHTML = '<span class="orange">云图加载失败：' + esc(e2.message) + '</span>';
+if (empty) empty.textContent = '云图暂时没有数据，点右上角「刷新云图」重试。';
+return;
+}
+}
+CLOUD.loading = false;
+try { sessionStorage.setItem(CLOUD_CACHE_KEY, JSON.stringify({ at: CLOUD.at, capScale: CLOUD.capScale, fallbackMode: CLOUD.fallbackMode, data: CLOUD.data })); } catch (e) { /* 超出配额不影响当前页面 */ }
+cloudBuildLayout();
+cloudRender();
+}
+
+function cloudFilteredRows() {
+return (CLOUD.data || []).filter((x) => cloudInScope(x) && cloudMetricVal(x) > 0);
+}
+
+function cloudGroupData() {
+if (CLOUD.fallbackMode) {
+const boards = (DATA.boards && DATA.boards.industry) || [];
+if (boards.length) {
+return boards.filter((b) => b.name && Number.isFinite(b.chgPct)).map((b) => {
+const sym = String(b.leadSymbol || '');
+const code = sym.replace(/^(sh|sz|bj)/i, '');
+const market = /^sh/i.test(sym) || /^6/.test(code) ? 1 : 0;
+const amount = Number.isFinite(b.amount) && b.amount > 0 ? b.amount : b.count;
+return {
+name: b.name, value: amount, count: b.count, chg: b.chgPct,
+stocks: [{
+code: code, market: market, name: b.leadName || b.name, price: b.leadPrice,
+chgPct: b.chgPct, amount: amount, mktCap: NaN, floatCap: NaN,
+industry: b.name, boardProxy: true
+}]
+};
+}).filter((g) => g.value > 0).sort((a, b) => b.value - a.value);
+}
+}
+const map = {};
+cloudFilteredRows().forEach((x) => {
+const key = x.industry || '其他';
+const g = map[key] || (map[key] = { name: key, stocks: [], value: 0, chgSum: 0, chg: 0, count: 0, up: 0, down: 0, flat: 0 });
+const v = cloudMetricVal(x);
+g.stocks.push(x);
+g.value += v;
+g.chgSum += x.chgPct * v;
+g.count++;
+if (x.chgPct > 0) g.up++; else if (x.chgPct < 0) g.down++; else g.flat++;
+});
+const groups = Object.keys(map).map((k) => {
+const g = map[k];
+g.chg = g.value > 0 ? g.chgSum / g.value : 0;
+g.stocks.sort((a, b) => cloudMetricVal(b) - cloudMetricVal(a));
+return g;
+});
+groups.sort((a, b) => b.value - a.value);
+return groups;
+}
+
+/** 二叉树式 treemap：按价值对半切，兼顾面积准确与实现稳定 */
+function cloudTreemap(items, x, y, w, h) {
+if (!items.length || w <= 0 || h <= 0) return;
+if (items.length === 1) {
+items[0].rect = { x: x, y: y, w: Math.max(0, w), h: Math.max(0, h) };
+return;
+}
+const vals = items.map((item) => Math.max(0, Number.isFinite(item.value) ? item.value : cloudMetricVal(item)));
+let total = vals.reduce((s, v) => s + v, 0);
+if (!(total > 0)) total = items.length;
+let acc = 0, split = 1;
+for (; split < items.length; split++) {
+acc += vals[split - 1];
+if (acc >= total / 2) break;
+}
+split = Math.min(Math.max(1, split), items.length - 1);
+const a = items.slice(0, split), b = items.slice(split);
+const va = vals.slice(0, split).reduce((s, v) => s + v, 0);
+const vb = total - va;
+const ratio = total > 0 ? va / total : 0.5;
+if (w >= h) {
+const wa = w * ratio;
+cloudTreemap(a, x, y, wa, h);
+cloudTreemap(b, x + wa, y, w - wa, h);
+} else {
+const ha = h * ratio;
+cloudTreemap(a, x, y, w, ha);
+cloudTreemap(b, x, y + ha, w, h - ha);
+}
+}
+
+function cloudBuildLayout() {
+const wrap = $('cloudCanvasWrap');
+const cv = $('cloudCanvas');
+if (!wrap || !cv) return;
+const w = Math.round(wrap.clientWidth || 0);
+const h = Math.round(wrap.clientHeight || 0);
+if (w < 40 || h < 40) return;
+CLOUD.w = w;
+CLOUD.h = h;
+CLOUD.dpr = Math.min(2, window.devicePixelRatio || 1);
+cv.width = Math.round(w * CLOUD.dpr);
+cv.height = Math.round(h * CLOUD.dpr);
+cv.style.width = '100%';
+cv.style.height = '100%';
+CLOUD.groups = cloudGroupData();
+CLOUD.tiles = [];
+if (!CLOUD.groups.length) { CLOUD.base = null; return; }
+cloudTreemap(CLOUD.groups, 0, 0, w, h);
+CLOUD.groups.forEach((g) => {
+if (!g.rect) return;
+const gh = Math.max(0, g.rect.h);
+const head = gh >= 30 ? Math.min(18, gh * 0.22) : 0;
+g.headerH = head;
+const iw = Math.max(0, g.rect.w);
+const ih = Math.max(0, gh - head);
+if (iw > 0 && ih > 0 && g.stocks.length) cloudTreemap(g.stocks, g.rect.x, g.rect.y + head, iw, ih);
+g.stocks.forEach((s) => {
+if (s.rect && s.rect.w > 0 && s.rect.h > 0) {
+s.group = g.name;
+CLOUD.tiles.push(s);
+}
+});
+});
+}
+
+function cloudDrawBase() {
+const cv = $('cloudCanvas');
+if (!cv) return;
+if (!CLOUD.groups.length) { CLOUD.base = null; return; }
+const off = document.createElement('canvas');
+off.width = cv.width;
+off.height = cv.height;
+const ctx = off.getContext('2d');
+ctx.setTransform(CLOUD.dpr, 0, 0, CLOUD.dpr, 0, 0);
+ctx.fillStyle = '#0b111b';
+ctx.fillRect(0, 0, CLOUD.w, CLOUD.h);
+CLOUD.groups.forEach((g) => {
+if (!g.rect) return;
+const gr = g.rect;
+if (gr.w < 0.5 || gr.h < 0.5) return;
+ctx.fillStyle = 'rgba(18,28,42,.7)';
+ctx.fillRect(gr.x, gr.y, gr.w, gr.h);
+if (g.headerH > 0) {
+ctx.fillStyle = 'rgba(255,255,255,.065)';
+ctx.fillRect(gr.x, gr.y, gr.w, g.headerH);
+if (gr.w >= 58) {
+ctx.font = '700 10.5px "Microsoft YaHei",sans-serif';
+ctx.textAlign = 'left';
+ctx.textBaseline = 'middle';
+ctx.fillStyle = '#dfe9f7';
+const label = cloudFitText(ctx, g.name + '  ' + sign(g.chg) + '%', gr.w - 8);
+ctx.fillText(label, gr.x + 4, gr.y + g.headerH / 2 + 0.5);
+}
+}
+g.stocks.forEach((s) => {
+if (!s.rect) return;
+const r = s.rect;
+const pad = r.w > 3 && r.h > 3 ? 1 : 0;
+const tw = Math.max(0.5, r.w - pad * 2);
+const th = Math.max(0.5, r.h - pad * 2);
+ctx.fillStyle = cloudColor(s.chgPct);
+ctx.fillRect(r.x + pad, r.y + pad, tw, th);
+ctx.strokeStyle = 'rgba(3,7,12,.62)';
+ctx.lineWidth = 0.8;
+ctx.strokeRect(r.x + pad, r.y + pad, tw, th);
+if (r.w >= 44 && r.h >= 26) {
+ctx.font = '11px "Microsoft YaHei",sans-serif';
+ctx.textAlign = 'left';
+ctx.textBaseline = 'middle';
+ctx.fillStyle = 'rgba(255,255,255,.95)';
+ctx.fillText(cloudFitText(ctx, s.name, r.w - 7), r.x + 4, r.y + r.h / 2 - (r.h >= 42 ? 5 : 0));
+if (r.h >= 42) {
+ctx.font = '10px Consolas,Menlo,monospace';
+ctx.fillStyle = 'rgba(255,255,255,.82)';
+ctx.fillText(sign(s.chgPct) + '%', r.x + 4, r.y + r.h / 2 + 8);
+}
+}
+});
+});
+CLOUD.base = off;
+}
+
+function cloudDrawOverlay() {
+const cv = $('cloudCanvas');
+if (!cv) return;
+const ctx = cv.getContext('2d');
+ctx.setTransform(1, 0, 0, 1, 0, 0);
+ctx.clearRect(0, 0, cv.width, cv.height);
+if (CLOUD.base) ctx.drawImage(CLOUD.base, 0, 0);
+ctx.setTransform(CLOUD.dpr, 0, 0, CLOUD.dpr, 0, 0);
+const border = (s, color, width) => {
+if (!s || !s.rect) return;
+ctx.strokeStyle = color;
+ctx.lineWidth = width;
+ctx.strokeRect(s.rect.x + 0.5, s.rect.y + 0.5, Math.max(1, s.rect.w - 1), Math.max(1, s.rect.h - 1));
+};
+border(CLOUD.hover, '#4a9eff', 1.6);
+border(CLOUD.selected, '#f0b73f', 2.2);
+}
+
+function cloudUpdateStats() {
+const rows = cloudFilteredRows();
+let up = 0, down = 0, flat = 0, amount = 0, sum = 0, valid = 0;
+rows.forEach((x) => {
+if (x.chgPct > 0) up++; else if (x.chgPct < 0) down++; else flat++;
+if (Number.isFinite(x.amount)) amount += x.amount;
+if (Number.isFinite(x.chgPct)) { sum += x.chgPct; valid++; }
+});
+const avg = valid ? sum / valid : NaN;
+const scope = CLOUD_SCOPE_LABEL[CLOUD.scope] || '全部 A 股';
+const metric = CLOUD_METRIC_LABEL[CLOUD.metric] || '总市值';
+const head = $('cloudHeadline'), sub = $('cloudSub'), stats = $('cloudStats'), mode = $('cloudModeTag'), mapSub = $('cloudMapSub');
+if (head) head.textContent = scope + ' · ' + (rows.length ? '上涨 ' + up + ' / 下跌 ' + down : '暂无个股数据');
+if (sub) sub.textContent = rows.length ? '平盘 ' + flat + ' · 成交额 ' + fmtAmt(amount) + ' · 平均 ' + (Number.isFinite(avg) ? sign(avg) + '%' : '--') + ' · ' + (CLOUD.groups.length) + ' 个行业' : '等待全市场行情…';
+if (mode) mode.textContent = CLOUD.fallbackMode ? '面积 = 板块成交额 · 颜色 = 涨跌（行业代表）' : '面积 = ' + metric + ' · 颜色 = 涨跌';
+if (mapSub) mapSub.textContent = CLOUD.fallbackMode ? (scope + ' · ' + rows.length + ' 只 · ' + CLOUD.groups.length + ' 个行业（龙头代表）') : (scope + ' · ' + rows.length + ' 只 · ' + CLOUD.groups.length + ' 个行业 · ' + metric);
+if (stats) stats.innerHTML = '<span>上涨 <b class="up">' + up + '</b></span>' +
+'<span>下跌 <b class="down">' + down + '</b></span>' +
+'<span>平盘 <b>' + flat + '</b></span>' +
+'<span>成交额 <b>' + fmtAmt(amount) + '</b></span>' +
+'<span>平均涨幅 <b class="' + (avg >= 0 ? 'up' : 'down') + '">' + (Number.isFinite(avg) ? sign(avg) + '%' : '--') + '</b></span>';
+}
+
+function cloudUpdateTopGroups() {
+const el = $('cloudTopGroups');
+if (!el) return;
+const top = CLOUD.groups.slice(0, 6);
+el.innerHTML = top.length ? top.map((g) => {
+const cls = g.chg > 0 ? 'up' : g.chg < 0 ? 'down' : 'flat';
+return '<div class="li"><span class="dot ' + (g.chg > 0 ? 'red' : g.chg < 0 ? 'green' : 'gray') + '"></span><span><b>' + esc(g.name) + '</b> <span class="' + cls + '">' + sign(g.chg) + '%</span><br><span class="dim">' + g.count + ' 只 · ' + cloudFmtValue(g.value) + '</span></span></div>';
+}).join('') : '<div class="muted">暂无行业数据</div>';
+}
+
+function cloudRender() {
+const empty = $('cloudEmpty'), wrap = $('cloudCanvasWrap'), cv = $('cloudCanvas');
+if (!CLOUD.data || !CLOUD.groups.length) {
+if (empty) empty.style.display = 'flex';
+return;
+}
+cloudDrawBase();
+cloudDrawOverlay();
+if (empty) empty.style.display = 'none';
+if (cv) cv.style.cursor = 'crosshair';
+cloudUpdateStats();
+cloudUpdateTopGroups();
+const legend = $('cloudLegend');
+if (legend && !legend.innerHTML) {
+legend.innerHTML = '<span>跌</span>' + [-4, -2, 0, 2, 4].map((v) => '<i style="background:' + cloudColor(v) + '"></i><span>' + (v > 0 ? '+' : '') + v + '%</span>').join('') + '<span>涨</span><span class="dim">颜色越深，幅度越大</span>';
+}
+}
+
+function cloudFind(x, y) {
+for (let i = CLOUD.tiles.length - 1; i >= 0; i--) {
+const s = CLOUD.tiles[i], r = s.rect;
+if (r && x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) return s;
+}
+return null;
+}
+
+function cloudShowTip(s, ev) {
+const tip = $('cloudTip'), wrap = $('cloudCanvasWrap');
+if (!tip || !wrap || !s) return;
+tip.innerHTML = '<b>' + esc(s.name) + '</b> <span class="dim">' + esc(s.code || '') + (s.boardProxy ? ' · 板块龙头' : '') + '</span><br>' +
+esc(s.industry || '其他') + ' · <span class="' + (s.chgPct >= 0 ? 'up' : 'down') + '">' + sign(s.chgPct) + '%</span><br>' +
+(s.boardProxy ? '板块成交额 ' + fmtAmt(s.amount) : '总市值 ' + cloudFmtCap(s.mktCap) + ' · 成交额 ' + fmtAmt(s.amount));
+tip.style.display = 'block';
+const r = wrap.getBoundingClientRect();
+let left = ev.clientX - r.left + 13;
+let top = ev.clientY - r.top + 13;
+left = Math.max(6, Math.min(left, r.width - tip.offsetWidth - 6));
+top = Math.max(6, Math.min(top, r.height - tip.offsetHeight - 6));
+tip.style.left = left + 'px';
+tip.style.top = top + 'px';
+}
+
+function cloudHideTip() {
+const tip = $('cloudTip');
+if (tip) tip.style.display = 'none';
+}
+
+function cloudUpdateDetails(s) {
+const el = $('cloudDetails');
+const load = $('cloudLoadKline'), add = $('cloudAddWatch'), clear = $('cloudClearSel');
+if (!el) return;
+if (!s) {
+el.innerHTML = '<div class="muted">点击云图中的个股方块，这里显示名称、行业、涨跌、市值和成交额。</div>';
+if (load) load.disabled = true;
+if (add) add.disabled = true;
+if (clear) clear.disabled = true;
+return;
+}
+el.innerHTML = (s.boardProxy ? '<div class="hint" style="margin-bottom:4px;">板块聚合 · 龙头代表</div>' : '') +
+'<div class="big">' + esc(s.name) + ' <span class="dim">' + esc(s.code || '') + '</span></div>' +
+'<div class="kv"><span>行业 <b>' + esc(s.industry || '其他') + '</b></span><span>现价 <b>' + (Number.isFinite(s.price) ? s.price : '--') + '</b></span></div>' +
+'<div class="kv"><span>' + (s.boardProxy ? '板块涨跌' : '涨跌') + ' <b class="' + (s.chgPct >= 0 ? 'up' : 'down') + '">' + sign(s.chgPct) + '%</b></span><span>' + (s.boardProxy ? '板块成交额' : '成交额') + ' <b>' + fmtAmt(s.amount) + '</b></span></div>' +
+'<div class="kv"><span>总市值 <b>' + (s.boardProxy ? '--' : cloudFmtCap(s.mktCap)) + '</b></span><span>流通市值 <b>' + (s.boardProxy ? '--' : cloudFmtCap(s.floatCap)) + '</b></span></div>';
+if (load) load.disabled = !s.code;
+if (add) add.disabled = !s.code;
+if (clear) clear.disabled = false;
+}
+
+function cloudSelect(s) {
+CLOUD.selected = s || null;
+cloudUpdateDetails(s);
+cloudDrawOverlay();
+}
+
+function cloudClearSelection() {
+CLOUD.selected = null;
+cloudUpdateDetails(null);
+cloudDrawOverlay();
+}
+
+function cloudBind() {
+const cv = $('cloudCanvas');
+if (cv) {
+cv.addEventListener('mousemove', (ev) => {
+const r = cv.getBoundingClientRect();
+const s = cloudFind(ev.clientX - r.left, ev.clientY - r.top);
+if (s !== CLOUD.hover) {
+CLOUD.hover = s;
+cloudDrawOverlay();
+}
+if (s) cloudShowTip(s, ev); else cloudHideTip();
+});
+cv.addEventListener('mouseleave', () => {
+CLOUD.hover = null;
+cloudHideTip();
+cloudDrawOverlay();
+});
+cv.addEventListener('click', (ev) => {
+const r = cv.getBoundingClientRect();
+const s = cloudFind(ev.clientX - r.left, ev.clientY - r.top);
+if (s) cloudSelect(s);
+});
+cv.addEventListener('dblclick', (ev) => {
+const r = cv.getBoundingClientRect();
+const s = cloudFind(ev.clientX - r.left, ev.clientY - r.top);
+if (s) loadCode(cloudFullCode(s), { name: s.name, period: 'day', scrollTo: 'sec-kline' });
+});
+}
+if ($('cloudScope')) $('cloudScope').addEventListener('change', (ev) => {
+CLOUD.scope = ev.target.value;
+CLOUD.selected = null;
+cloudBuildLayout();
+cloudRender();
+cloudUpdateDetails(null);
+});
+if ($('cloudMetric')) $('cloudMetric').addEventListener('change', (ev) => {
+CLOUD.metric = ev.target.value;
+CLOUD.selected = null;
+cloudBuildLayout();
+cloudRender();
+cloudUpdateDetails(null);
+});
+if ($('btnCloudRefresh')) $('btnCloudRefresh').addEventListener('click', () => loadCloudData(true));
+if ($('cloudLoadKline')) $('cloudLoadKline').addEventListener('click', () => {
+if (CLOUD.selected) loadCode(cloudFullCode(CLOUD.selected), { name: CLOUD.selected.name, period: 'day', scrollTo: 'sec-kline' });
+});
+if ($('cloudAddWatch')) $('cloudAddWatch').addEventListener('click', () => {
+if (CLOUD.selected) addWatch(cloudFullCode(CLOUD.selected));
+});
+if ($('cloudClearSel')) $('cloudClearSel').addEventListener('click', cloudClearSelection);
+let rz = null;
+window.addEventListener('resize', () => {
+clearTimeout(rz);
+rz = setTimeout(() => {
+if (!CLOUD.data) return;
+cloudBuildLayout();
+cloudRender();
+}, 160);
+});
+}
+
 /**
  * 搜索框与当前标的保持同步。
  * 不管是从排行榜 / 连板梯队 / ETF榜 / 自选股 / 龙虎榜点进来的，还是搜索载入的，
@@ -7733,10 +8411,10 @@ function buildEtfChips() {
    点表格行跳到别的模块时也会自动切过去；宽屏完全不受影响（.mob 不会被加上）。 */
 
 const MOB_SECTIONS = [
-  ['sec-market', '① 大盘'], ['sec-strategy', '② 雷达'], ['sec-kline', '③ K线'], ['sec-analyze', '④ 分析'],
-  ['sec-global', '⑤ 全球'], ['sec-flow', '⑥ 资金'], ['sec-dragon', '⑦ 热点'], ['sec-rank', '⑧ 排行'],
-  ['sec-zt', '⑨ 连板'], ['sec-pick', '⑩ 选股'], ['sec-review', '⑪ 复盘'], ['sec-watch', '⑫ 自选'],
-  ['sec-etf', '⑬ ETF'], ['sec-method', '⑭ 方法'], ['sec-risk', '⑮ 风险']
+['sec-market', '① 大盘'], ['sec-cloud', '② 云图'], ['sec-strategy', '③ 雷达'], ['sec-kline', '④ K线'],
+['sec-analyze', '⑤ 分析'], ['sec-global', '⑥ 全球'], ['sec-flow', '⑦ 资金'], ['sec-dragon', '⑧ 热点'],
+['sec-rank', '⑨ 排行'], ['sec-zt', '⑩ 连板'], ['sec-pick', '⑪ 选股'], ['sec-review', '⑫ 复盘'],
+['sec-watch', '⑬ 自选'], ['sec-etf', '⑭ ETF'], ['sec-method', '⑮ 方法'], ['sec-risk', '⑯ 风险']
 ];
 let MOB_CUR = 'sec-market';
 
@@ -7763,6 +8441,7 @@ function setMobTab(id, noScroll) {
 function refreshMobSection(id) {
   try {
     if (id === 'sec-market') { renderMarket(); renderIndexMinute(true); }
+else if (id === 'sec-cloud') { cloudBuildLayout(); cloudRender(); }
     else if (id === 'sec-strategy') { if (SW.plan) swRenderPlan(); swRenderLogs(); }
     else if (id === 'sec-kline') { renderKlineHead(); renderKlinePanel(true); }
     else if (id === 'sec-analyze') { renderAnalyze(); }
@@ -8950,7 +9629,7 @@ function renderZt() {
   const sectMax = sectArr.length ? sectArr[0][1] : 1;
   if ($('ztSector')) {
     $('ztSector').innerHTML = '<thead><tr><th>行业</th><th>涨停家数</th><th>占比</th></tr></thead><tbody>' +
-      (isLocal ? '<tr><td class="muted" colspan="3">本地推算口径不含行业字段，可参考⑥资金流向里的板块聚合，或等接口恢复后自动补齐。</td></tr>'
+(isLocal ? '<tr><td class="muted" colspan="3">本地推算口径不含行业字段，可参考⑦资金流向里的板块聚合，或等接口恢复后自动补齐。</td></tr>'
         : sectArr.length ? sectArr.map((r) => '<tr><td class="name">' + esc(r[0]) + '</td><td class="mono up">' + r[1] + '</td>' +
         '<td style="min-width:130px;"><div class="bar-track" style="width:120px;"><div class="bar-fill" style="width:' + (r[1] / sectMax * 100).toFixed(0) + '%;background:linear-gradient(90deg,#ff4d5e,#ff8a94);"></div></div></td></tr>').join('') : '<tr><td class="muted" colspan="3">暂无数据</td></tr>') + '</tbody>';
   }
@@ -9205,11 +9884,11 @@ function renderFavButtons() {
   const add = $('btnFavAdd'), del = $('btnFavDel');
   if (add) {
     add.disabled = has;
-    add.title = has ? '已经在自选里了' : '把当前标的（股票 / ETF）加入⑫自选股';
+add.title = has ? '已经在自选里了' : '把当前标的（股票 / ETF）加入⑬自选股';
   }
   if (del) {
     del.disabled = !has;
-    del.title = has ? '把当前标的从⑫自选股里删除' : '当前标的不在自选里';
+del.title = has ? '把当前标的从⑬自选股里删除' : '当前标的不在自选里';
   }
 }
 
@@ -9311,7 +9990,7 @@ async function loadWatchPanel(force) {
   const tag = $('watchPanelTag');
   if (!box) return;
   if (!UI.watch.length) {
-    box.innerHTML = '<div class="card"><div class="hint">自选列表为空：在③载入任意股票或 ETF 后，点图上方「＋ 加入自选」，它就会出现在这里。</div></div>';
+box.innerHTML = '<div class="card"><div class="hint">自选列表为空：在④载入任意股票或 ETF 后，点图上方「＋ 加入自选」，它就会出现在这里。</div></div>';
     if (hint) hint.textContent = '自选为空';
     if (tag) tag.textContent = '0 只';
     return;
@@ -9947,6 +10626,7 @@ swRenderNews(SW.newsMatches);
       drawGauge($('gaugeGlobal'), globalModel().score);
     }, 260);
   });
+cloudBind();
 }
 
 /** 导航高亮（滚动跟随）+ 回到顶部 */
@@ -10128,6 +10808,7 @@ async function slowTick() {
   if (ZT.data && Date.now() - ZT.at > 120000) { loadZtData(true).catch(() => {}); }
   if (DATA.etf && Date.now() - DATA.etf.t > 600000) { loadEtfData(true).catch(() => {}); }
   if (WATCHP.at && Date.now() - WATCHP.at > 170000) { loadWatchPanel(false).catch(() => {}); }
+if (CLOUD.data && Date.now() - CLOUD.at > 300000) loadCloudData(true).catch(() => {});
 }
 
 function scheduleFast() {
@@ -10173,7 +10854,8 @@ loadSearchHistory();
   renderAnomalyBoards();
   renderFlow();
   renderLHB();
-  /* ⑨ 连板股 / ⑬ ETF 专区：滚动到附近才触发加载，先把首屏让给行情与K线 */
+/* ② 大盘云图 / ⑩ 连板股 / ⑭ ETF 专区：滚动到附近才触发加载，先把首屏让给行情与K线 */
+lazySection('sec-cloud', () => loadCloudData(false));
   lazySection('sec-zt', () => loadZtData(false));
   lazySection('sec-etf', () => loadEtfData(false));
   lazySection('sec-watch', () => loadWatchPanel(false));
