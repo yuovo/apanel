@@ -7402,7 +7402,7 @@ return s + '…';
 
 async function cloudFetchEast(onProgress) {
 const fs = 'm:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23,m:0+t:81+s:2048';
-const base = 'https://push2.eastmoney.com/api/qt/clist/get?po=1&np=1&fltt=2&invt=2&fid=f3&ut=' + CLOUD_UT +
+const base = 'https://push2.eastmoney.com/api/qt/clist/get?po=1&np=1&fltt=2&invt=2&fid=f20&ut=' + CLOUD_UT +
 '&fs=' + encodeURIComponent(fs) + '&fields=f2,f3,f6,f12,f13,f14,f20,f21,f100';
 const getPage = async (pn) => {
 let lastErr = null;
@@ -7421,7 +7421,7 @@ throw lastErr || new Error('云图分页失败');
 };
 const first = await getPage(1);
 const total = Number.isFinite(first.total) && first.total > 0 ? first.total : first.arr.length;
-const pages = Math.min(80, Math.max(1, Math.ceil(total / 100)));
+const pages = Math.min(12, Math.max(1, Math.ceil(total / 100)));
 const results = new Array(pages);
 results[0] = first.arr;
 let next = 2, done = 1;
@@ -7459,7 +7459,7 @@ industry: String(x.f100 || '其他').trim() || '其他'
 };
 }).filter((x) => x.code && x.name && Number.isFinite(x.price) && x.price > 0 && Number.isFinite(x.chgPct));
 if (!rows.length) throw new Error('云图接口没有返回个股');
-if (rows.length < 3000) throw new Error('云图分页返回不完整（' + rows.length + ' 只）');
+if (rows.length < 500) throw new Error('云图分页返回不完整（' + rows.length + ' 只）');
 const maxCap = rows.reduce((m, x) => Math.max(m, Number.isFinite(x.mktCap) ? x.mktCap : 0), 0);
 CLOUD.capScale = maxCap > 1e9 ? 1 : maxCap > 1e5 ? 1e4 : maxCap > 0 ? 1e8 : 1;
 CLOUD.fallbackMode = false;
@@ -7504,7 +7504,7 @@ CLOUD.capScale = Number(cached.capScale) || 1;
 CLOUD.fallbackMode = !!cached.fallbackMode;
 if (CLOUD.fallbackMode && (!DATA.boards || !DATA.boards.industry || !DATA.boards.industry.length)) await refreshBoards();
 const s0 = $('cloudStatus');
-if (s0) s0.textContent = '缓存全市场 ' + cached.data.length + ' 只 · ' + new Date(cached.at).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+if (s0) s0.textContent = (cached.fallbackMode ? '缓存板块聚合 ' : '缓存权重股 ') + cached.data.length + ' 只 · ' + new Date(cached.at).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
 srcMark('cloud', true, '缓存 ' + cached.data.length + ' 只');
 cloudBuildLayout();
 cloudRender();
@@ -7526,8 +7526,8 @@ if (status) status.textContent = '正在抓取全市场云图… ' + done + '/' 
 });
 CLOUD.data = rows;
 CLOUD.at = Date.now();
-srcMark('cloud', true, '全市场 ' + rows.length + ' 只');
-if (status) status.textContent = '东财全市场 ' + rows.length + ' 只 · ' + nowHms();
+srcMark('cloud', true, '权重股 ' + rows.length + ' 只');
+if (status) status.textContent = '东财市值权重股 ' + rows.length + ' 只 · ' + nowHms();
 } catch (e) {
 try {
 const rows = await cloudFromSnapshot();
@@ -7734,10 +7734,25 @@ border(CLOUD.hover, '#4a9eff', 1.6);
 border(CLOUD.selected, '#f0b73f', 2.2);
 }
 
+function cloudStatRows() {
+const list = DATA.snapshot && DATA.snapshot.list;
+if (list && list.length) {
+return list.map((x) => {
+const sym = String(x.symbol || x.code || '');
+return {
+code: sym.replace(/^(sh|sz|bj)/i, ''), price: x.price,
+chgPct: x.chgPct, amount: x.amount
+};
+}).filter((x) => x.code && Number.isFinite(x.price) && x.price > 0 && Number.isFinite(x.chgPct));
+}
+return cloudFilteredRows();
+}
+
 function cloudUpdateStats() {
 const rows = cloudFilteredRows();
+const statRows = cloudStatRows().filter((x) => cloudInScope(x));
 let up = 0, down = 0, flat = 0, amount = 0, sum = 0, valid = 0;
-rows.forEach((x) => {
+statRows.forEach((x) => {
 if (x.chgPct > 0) up++; else if (x.chgPct < 0) down++; else flat++;
 if (Number.isFinite(x.amount)) amount += x.amount;
 if (Number.isFinite(x.chgPct)) { sum += x.chgPct; valid++; }
@@ -7746,10 +7761,10 @@ const avg = valid ? sum / valid : NaN;
 const scope = CLOUD_SCOPE_LABEL[CLOUD.scope] || '全部 A 股';
 const metric = CLOUD_METRIC_LABEL[CLOUD.metric] || '总市值';
 const head = $('cloudHeadline'), sub = $('cloudSub'), stats = $('cloudStats'), mode = $('cloudModeTag'), mapSub = $('cloudMapSub');
-if (head) head.textContent = scope + ' · ' + (rows.length ? '上涨 ' + up + ' / 下跌 ' + down : '暂无个股数据');
-if (sub) sub.textContent = rows.length ? '平盘 ' + flat + ' · 成交额 ' + fmtAmt(amount) + ' · 平均 ' + (Number.isFinite(avg) ? sign(avg) + '%' : '--') + ' · ' + (CLOUD.groups.length) + ' 个行业' : '等待全市场行情…';
+if (head) head.textContent = scope + ' · ' + (statRows.length ? '上涨 ' + up + ' / 下跌 ' + down : '暂无个股数据');
+if (sub) sub.textContent = statRows.length ? '平盘 ' + flat + ' · 成交额 ' + fmtAmt(amount) + ' · 平均 ' + (Number.isFinite(avg) ? sign(avg) + '%' : '--') + ' · ' + (CLOUD.groups.length) + ' 个行业' : '等待全市场行情…';
 if (mode) mode.textContent = CLOUD.fallbackMode ? '面积 = 板块成交额 · 颜色 = 涨跌（行业代表）' : '面积 = ' + metric + ' · 颜色 = 涨跌';
-if (mapSub) mapSub.textContent = CLOUD.fallbackMode ? (scope + ' · ' + rows.length + ' 只 · ' + CLOUD.groups.length + ' 个行业（龙头代表）') : (scope + ' · ' + rows.length + ' 只 · ' + CLOUD.groups.length + ' 个行业 · ' + metric);
+if (mapSub) mapSub.textContent = CLOUD.fallbackMode ? (scope + ' · ' + rows.length + ' 只 · ' + CLOUD.groups.length + ' 个行业（龙头代表）') : (scope + ' · 权重股 ' + rows.length + ' 只 · ' + CLOUD.groups.length + ' 个行业 · ' + metric);
 if (stats) stats.innerHTML = '<span>上涨 <b class="up">' + up + '</b></span>' +
 '<span>下跌 <b class="down">' + down + '</b></span>' +
 '<span>平盘 <b>' + flat + '</b></span>' +
