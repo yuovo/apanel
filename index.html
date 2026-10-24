@@ -4202,7 +4202,7 @@ data: null, at: 0, loading: false, scope: 'all', metric: 'mktCap',
 selected: null, hover: null, groups: [], tiles: [], base: null,
 w: 0, h: 0, dpr: 1, capScale: 1, fallbackMode: false
 };
-const CLOUD_CACHE_KEY = 'apanel_cloud_cache_v1';
+const CLOUD_CACHE_KEY = 'apanel_cloud_cache_v2';
 
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const nowHms = () => { const d = bjNow(); return pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds()); };
@@ -7676,7 +7676,7 @@ return fmtAmt(Number(v) * (Number(CLOUD.capScale) || 1));
 }
 
 function cloudFmtValue(v) {
-return (CLOUD.metric === 'amount' || CLOUD.fallbackMode) ? fmtAmt(v) : cloudFmtCap(v);
+return CLOUD.metric === 'amount' ? fmtAmt(v) : cloudFmtCap(v);
 }
 
 function cloudColor(chg) {
@@ -7762,16 +7762,20 @@ return rows;
 
 async function cloudFromSnapshot() {
 if (!DATA.snapshot || !DATA.snapshot.list || !DATA.snapshot.list.length) await refreshMarketData(false);
-if (!DATA.boards || !DATA.boards.industry || !DATA.boards.industry.length) await refreshBoards();
 const list = (DATA.snapshot && DATA.snapshot.list) || [];
 const rows = list.map((x) => {
 const sym = String(x.symbol || x.code || '');
 const code = sym.replace(/^(sh|sz|bj)/i, '');
 const market = /^sh/i.test(sym) || /^6/.test(code) ? 1 : 0;
+const marketGroup = /^(68|69)/.test(code) ? '科创板'
+: /^30/.test(code) ? '创业板'
+: /^(4|8|9)/.test(code) ? '北交所'
+: /^6/.test(code) ? '沪市主板'
+: '深市主板';
 return {
 code: code, market: market, name: x.name || '', price: x.price,
 chgPct: x.chgPct, amount: x.amount, mktCap: x.mktCap, floatCap: x.floatCap,
-industry: '全市场'
+industry: marketGroup
 };
 }).filter((x) => x.code && x.name && Number.isFinite(x.price) && x.price > 0 && Number.isFinite(x.chgPct));
 const maxCap = rows.reduce((m, x) => Math.max(m, Number.isFinite(x.mktCap) ? x.mktCap : 0), 0);
@@ -7796,9 +7800,8 @@ CLOUD.data = cached.data;
 CLOUD.at = cached.at;
 CLOUD.capScale = Number(cached.capScale) || 1;
 CLOUD.fallbackMode = !!cached.fallbackMode;
-if (CLOUD.fallbackMode && (!DATA.boards || !DATA.boards.industry || !DATA.boards.industry.length)) await refreshBoards();
 const s0 = $('cloudStatus');
-if (s0) s0.textContent = (cached.fallbackMode ? '缓存板块聚合 ' : '缓存权重股 ') + cached.data.length + ' 只 · ' + new Date(cached.at).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+if (s0) s0.textContent = (cached.fallbackMode ? '缓存全市场快照 ' : '缓存权重股 ') + cached.data.length + ' 只 · ' + new Date(cached.at).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
 srcMark('cloud', true, '缓存 ' + cached.data.length + ' 只');
 cloudBuildLayout();
 cloudRender();
@@ -7827,8 +7830,8 @@ try {
 const rows = await cloudFromSnapshot();
 CLOUD.data = rows;
 CLOUD.at = Date.now();
-srcMark('cloud', true, '行业板块聚合');
-if (status) status.innerHTML = '<span class="orange">东财云图接口不可用，已用全市场快照 + 行业板块聚合（龙头代表）</span>';
+ srcMark('cloud', true, '全市场快照');
+if (status) status.innerHTML = '<span class="orange">东财云图接口不可用，已切换为全市场股票快照（按市场分层）</span>';
 } catch (e2) {
 CLOUD.loading = false;
 if (status) status.innerHTML = '<span class="orange">云图加载失败：' + esc(e2.message) + '</span>';
@@ -7847,25 +7850,6 @@ return (CLOUD.data || []).filter((x) => cloudInScope(x) && cloudMetricVal(x) > 0
 }
 
 function cloudGroupData() {
-if (CLOUD.fallbackMode) {
-const boards = (DATA.boards && DATA.boards.industry) || [];
-if (boards.length) {
-return boards.filter((b) => b.name && Number.isFinite(b.chgPct)).map((b) => {
-const sym = String(b.leadSymbol || '');
-const code = sym.replace(/^(sh|sz|bj)/i, '');
-const market = /^sh/i.test(sym) || /^6/.test(code) ? 1 : 0;
-const amount = Number.isFinite(b.amount) && b.amount > 0 ? b.amount : b.count;
-return {
-name: b.name, value: amount, count: b.count, chg: b.chgPct,
-stocks: [{
-code: code, market: market, name: b.leadName || b.name, price: b.leadPrice,
-chgPct: b.chgPct, amount: amount, mktCap: NaN, floatCap: NaN,
-industry: b.name, boardProxy: true
-}]
-};
-}).filter((g) => g.value > 0).sort((a, b) => b.value - a.value);
-}
-}
 const map = {};
 cloudFilteredRows().forEach((x) => {
 const key = x.industry || '其他';
@@ -8056,9 +8040,9 @@ const scope = CLOUD_SCOPE_LABEL[CLOUD.scope] || '全部 A 股';
 const metric = CLOUD_METRIC_LABEL[CLOUD.metric] || '总市值';
 const head = $('cloudHeadline'), sub = $('cloudSub'), stats = $('cloudStats'), mode = $('cloudModeTag'), mapSub = $('cloudMapSub');
 if (head) head.textContent = scope + ' · ' + (statRows.length ? '上涨 ' + up + ' / 下跌 ' + down : '暂无个股数据');
-if (sub) sub.textContent = statRows.length ? '平盘 ' + flat + ' · 成交额 ' + fmtAmt(amount) + ' · 平均 ' + (Number.isFinite(avg) ? sign(avg) + '%' : '--') + ' · ' + (CLOUD.groups.length) + ' 个行业' : '等待全市场行情…';
-if (mode) mode.textContent = CLOUD.fallbackMode ? '面积 = 板块成交额 · 颜色 = 涨跌（行业代表）' : '面积 = ' + metric + ' · 颜色 = 涨跌';
-if (mapSub) mapSub.textContent = CLOUD.fallbackMode ? (scope + ' · ' + rows.length + ' 只 · ' + CLOUD.groups.length + ' 个行业（龙头代表）') : (scope + ' · 权重股 ' + rows.length + ' 只 · ' + CLOUD.groups.length + ' 个行业 · ' + metric);
+if (sub) sub.textContent = statRows.length ? '平盘 ' + flat + ' · 成交额 ' + fmtAmt(amount) + ' · 平均 ' + (Number.isFinite(avg) ? sign(avg) + '%' : '--') + ' · ' + (CLOUD.groups.length) + ' 个' + (CLOUD.fallbackMode ? '市场分层' : '行业') : '等待全市场行情…';
+if (mode) mode.textContent = '面积 = ' + metric + ' · 颜色 = 涨跌' + (CLOUD.fallbackMode ? ' · 市场分层' : '');
+if (mapSub) mapSub.textContent = CLOUD.fallbackMode ? (scope + ' · 入图 ' + rows.length + ' 只 · ' + CLOUD.groups.length + ' 个市场分层') : (scope + ' · 权重股 ' + rows.length + ' 只 · ' + CLOUD.groups.length + ' 个行业 · ' + metric);
 if (stats) stats.innerHTML = '<span>上涨 <b class="up">' + up + '</b></span>' +
 '<span>下跌 <b class="down">' + down + '</b></span>' +
 '<span>平盘 <b>' + flat + '</b></span>' +
