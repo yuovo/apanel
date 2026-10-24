@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<meta name="apanel-build" content="2026-10-25-sidebar-v1" />
 <!-- 手机（iOS）加到主屏幕后按“应用”方式全屏运行 -->
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -531,17 +535,13 @@ table.tbl tbody tr:nth-child(even){background:rgba(140,156,182,.035);}
 .btn{border-radius:10px;}
 .tag{border-radius:8px;}
 
-/* ---------- 手机端：一次一屏（用顶部导航切换模块，不再一路下滑） ---------- */
+/* ---------- 分类页：侧栏直接切页，一次只显示当前模块 ---------- */
+body.page-mode main > .panel:not(.page-on),
+body.page-mode main > .note:not(.page-on),
+body.page-mode main > .risk-box:not(.page-on){display:none !important;}
 @media (max-width:760px){
-  /* 只显示当前模块：用顶部导航切换，手机上每次只看一屏 */
+  /* 手机端仍只显示当前分类，并压缩卡片密度 */
   body.mob main{padding:10px 10px 0;}
-  /* 注意：#sec-analyze 自带 display:flex，是 id 级选择器，这里必须用 !important 才压得住 */
-  body.mob main > .panel:not(.mob-on),
-  body.mob main > .note:not(.mob-on),
-  body.mob main > .risk-box:not(.mob-on){display:none !important;}
-  body.mob main > .panel.mob-on,
-  body.mob main > .note.mob-on,
-  body.mob main > .risk-box.mob-on{display:block;}
   body.mob{padding-bottom:calc(24px + env(safe-area-inset-bottom));}
   body.mob .panel{padding:12px 12px 14px;border-radius:12px;}
   body.mob .panel-head{padding-bottom:9px;margin-bottom:11px;}
@@ -700,19 +700,232 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
 .purple{color:#b06bff;}
 .white{color:#cfd8e8;}
 #sec-watch .tbl-wrap table.tbl th,#sec-watch .tbl-wrap table.tbl td{padding:6px 8px;}
+
+/* ============================================================
+   左侧页面导航
+   ============================================================ */
+:root{--side-w:252px;--side-w-collapsed:76px;}
+.side-nav{
+  position:fixed;inset:0 auto 0 0;z-index:90;width:var(--side-w);
+  display:flex;flex-direction:column;overflow:hidden;
+  background:
+    radial-gradient(320px 260px at 18% 0%,rgba(47,173,255,.13),transparent 68%),
+    linear-gradient(180deg,#101723 0%,#0a1019 68%,#080d14 100%);
+  border-right:1px solid rgba(88,132,173,.22);
+  box-shadow:16px 0 48px rgba(0,0,0,.22);
+  transition:width .24s ease,transform .26s ease;
+}
+.side-nav::after{
+  content:"";position:absolute;inset:0 0 auto;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(91,220,255,.5),transparent);
+  pointer-events:none;
+}
+.side-brand{position:relative;flex:none;padding:17px 14px 13px;border-bottom:1px solid rgba(80,116,152,.17);}
+.side-brand-row{display:flex;align-items:center;gap:11px;min-width:0;}
+.side-logo{
+  width:42px;height:42px;border-radius:50%;color:#60ddff;
+  background:radial-gradient(circle at 35% 30%,rgba(90,229,255,.32),rgba(28,143,228,.16) 48%,rgba(20,48,75,.9));
+  border:1px solid rgba(80,216,255,.5);
+  box-shadow:0 0 22px rgba(66,207,255,.2),inset 0 0 15px rgba(94,225,255,.11);
+}
+.side-logo svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.side-brand-copy{min-width:0;transition:opacity .16s ease,width .2s ease;}
+.side-brand-copy h1{font-size:16px;line-height:1.25;letter-spacing:.4px;color:#f2f7ff;white-space:nowrap;}
+.side-brand-copy p{margin:3px 0 0;font-size:9px;line-height:1.2;letter-spacing:1.35px;color:#6f849d;white-space:nowrap;}
+.side-collapse{
+  position:absolute;top:25px;right:10px;width:27px;height:27px;display:inline-flex;
+  align-items:center;justify-content:center;border:1px solid rgba(103,142,178,.18);
+  border-radius:8px;background:rgba(117,151,183,.055);color:#69839d;cursor:pointer;
+  transition:.18s;
+}
+.side-collapse:hover{color:#62dfff;border-color:rgba(98,223,255,.42);background:rgba(78,202,255,.09);}
+.side-collapse svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .24s ease;}
+.nav-sprite{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;}
+.side-nav .navbar{
+  display:flex;flex:1;flex-direction:column;flex-wrap:nowrap;gap:3px;
+  width:100%;min-height:0;margin:0;padding:11px 11px 14px;
+  overflow-x:hidden;overflow-y:auto;scrollbar-width:thin;
+  scrollbar-color:rgba(84,125,161,.35) transparent;
+}
+.side-nav .navbar::-webkit-scrollbar{width:5px;}
+.side-nav .navbar::-webkit-scrollbar-thumb{background:rgba(84,125,161,.35);border-radius:5px;}
+.side-nav .navbar a{
+  position:relative;display:flex;align-items:center;gap:11px;flex:none;
+  width:100%;height:41px;padding:0 13px;border-radius:11px;
+  border:1px solid transparent;background:transparent;
+  color:#8695a8;font-size:13px;font-weight:600;line-height:1;white-space:nowrap;
+  transition:color .17s,border-color .17s,background .17s,box-shadow .17s;
+}
+.side-nav .navbar a:hover{
+  color:#c8eaff;border-color:rgba(84,172,215,.17);
+  background:rgba(77,153,194,.065);
+}
+.side-nav .navbar a.on{
+  color:#5de2ff;border-color:rgba(70,207,255,.36);
+  background:linear-gradient(90deg,rgba(24,139,190,.2),rgba(24,105,148,.08));
+  box-shadow:inset 0 0 20px rgba(50,191,236,.055),0 7px 20px rgba(0,0,0,.12);
+  font-weight:700;
+}
+.side-nav .navbar a.on::before{
+  content:"";position:absolute;left:-1px;top:11px;bottom:11px;width:3px;
+  border-radius:0 4px 4px 0;background:#5de2ff;box-shadow:0 0 12px rgba(93,226,255,.64);
+}
+.nav-ico{
+  width:19px;height:19px;flex:none;fill:none;stroke:currentColor;
+  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+}
+.side-foot{
+  flex:none;display:flex;align-items:center;gap:8px;min-height:42px;
+  padding:0 18px;border-top:1px solid rgba(80,116,152,.14);
+  color:#60748a;font-size:10.5px;white-space:nowrap;overflow:hidden;
+}
+.side-foot i{width:6px;height:6px;flex:none;border-radius:50%;background:#35d399;box-shadow:0 0 9px rgba(53,211,153,.72);}
+.nav-overlay{display:none;position:fixed;inset:0;z-index:85;border:0;padding:0;background:rgba(2,7,12,.7);backdrop-filter:blur(3px);cursor:pointer;opacity:0;pointer-events:none;transition:opacity .22s ease;}
+body>.stick,body>main{margin-left:var(--side-w);transition:margin-left .24s ease;}
+body>main{max-width:none;margin-right:0;}
+
+/* 收起后只保留图标，桌面空间立即释放 */
+body.side-collapsed .side-nav{width:var(--side-w-collapsed);}
+body.side-collapsed>.stick,body.side-collapsed>main{margin-left:var(--side-w-collapsed);}
+body.side-collapsed .side-brand{padding-left:10px;padding-right:10px;}
+body.side-collapsed .side-brand-row{justify-content:center;}
+body.side-collapsed .side-brand-copy{display:none;}
+body.side-collapsed .side-collapse{top:64px;right:24px;}
+body.side-collapsed .side-collapse svg{transform:rotate(180deg);}
+body.side-collapsed .side-nav .navbar{padding-left:9px;padding-right:9px;}
+body.side-collapsed .side-nav .navbar a{justify-content:center;gap:0;padding:0;}
+body.side-collapsed .side-nav .navbar a>span{position:absolute;width:0;height:0;overflow:hidden;opacity:0;}
+body.side-collapsed .side-nav .navbar a.on::before{left:-1px;}
+body.side-collapsed .side-foot{justify-content:center;padding:0;}
+body.side-collapsed .side-foot span{display:none;}
+
+.page-context{display:flex;align-items:center;gap:11px;min-width:0;}
+.page-context>div{min-width:0;}
+.page-eyebrow{display:block;margin-bottom:1px;color:#64758a;font-size:9.5px;line-height:1.2;letter-spacing:1.2px;text-transform:uppercase;}
+.page-context strong{display:block;color:#edf5ff;font-size:15px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.nav-trigger{
+  display:none;width:38px;height:38px;flex:none;align-items:center;justify-content:center;
+  border:1px solid rgba(90,138,180,.28);border-radius:10px;
+  background:rgba(70,121,162,.09);color:#b8d9f0;cursor:pointer;
+}
+.nav-trigger:hover{color:#5de2ff;border-color:rgba(93,226,255,.4);}
+.nav-trigger svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;}
+
+@media (max-width:1024px){
+  body>.stick,body>main,body.side-collapsed>.stick,body.side-collapsed>main{margin-left:0;}
+  .side-nav,body.side-collapsed .side-nav{
+    width:min(292px,86vw);transform:translateX(-104%);
+    box-shadow:22px 0 60px rgba(0,0,0,.52);
+  }
+  body.side-collapsed .side-brand{padding-left:14px;padding-right:14px;}
+  body.side-collapsed .side-brand-row{justify-content:flex-start;}
+  body.side-collapsed .side-brand-copy{display:block;}
+  body.side-collapsed .side-nav .navbar{padding-left:11px;padding-right:11px;}
+  body.side-collapsed .side-nav .navbar a{justify-content:flex-start;gap:11px;padding:0 13px;}
+  body.side-collapsed .side-nav .navbar a>span{position:static;width:auto;height:auto;overflow:visible;opacity:1;}
+  body.side-collapsed .side-foot{justify-content:flex-start;padding:0 18px;}
+  body.side-collapsed .side-foot span{display:inline;}
+  .side-collapse{display:none;}
+  .nav-overlay{display:block;}
+  body.nav-open .side-nav{transform:translateX(0);}
+  body.nav-open .nav-overlay{opacity:1;pointer-events:auto;}
+  .nav-trigger{display:inline-flex;}
+}
+
+@media (max-width:760px){
+  body>.stick .topbar{
+    flex-wrap:nowrap;gap:8px;padding:8px 10px;
+  }
+  .page-context{flex:1;}
+  .page-context strong{font-size:13.5px;}
+  .page-eyebrow{display:none;}
+  .nav-trigger{width:35px;height:35px;border-radius:9px;}
+  .topbar-right{width:auto;flex:none;justify-content:flex-end;gap:6px;flex-wrap:nowrap;}
+  .topbar-right #lastUpdate,.topbar-right #refreshSel,.topbar-right #sessionTag{display:none;}
+  .topbar-right .src-line{max-width:44px;overflow:hidden;white-space:nowrap;}
+  .topbar-right .src-line span{display:none;}
+  .topbar-right .clock{display:block;font-size:10.5px;white-space:nowrap;}
+  .topbar-right .btn.primary{padding:6px 9px;font-size:11.5px;white-space:nowrap;}
+  .side-nav .navbar{padding-top:9px;}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .side-nav,.side-nav .navbar a,.nav-overlay,body>.stick,body>main{transition:none !important;}
+}
 </style>
 </head>
 
-<body>
+<body class="page-mode">
+
+<aside class="side-nav" id="sideNav" aria-label="页面导航">
+  <div class="side-brand">
+    <div class="side-brand-row">
+      <div class="logo side-logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M4 18V9m5 9V5m5 13v-7m5 7V3"/><path d="M3 20h18"/></svg>
+      </div>
+      <div class="side-brand-copy">
+        <h1>A股决策台</h1>
+        <p>GA · MARKET DESK</p>
+      </div>
+    </div>
+    <button class="side-collapse" id="navCollapse" type="button" aria-label="收起侧边栏" title="收起侧边栏">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+  </div>
+
+  <svg class="nav-sprite" aria-hidden="true">
+    <symbol id="ni-market" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></symbol>
+    <symbol id="ni-cloud" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="11" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="18" width="7" height="3" rx="1.5"/></symbol>
+    <symbol id="ni-radar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 12l6.5-6.5"/></symbol>
+    <symbol id="ni-kline" viewBox="0 0 24 24"><path d="M6 3v4m0 10v4m0-10h3v6H6zm9-7v3m0 12v2m0-11h3v8h-3z"/></symbol>
+    <symbol id="ni-analyze" viewBox="0 0 24 24"><path d="M3 18l4-5 4 2 4-7 6 4"/><path d="M3 21h18"/></symbol>
+    <symbol id="ni-global" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></symbol>
+    <symbol id="ni-flow" viewBox="0 0 24 24"><path d="M4 7h12m-3-3l3 3-3 3M20 17H8m3-3l-3 3 3 3"/></symbol>
+    <symbol id="ni-hot" viewBox="0 0 24 24"><path d="M12 22c4 0 7-2.8 7-6.6 0-4.7-4.1-7.5-5.5-12.4-2.1 2-3.1 4.2-2.8 6.5-1.4-.5-2.3-1.5-2.8-2.8C5.9 8.9 5 10.9 5 13.5 5 18.1 8 22 12 22z"/><path d="M9.5 17.5c0-2 1.1-3.3 2.5-5 1.4 1.7 2.5 3 2.5 5"/></symbol>
+    <symbol id="ni-rank" viewBox="0 0 24 24"><path d="M5 20V11m7 9V5m7 15v-7"/><path d="M3 20h18"/></symbol>
+    <symbol id="ni-ladder" viewBox="0 0 24 24"><path d="M5 20V9l7-5 7 5v11"/><path d="M9 20v-5h6v5M9 10h.01M15 10h.01"/></symbol>
+    <symbol id="ni-pick" viewBox="0 0 24 24"><path d="M4 5h16M7 12h10M10 19h4"/><circle cx="18.5" cy="17.5" r="3.5"/></symbol>
+    <symbol id="ni-review" viewBox="0 0 24 24"><path d="M7 3h10v4H7z"/><path d="M6 5H4v16h16V5h-2"/><path d="M8 12h8m-8 4h5"/></symbol>
+    <symbol id="ni-watch" viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.6l6.2-.9z"/></symbol>
+    <symbol id="ni-etf" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3"/></symbol>
+    <symbol id="ni-method" viewBox="0 0 24 24"><path d="M4 5a3 3 0 013-3h13v18H7a3 3 0 000 6h13"/><path d="M8 7h8M8 11h6"/></symbol>
+    <symbol id="ni-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></symbol>
+    <symbol id="ni-risk" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M12 8v5m0 3h.01"/></symbol>
+  </svg>
+
+  <nav class="navbar" id="mainNav">
+    <a href="#sec-market"><svg class="nav-ico" aria-hidden="true"><use href="#ni-market"></use></svg><span>① A股大盘</span></a>
+    <a href="#sec-cloud"><svg class="nav-ico" aria-hidden="true"><use href="#ni-cloud"></use></svg><span>② 大盘云图</span></a>
+    <a href="#sec-strategy"><svg class="nav-ico" aria-hidden="true"><use href="#ni-radar"></use></svg><span>③ 机会雷达</span></a>
+    <a href="#sec-kline"><svg class="nav-ico" aria-hidden="true"><use href="#ni-kline"></use></svg><span>④ K线技术面板</span></a>
+    <a href="#sec-analyze"><svg class="nav-ico" aria-hidden="true"><use href="#ni-analyze"></use></svg><span>⑤ 个股买卖分析</span></a>
+    <a href="#sec-global"><svg class="nav-ico" aria-hidden="true"><use href="#ni-global"></use></svg><span>⑥ 全球市场</span></a>
+    <a href="#sec-flow"><svg class="nav-ico" aria-hidden="true"><use href="#ni-flow"></use></svg><span>⑦ 资金流向</span></a>
+    <a href="#sec-dragon"><svg class="nav-ico" aria-hidden="true"><use href="#ni-hot"></use></svg><span>⑧ 热点·龙虎榜·异动</span></a>
+    <a href="#sec-rank"><svg class="nav-ico" aria-hidden="true"><use href="#ni-rank"></use></svg><span>⑨ 每日排行榜</span></a>
+    <a href="#sec-zt"><svg class="nav-ico" aria-hidden="true"><use href="#ni-ladder"></use></svg><span>⑩ 连板股</span></a>
+    <a href="#sec-pick"><svg class="nav-ico" aria-hidden="true"><use href="#ni-pick"></use></svg><span>⑪ 选股推荐</span></a>
+    <a href="#sec-review"><svg class="nav-ico" aria-hidden="true"><use href="#ni-review"></use></svg><span>⑫ 每日复盘</span></a>
+    <a href="#sec-watch"><svg class="nav-ico" aria-hidden="true"><use href="#ni-watch"></use></svg><span>⑬ 自选股</span></a>
+    <a href="#sec-etf"><svg class="nav-ico" aria-hidden="true"><use href="#ni-etf"></use></svg><span>⑭ ETF 专区</span></a>
+    <a href="#sec-method"><svg class="nav-ico" aria-hidden="true"><use href="#ni-method"></use></svg><span>⑮ 交易方法</span></a>
+    <a href="#sec-calendar"><svg class="nav-ico" aria-hidden="true"><use href="#ni-calendar"></use></svg><span>⑯ 财经日历</span></a>
+    <a href="#sec-risk"><svg class="nav-ico" aria-hidden="true"><use href="#ni-risk"></use></svg><span>⑰ 风险提示</span></a>
+  </nav>
+  <div class="side-foot"><i></i><span>实时行情 · 盘面决策</span></div>
+</aside>
+<button class="nav-overlay" id="navOverlay" type="button" aria-label="关闭侧边栏"></button>
 
 <div class="stick">
   <!-- ===================== 顶部栏 ===================== -->
   <header class="topbar">
-    <div class="brand">
-      <div class="logo">GA</div>
+    <div class="page-context">
+      <button class="nav-trigger" id="navToggle" type="button" aria-label="打开页面导航" aria-expanded="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
       <div>
-        <h1>全球市场 + A股实时技术分析面板</h1>
-        <p class="sub">实时行情 · K线与指标 · 全市场排行 · 多策略选股 · 自动复盘 —— 数据来自公开行情接口</p>
+        <span class="page-eyebrow">2026-10-25 · 侧栏版</span>
+        <strong id="currentSectionTitle">① A股大盘</strong>
       </div>
     </div>
     <div class="topbar-right">
@@ -731,25 +944,6 @@ table.tbl tbody tr.on{background:rgba(240,183,63,.10);}
     </div>
   </header>
 
-  <nav class="navbar" id="mainNav">
-    <a href="#sec-market">① A股大盘</a>
-<a href="#sec-cloud">② 大盘云图</a>
-<a href="#sec-strategy">③ 机会雷达</a>
-<a href="#sec-kline">④ K线技术面板</a>
-<a href="#sec-analyze">⑤ 个股买卖分析</a>
-<a href="#sec-global">⑥ 全球市场</a>
-<a href="#sec-flow">⑦ 资金流向</a>
-<a href="#sec-dragon">⑧ 热点·龙虎榜·异动</a>
-<a href="#sec-rank">⑨ 每日排行榜</a>
-<a href="#sec-zt">⑩ 连板股</a>
-<a href="#sec-pick">⑪ 选股推荐</a>
-<a href="#sec-review">⑫ 每日复盘</a>
-<a href="#sec-watch">⑬ 自选股</a>
-<a href="#sec-etf">⑭ ETF 专区</a>
-<a href="#sec-method">⑮ 交易方法</a>
-<a href="#sec-calendar">⑯ 财经日历</a>
-<a href="#sec-risk">⑰ 风险提示</a>
-  </nav>
 </div>
 
 <main>
@@ -8774,22 +8968,82 @@ const MOB_SECTIONS = [
 ['sec-watch', '⑬ 自选'], ['sec-etf', '⑭ ETF'], ['sec-method', '⑮ 方法'], ['sec-calendar', '⑯ 日历'],
 ['sec-risk', '⑰ 风险']
 ];
-let MOB_CUR = 'sec-market';
+let ACTIVE_SECTION = 'sec-market';
+const SIDE_COLLAPSE_KEY = 'apanel_side_collapsed_v1';
+
+function syncCurrentSection(id) {
+  const link = document.querySelector('#mainNav a[href="#' + id + '"]');
+  const title = $('currentSectionTitle');
+  if (link && title) {
+    const label = link.querySelector('span');
+    title.textContent = label ? label.textContent : link.textContent;
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('#mainNav a'), (a) => {
+    a.classList.toggle('on', a.getAttribute('href') === '#' + id);
+    if (a.classList.contains('on')) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
+  });
+  if (link) {
+    try { link.scrollIntoView({ block: 'nearest' }); } catch (e) { /* 忽略 */ }
+  }
+}
+
+function setSidebarCollapsed(collapsed) {
+  document.body.classList.toggle('side-collapsed', !!collapsed);
+  const btn = $('navCollapse');
+  if (btn) {
+    btn.setAttribute('aria-label', collapsed ? '展开侧边栏' : '收起侧边栏');
+    btn.title = collapsed ? '展开侧边栏' : '收起侧边栏';
+  }
+  try { localStorage.setItem(SIDE_COLLAPSE_KEY, collapsed ? '1' : '0'); } catch (e) { /* 忽略 */ }
+}
+
+function setSidebarOpen(open) {
+  const wide = window.matchMedia('(min-width:1025px)').matches;
+  document.body.classList.toggle('nav-open', !!open && !wide);
+  const btn = $('navToggle');
+  if (btn) btn.setAttribute('aria-expanded', open && !wide ? 'true' : 'false');
+}
+
+function setupSidebar() {
+  let collapsed = false;
+  try { collapsed = localStorage.getItem(SIDE_COLLAPSE_KEY) === '1'; } catch (e) { /* 忽略 */ }
+  setSidebarCollapsed(collapsed && window.matchMedia('(min-width:1025px)').matches);
+  document.querySelectorAll('#mainNav a').forEach((a) => {
+    const label = a.querySelector('span');
+    if (label) a.title = label.textContent;
+  });
+  if ($('navCollapse')) $('navCollapse').addEventListener('click', () => {
+    setSidebarCollapsed(!document.body.classList.contains('side-collapsed'));
+  });
+  if ($('navToggle')) $('navToggle').addEventListener('click', () => {
+    setSidebarOpen(!document.body.classList.contains('nav-open'));
+  });
+  if ($('navOverlay')) $('navOverlay').addEventListener('click', () => setSidebarOpen(false));
+  document.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Escape') setSidebarOpen(false);
+  });
+  window.addEventListener('resize', () => {
+    if (window.matchMedia('(min-width:1025px)').matches) setSidebarOpen(false);
+  }, { passive: true });
+  const initial = location.hash && $(location.hash.slice(1)) ? location.hash.slice(1) : ACTIVE_SECTION;
+  activateSection(initial, true);
+}
 
 function isMobile() {
   return typeof window.matchMedia === 'function' && window.matchMedia('(max-width:760px)').matches;
 }
 
-/** 切到某个模块（手机上），noScroll=true 时不回到顶部 */
-function setMobTab(id, noScroll) {
+/** 切到某个分类页；侧栏点击、表格跳转和手机端共用同一套切页逻辑 */
+function activateSection(id, noScroll) {
   if (!id) return;
-  MOB_CUR = id;
-  if (!isMobile()) return;
-  document.body.classList.add('mob');
+  ACTIVE_SECTION = id;
+  document.body.classList.add('page-mode');
   Array.prototype.forEach.call(document.querySelectorAll('main > .panel, main > .note, main > .risk-box'), (el) => {
-    el.classList.toggle('mob-on', el.id === id);
+    el.classList.toggle('page-on', el.id === id);
   });
-  Array.prototype.forEach.call(document.querySelectorAll('#mainNav a'), (a) => a.classList.toggle('on', a.getAttribute('href') === '#' + id));
+  syncCurrentSection(id);
+  setSidebarOpen(false);
   if (!noScroll) { try { window.scrollTo(0, 0); } catch (e) { /* 忽略 */ } }
   /* display:none 时画布量不到宽度，切回来必须重画；顺带触发这个模块的懒加载 */
   setTimeout(() => { runLazy(id); refreshMobSection(id); }, 40);
@@ -8819,10 +9073,9 @@ else if (id === 'sec-calendar') { renderCalendar(); }
 function syncMobMode() {
   if (isMobile()) {
     document.body.classList.add('mob');
-    setMobTab(MOB_CUR, true);
+    if (!document.querySelector('main > .page-on')) activateSection(ACTIVE_SECTION, true);
   } else {
     document.body.classList.remove('mob');
-    Array.prototype.forEach.call(document.querySelectorAll('.mob-on'), (el) => el.classList.remove('mob-on'));
   }
 }
 
@@ -10617,10 +10870,7 @@ function bindHover() {
 function scrollToSection(id) {
   const el = $(id);
   if (!el) return;
-  /* 手机端是「一次一屏」：跳到别的模块 = 切标签，而不是滚动 */
-  if (isMobile() && document.body.classList.contains('mob')) { setMobTab(id); return; }
-  const top = Math.max(0, el.getBoundingClientRect().top + window.scrollY - stickyOffset() - 12);
-  try { window.scrollTo({ top: top, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, top); }
+  activateSection(id);
 }
 
 /** 吸顶头部（顶部栏 + 导航）的实测高度：滚动定位要用它留偏移，否则区块标题会被吸顶栏盖住、按钮点不动 */
@@ -10904,11 +11154,11 @@ swRenderNews(SW.newsMatches);
     const sg = ev.target.closest('.sg-item[data-code]');
     if (sg) { pickSuggestEl(sg); return; }
     if (!ev.target.closest('.search-wrap')) hideSuggest();
-    /* 手机端：顶部导航 = 切换模块（不再长滚动） */
+    /* 侧栏分类 = 直接切换页面 */
     const mobLink = ev.target.closest('#mainNav a[href^="#sec-"]');
-    if (mobLink && isMobile()) {
+    if (mobLink) {
       ev.preventDefault();
-      setMobTab(mobLink.getAttribute('href').slice(1));
+      activateSection(mobLink.getAttribute('href').slice(1));
       return;
     }
     /* ①A股大盘的指数卡片：切换本模块的分时图（要在通用 .card 之前判断） */
@@ -11006,36 +11256,17 @@ if ($('btnCalRefresh')) $('btnCalRefresh').addEventListener('click', renderCalen
 cloudBind();
 }
 
-/** 导航高亮（滚动跟随）+ 回到顶部 */
+/** 侧栏切页 + 回到顶部 */
 function bindScrollSpy() {
   const nav = $('mainNav');
   if (!nav) return;
-  /* 点导航按吸顶高度偏移滚动：否则区块标题会被吸顶栏盖住、里面的按钮点不动 */
   nav.addEventListener('click', (ev) => {
     const a = ev.target.closest('a[href^="#"]');
     if (!a) return;
     ev.preventDefault();
-    scrollToSection(String(a.getAttribute('href')).slice(1));
+    ev.stopPropagation();
+    activateSection(String(a.getAttribute('href')).slice(1));
   });
-  watchSticky();
-  const links = Array.prototype.slice.call(nav.querySelectorAll('a'));
-  const map = {};
-  links.forEach((a) => {
-    const id = String(a.getAttribute('href') || '').slice(1);
-    const el = $(id);
-    if (el) map[id] = a;
-  });
-  if (typeof IntersectionObserver === 'function') {
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach((en) => {
-        if (!en.isIntersecting) return;
-        links.forEach((a) => a.classList.remove('on'));
-        const a = map[en.target.id];
-        if (a) a.classList.add('on');
-      });
-    }, { rootMargin: '-150px 0px -65% 0px', threshold: 0 });
-    Object.keys(map).forEach((id) => obs.observe($(id)));
-  }
   const btn = $('toTop');
   window.addEventListener('scroll', () => {
     const y = window.scrollY || document.documentElement.scrollTop || 0;
@@ -11214,6 +11445,7 @@ loadSearchHistory();
 renderCalendar();
   importWatchFromUrl();
   loadMarketIndex();
+  setupSidebar();
   swLoadLogs();
   try { SW.cat = JSON.parse(localStorage.getItem('apanel_sw_cat') || '{}') || {}; } catch (e) { SW.cat = {}; }
   bindEvents();
