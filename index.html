@@ -10467,19 +10467,31 @@ async function auctionEnsure(force) {
     });
     const quotes = await fetchQuotes(codes.slice(0, 100));
     Object.assign(DATA.quotes, quotes);
+    const snapshotMap = {};
+    ((DATA.snapshot && DATA.snapshot.list) || []).forEach((x) => {
+      const full = String(x.symbol || '').toLowerCase();
+      const short = full.replace(/^(sh|sz|bj)/, '') || String(x.code || '');
+      if (short) snapshotMap[short] = x;
+    });
     const candidates = base.raw.map((x) => {
       const code = ztCode(x);
-      const q = quotes[code] || DATA.quotes[code];
-      const gap = auctionGap(q);
-      const relative = q && Number(q.open) > 0 ? (Number(q.price) / Number(q.open) - 1) * 100 : NaN;
+      const liveQuote = quotes[code] || DATA.quotes[code] || null;
+      const snap = snapshotMap[String(code).replace(/^(sh|sz|bj)/i, '')] || null;
+      const q = liveQuote || snap;
+      const price = q && Number(q.price) > 0 ? Number(q.price) : NaN;
+      const open = q && Number(q.open) > 0 ? Number(q.open) : price;
+      const prevClose = q && Number(q.prevClose) > 0 ? Number(q.prevClose) : NaN;
+      const gap = liveQuote ? auctionGap(liveQuote)
+        : (Number.isFinite(price) && Number.isFinite(prevClose) ? (price / prevClose - 1) * 100 : NaN);
+      const relative = Number.isFinite(price) && Number.isFinite(open) && open > 0 ? (price / open - 1) * 100 : NaN;
       const height = Math.max(1, Number(x.ylbc || x.lbc) || 1);
       const sector = String(x.hybk || '其他');
       const breaks = Math.max(0, Number(x.zbc) || 0);
       const firstTime = Number(x.fbt);
       return {
         code: code, name: x.n || codeName(code), sector: sector, height: height,
-        gap: gap, volRatio: q ? Number(q.volRatio) : NaN, relative: relative,
-        breaks: breaks, firstTime: firstTime, quote: q,
+        gap: gap, volRatio: liveQuote ? Number(liveQuote.volRatio) : NaN, relative: relative,
+        breaks: breaks, firstTime: firstTime, quote: q, quoteSource: liveQuote ? '腾讯实时' : snap ? '新浪快照' : '缺失',
         mode: height >= 3 && gap > 0 ? '强转强' : sector !== '其他' && gap > 0 ? '板块共振' : '观察承接',
         sectorCount: 0, score: 0, filtered: ''
       };
