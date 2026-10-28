@@ -983,7 +983,7 @@ body.side-collapsed .side-foot span{display:none;}
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
       <div>
-        <span class="page-eyebrow">2026-10-29 · 分时三源修复版</span>
+        <span class="page-eyebrow">2026-10-29 · 恒生分时稳定版</span>
         <strong id="currentSectionTitle">① A股大盘</strong>
       </div>
     </div>
@@ -3336,7 +3336,8 @@ function fmtP(v) {
 const API = {
   quote: 'https://qt.gtimg.cn/q=',
   kline: 'https://proxy.finance.qq.com/ifzqgtimg/appstock/app/newfqkline/get',
-  minute: 'https://web.ifzq.gtimg.cn/appstock/app/minute/query',
+  /* web.ifzq 常被 WAF 拦截；proxy.finance.qq.com 返回同一份分钟数据且更稳定 */
+  minute: 'https://proxy.finance.qq.com/ifzqgtimg/appstock/app/minute/query',
   usMinute: 'https://web.ifzq.gtimg.cn/appstock/app/usMinute/query',
   mkline: 'https://proxy.finance.qq.com/ifzqgtimg/appstock/app/kline/mkline',
   search: 'https://proxy.finance.qq.com/ifzqgtimg/appstock/smartbox/search/get',
@@ -4029,6 +4030,10 @@ function emSecid(code) {
   if (m) return (m[1] === 'sh' ? '1.' : '0.') + m[2];
   m = /^hk(\d{5})$/.exec(String(code || ''));
   if (m) return '116.' + m[1];
+  /* 腾讯分钟接口失败时，三个恒生指数使用东财全球指数专用 secid */
+  if (code === 'hkHSI') return '100.HSI';
+  if (code === 'hkHSCEI') return '100.HSCEI';
+  if (code === 'hkHSTECH') return '124.HSTECH';
   const ap = asiaDefOf(code);
   if (ap && ap.em) return ap.em;
   return '';
