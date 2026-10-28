@@ -983,7 +983,7 @@ body.side-collapsed .side-foot span{display:none;}
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
       <div>
-        <span class="page-eyebrow">2026-10-29 · ETF修复版</span>
+        <span class="page-eyebrow">2026-10-29 · 分时恢复版</span>
         <strong id="currentSectionTitle">① A股大盘</strong>
       </div>
     </div>
@@ -1031,7 +1031,7 @@ body.side-collapsed .side-foot span{display:none;}
         <div class="card">
           <div class="card-head"><div class="card-title">数据源与口径</div><div class="card-sub">看到「已降级」时看这里</div></div>
           <div class="list">
-<div class="li"><span class="dot blue"></span><span><b>数据源</b>：腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（龙虎榜 / 涨停池 / 每分钟大单资金流 / 7×24 快讯）、东财 push2 或 CNBC（亚太指数行情 / 分时 / K线）。顶部状态依次为<b>正常 / 待连接 / 已降级 / 异常</b>。</span></div>
+<div class="li"><span class="dot blue"></span><span><b>数据源</b>：腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（分时备用源 / 龙虎榜 / 涨停池 / 每分钟大单资金流 / 7×24 快讯）、东财 push2 或 CNBC（亚太指数行情 / 分时 / K线）。顶部状态依次为<b>正常 / 待连接 / 已降级 / 异常</b>。</span></div>
 <div class="li"><span class="dot orange"></span><span><b>已降级</b>：可能出现在两个地方。①「东财·涨停池」——该域名在当前网络被拦截时，⑨ 连板股与②早盘竞价会自动改用「全市场快照＋日线」本地推算；⑤全球市场在亚太接口不可达时会退回腾讯口径。两处都会明确标注当前口径。</span></div>
 <div class="li"><span class="dot gray"></span><span><b>美股也能看分时</b>：④ 顶部周期切到「分时」即可看美股个股与美股指数的当日分时；公开接口不提供美股个股的历史K线，所以日线技术分析仍只对A股 / ETF / 港股 / 美股指数开放。</span></div>
             <div class="li"><span class="dot gold"></span><span><b>ETF 的 T+0 / T+1</b>：名称后的标签是交易规则备注——T+0＝当天买当天能卖（债券、货币、黄金/商品、跨境类 ETF）；T+1＝次日才能卖（境内股票型 ETF）。按代码段＋名称关键词推定，个别产品以券商与基金公告为准。</span></div>
@@ -1994,7 +1994,7 @@ body.side-collapsed .side-foot span{display:none;}
       <li>所有技术指标均存在<b>滞后性</b>，指标信号可能失真、出现骗线（假金叉/假死叉/假突破）。</li>
       <li>突发消息、政策变化、地缘冲突、外围市场大幅波动，均可能直接打破既有技术形态。</li>
       <li>方向概率推演仅为技术模型的推演结果，<b>不能保证准确</b>，历史规律不代表未来表现。</li>
-<li>本页行情数据来自腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（涨停池 / 连板 / 龙虎榜 / 7×24 快讯）以及东方财富 push2 或 CNBC（亚太指数）的<b>公开接口</b>，为程序直接抓取，可能存在延迟、缺失或与交易所官方数据不一致的情况；免费接口也可能随时调整或不可用，请以券商交易软件为准。</li>
+<li>本页行情数据来自腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（分时备用源 / 涨停池 / 连板 / 龙虎榜 / 7×24 快讯）以及东方财富 push2 或 CNBC（亚太指数）的<b>公开接口</b>。腾讯分钟接口被 WAF 拦截时，A股 / ETF / 指数分时会自动切换东方财富备用源；免费接口仍可能随时调整或不可用，请以券商交易软件为准。</li>
       <li>「<b>大单金额</b>」为东方财富资金流口径（按单笔成交额分档的钱），每分钟净额由该分钟的<b>累计值做差</b>得到，与交易所逐笔成交口径、各券商软件的主力资金统计<b>会有差异</b>；该口径只覆盖 A股 / ETF / 北交所 / 指数，港股与美股、亚太指数没有对应数据（页面会退化为「每分钟成交额」并明确标注）。</li>
       <li>「<b>分时顶底</b>」是按分时价格序列的局部极值规则标注的（前后若干分钟都不超过它），「顶 / 底背离」是用分时 MACD 的 DIF 与相邻两个极值点比较得出的，属于<b>规则化标注</b>，不是预测，也不代表后续一定反转。</li>
       <li>ETF / 场内基金与个股的规则不同（T+0 或 T+1、涨跌幅 ±10% 或 ±20%、有折溢价），本页已按品种自动套用相应口径，但<b>折溢价率、跟踪指数、成分股</b>仍需自行在基金页面核对。</li>
@@ -3353,6 +3353,8 @@ const API = {
   emList: 'https://push2.eastmoney.com/api/qt/ulist.np/get',
   /* 东财分钟级资金流（大单 / 超大单 / 中单 / 小单 每分钟净额） */
   emFlow: 'https://push2.eastmoney.com/api/qt/stock/fflow/kline/get',
+  /* 东财分时备用源：腾讯 WAF 拦截时恢复 A股 / ETF / 指数分时 */
+  emMinute: 'https://push2.eastmoney.com/api/qt/stock/trends2/get',
   cnbc: 'https://quote.cnbc.com/quote-html-webservice/restQuote/symbolType/symbol',
   /* CNBC 图表接口：路径里放起止时间（yyyyMMddHHmmss），symbol 走查询参数 */
   cnbcChart: 'https://ts-api.cnbc.com/harmony/app/charts/'
@@ -3839,6 +3841,42 @@ async function getKline(code, period, count, maxAgeMs) {
 
 /* ---------------- 分时（腾讯） ---------------- */
 
+async function fetchEastMinute(code) {
+  const secid = emSecid(code);
+  if (!secid) throw new Error('该标的没有分时数据（' + code + '）');
+  const url = API.emMinute + '?secid=' + secid +
+    '&fields1=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13' +
+    '&fields2=f51,f52,f53,f54,f55,f56,f57,f58&iscr=0&ndays=1&ut=' + EM_FLOW_UT;
+  const json = await fetchJsonpCb(url, 15000, 'cb');
+  const data = json && json.data;
+  const rows = data && data.trends;
+  if (!Array.isArray(rows) || rows.length < 5) throw new Error('东方财富分时无数据（' + code + '）');
+  const points = [];
+  let date = '';
+  rows.forEach((raw) => {
+    const p = String(raw || '').split(',');
+    if (p.length < 7) return;
+    const stamp = String(p[0] || '');
+    const price = toNum(p[2]);
+    if (!Number.isFinite(price) || price <= 0) return;
+    if (!date && /^\d{4}-\d{2}-\d{2}/.test(stamp)) date = stamp.slice(0, 10).replace(/-/g, '');
+    points.push({
+      time: (stamp.split(' ')[1] || '').slice(0, 5),
+      price: price,
+      volume: toNum(p[5]) || 0,
+      amount: toNum(p[6]) || 0,
+      avg: Number.isFinite(toNum(p[7])) ? toNum(p[7]) : price
+    });
+  });
+  if (points.length < 5) throw new Error('东方财富分时数据不足（' + code + '）');
+  srcMark('minute', true, '东财备用分时 ' + points.length + ' 点');
+  return {
+    code: code, points: points, date: date,
+    prevClose: data && Number.isFinite(toNum(data.preClose)) ? toNum(data.preClose) : NaN,
+    src: 'eastmoney'
+  };
+}
+
 async function fetchMinute(code) {
   const name = uniqName('mn');
   /* 亚太指数走 CNBC 的分钟级接口（本地时段过滤后返回） */
@@ -3856,15 +3894,19 @@ async function fetchMinute(code) {
       const r = await fetch(ep + '?code=' + code + '&_=' + Date.now());
       json = await r.json();
     } catch (e2) {
-      srcMark('minute', false, '分时接口请求失败');
-      throw new Error('分时接口请求失败');
+      try { return await fetchEastMinute(code); } catch (e3) {
+        srcMark('minute', false, '分时接口请求失败');
+        throw new Error('分时接口请求失败：腾讯与东方财富备用源均不可用');
+      }
     }
   }
   const node = json && json.data && json.data[code];
   const raw = node && node.data && node.data.data ? node.data.data : null;
   if (!raw || !raw.length) {
-    srcMark('minute', false, '无分时数据');
-    throw new Error('无分时数据（' + code + '）');
+    try { return await fetchEastMinute(code); } catch (e) {
+      srcMark('minute', false, '无分时数据');
+      throw new Error('无分时数据（' + code + '）');
+    }
   }
   const points = [];
   /* 分时均价 = 成交量加权均价。
@@ -7624,21 +7666,13 @@ async function renderKlinePanel(keepActive) {
       $('klLegend').innerHTML = '<span><i style="background:#ff4d5e"></i>价格</span><span><i style="background:#f0b73f"></i>分时均价</span>' +
         (Number.isFinite(base) ? '<span><i style="background:#8c9cb6"></i>昨收 ' + fmtP(base) + '</span>' : '');
       $('klHint').innerHTML = '分时数据为每个分钟的成交价与累计成交量（' +
-        (asiaDefOf(code) ? 'CNBC，延迟 ≥15 分钟' : '腾讯财经') + '）· ' +
+        (asiaDefOf(code) ? 'CNBC，延迟 ≥15 分钟' : (m.src === 'eastmoney' ? '东方财富备用源' : '腾讯财经')) + '）· ' +
         (m.date ? '交易日 ' + m.date : '') + ' · 共 ' + m.points.length + ' 点 · ' + esc(sessionRangeText(code)) + ' · ' +
         minuteExtremeText(res, m) + ' · 更新 ' + nowHms();
     } catch (e) {
-      if (isFundCode(code) && klineCapable(code)) {
-        UI.kline.period = 'day';
-        syncSegs();
-        await renderKlinePanel(keepActive);
-        const hint = $('klHint');
-        if (hint) hint.innerHTML = '<span class="orange">该 ETF 分时接口暂不可用，已自动切换到日线分析。</span> ' + hint.textContent;
-        return;
-      }
       chartError(cv, '分时数据获取失败：' + e.message);
       $('klLegend').innerHTML = '';
-      $('klHint').innerHTML = '<span class="orange">' + esc(e.message) + '</span>';
+      $('klHint').innerHTML = '<span class="orange">' + esc(e.message) + '；当前保持分时模式，请稍后刷新或切换到日线。</span>';
     }
     return;
   }
