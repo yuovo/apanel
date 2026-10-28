@@ -10649,7 +10649,10 @@ async function auctionEnsure(force) {
     const picks = passed.slice(0, 2).map((c) => Object.assign({}, c, {
       positionPct: c.score >= 74 ? '15%' : '10%'
     }));
-    auctionSavePicks(picks);
+    const saveClock = bjNow();
+    const saveMins = saveClock.getHours() * 60 + saveClock.getMinutes();
+    const saveDay = saveClock.getDay();
+    if (saveDay >= 1 && saveDay <= 5 && saveMins >= 565) auctionSavePicks(picks);
     const tracking = auctionBuildTracking(previousPlan, quotes);
     const reasons = [
       '最高连板 ' + (maxH || '--') + ' 板，竞价均值 ' + (Number.isFinite(topGap) ? sign(topGap) + '%' : '--') + '。',
