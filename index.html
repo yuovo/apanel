@@ -983,7 +983,7 @@ body.side-collapsed .side-foot span{display:none;}
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
       <div>
-        <span class="page-eyebrow">2026-10-29 · 分时恢复版</span>
+        <span class="page-eyebrow">2026-10-29 · 分时线修复版</span>
         <strong id="currentSectionTitle">① A股大盘</strong>
       </div>
     </div>
@@ -7036,8 +7036,14 @@ function marketOf(code) {
 }
 
 /** 把「HHMM」摆到分时横轴的槽位上；集合竞价等落在时段外的点归到最近的一端 */
+function minuteClock(t) {
+  const s = String(t || '').replace(/[^0-9]/g, '');
+  return s.length >= 4 ? s.slice(0, 2) + ':' + s.slice(2, 4) : String(t || '');
+}
+
 function minuteSlot(t, mkt) {
-  const s = String(t);
+  /* 腾讯返回 HHMM，东方财富返回 HH:mm；统一解析，避免备用源有数据却画不出折线 */
+  const s = String(t).replace(/[^0-9]/g, '');
   const h = Number(s.slice(0, 2)), m = Number(s.slice(2, 4));
   if (!Number.isFinite(h) || !Number.isFinite(m)) return NaN;
   const mins = h * 60 + m;
@@ -7428,8 +7434,7 @@ function drawMinute(cv, m, quote, opt) {
     ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, padT + plotH + gap + volH); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + plotW, y); ctx.stroke();
     ctx.restore();
-    const h = String(p.time || '');
-    const info = h.slice(0, 2) + ':' + h.slice(2, 4) + '  价' + fmtP(p.price) +
+    const info = minuteClock(p.time) + '  价' + fmtP(p.price) +
       (Number.isFinite(p.avg) ? '  均' + fmtP(p.avg) : '') +
       ((p.volume || 0) > 0 ? '  量' + fmtVol(p.volume * volUnit) : '');
     ctx.font = '11px Consolas, Menlo, monospace';
@@ -7461,9 +7466,8 @@ function setMinIndVisible(show) {
 function minuteExtremeText(res, m) {
   const ex = res && res.extremes;
   if (!ex || !ex.high || !ex.low) return '顶底：数据不足';
-  const hm = (t) => { const s = String(t || ''); return s.length >= 4 ? s.slice(0, 2) + ':' + s.slice(2, 4) : s; };
-  const parts = ['日内高 <b>' + fmtP(ex.high.price) + '</b>@' + hm(ex.high.time),
-    '日内低 <b>' + fmtP(ex.low.price) + '</b>@' + hm(ex.low.time)];
+  const parts = ['日内高 <b>' + fmtP(ex.high.price) + '</b>@' + minuteClock(ex.high.time),
+    '日内低 <b>' + fmtP(ex.low.price) + '</b>@' + minuteClock(ex.low.time)];
   const pts = (m && m.points) || [];
   const last = pts.length ? pts[pts.length - 1].price : NaN;
   if (Number.isFinite(last) && ex.high.price > 0 && ex.low.price > 0) {
@@ -11845,9 +11849,9 @@ function minuteTipHtml(m, idx, code) {
   const base = q && Number.isFinite(q.prevClose) ? q.prevClose : NaN;
   /* A股上报「手」，港股 / 美股 / 亚太上报「股」 */
   const volUnit = marketOf(c) === 'cn' ? 100 : 1;
-  const tt = String(p.time || '');
+  const tt = minuteClock(p.time);
   const row = (k, v, cls) => '<div class="tip-row"><span class="tip-k">' + k + '</span><span class="' + (cls || '') + '">' + v + '</span></div>';
-  let h = '<div><b>' + tt.slice(0, 2) + ':' + tt.slice(2, 4) + '</b> <span class="dim">' + (m.date || '') + '</span></div>';
+  let h = '<div><b>' + tt + '</b> <span class="dim">' + (m.date || '') + '</span></div>';
   h += row('价格', fmtP(p.price), Number.isFinite(base) ? pctCls(p.price - base) : '');
   if (Number.isFinite(base)) h += row('涨跌', sign((p.price / base - 1) * 100) + '%', pctCls(p.price - base));
   if (Number.isFinite(p.avg)) h += row('均价', fmtP(p.avg), p.price >= p.avg ? 'up' : 'down');
