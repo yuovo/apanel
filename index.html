@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<meta name="apanel-build" content="2026-10-28-watch-conditions-v1" />
+<meta name="apanel-build" content="2026-10-29-etf-kline-fix-v1" />
 <!-- 手机（iOS）加到主屏幕后按“应用”方式全屏运行 -->
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -983,7 +983,7 @@ body.side-collapsed .side-foot span{display:none;}
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
       <div>
-        <span class="page-eyebrow">2026-10-28 · 自选条件版</span>
+        <span class="page-eyebrow">2026-10-29 · ETF修复版</span>
         <strong id="currentSectionTitle">① A股大盘</strong>
       </div>
     </div>
@@ -7628,6 +7628,14 @@ async function renderKlinePanel(keepActive) {
         (m.date ? '交易日 ' + m.date : '') + ' · 共 ' + m.points.length + ' 点 · ' + esc(sessionRangeText(code)) + ' · ' +
         minuteExtremeText(res, m) + ' · 更新 ' + nowHms();
     } catch (e) {
+      if (isFundCode(code) && klineCapable(code)) {
+        UI.kline.period = 'day';
+        syncSegs();
+        await renderKlinePanel(keepActive);
+        const hint = $('klHint');
+        if (hint) hint.innerHTML = '<span class="orange">该 ETF 分时接口暂不可用，已自动切换到日线分析。</span> ' + hint.textContent;
+        return;
+      }
       chartError(cv, '分时数据获取失败：' + e.message);
       $('klLegend').innerHTML = '';
       $('klHint').innerHTML = '<span class="orange">' + esc(e.message) + '</span>';
@@ -9061,7 +9069,7 @@ function etfValidList() {
 function etfRowHtml(x) {
   const code = x.symbol || normalizeCode(x.code);
   const cls = pctCls(x.chgPct);
-  return '<tr class="clickable" data-code="' + esc(code) + '">' +
+  return '<tr class="clickable" data-code="' + esc(code) + '" data-period="day">' +
     '<td><span class="name">' + esc(x.name) + '</span> <span class="code">' + esc(dispCode(code)) + '</span> ' + fundModeTag(code, x.name) + '</td>' +
     '<td class="mono ' + cls + '">' + fmtP(x.price) + '</td>' +
     '<td class="mono ' + cls + '">' + sign(x.chgPct) + '%</td>' +
@@ -11918,6 +11926,8 @@ recordSearchHistory(code, o.name || codeName(code));
   syncSearchBox(code, o.name);          /* 搜索框立刻跟着当前标的走 */
   UI.kline.code = code; UI.analyzeCode = code; UI.kline.active = null;
   if (o.period && (o.period !== 'min' || minuteCapable(code))) UI.kline.period = o.period;
+  /* ETF / LOF 的分钟接口不稳定，默认先打开可靠的日线；用户仍可手动切到分时。 */
+  if (!o.period && isFundCode(code)) UI.kline.period = 'day';
   /* 没有历史K线但有当日分时的（美股个股）：自动切到分时，避免一进来只看到一句「不可用」 */
   if (!o.period && !klineCapable(code) && minuteCapable(code)) UI.kline.period = 'min';
   try {
