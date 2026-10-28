@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<meta name="apanel-build" content="2026-10-27-auction-merged-v1" />
+<meta name="apanel-build" content="2026-10-28-watch-conditions-v1" />
 <!-- 手机（iOS）加到主屏幕后按“应用”方式全屏运行 -->
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -16,7 +16,7 @@
 <meta name="format-detection" content="telephone=no" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <link rel="icon" href="favicon-64.png" />
-<title>A股决策台 · 竞价与技术分析</title>
+<title>A股决策台 · 自选与竞价分析</title>
 <style>
 /* ============================================================
    全局配色（深色金融风格）
@@ -297,8 +297,8 @@ canvas{display:block;width:100%;}
 }
 .chip:hover{border-color:var(--gold);color:var(--gold);}
 .chip.on{border-color:var(--gold);color:var(--gold);background:var(--gold-bg);}
-.chip .x{color:var(--dim);font-size:13px;}
-.chip .x:hover{color:var(--red);}
+.chip .x{color:var(--muted);font-size:16px;line-height:1;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(140,156,182,.1);margin:-3px -6px -3px 1px;}
+.chip .x:hover{color:var(--red);background:rgba(255,77,94,.14);}
 .chip .chip-mode{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.3px;margin-left:4px;opacity:.95;}
 .chip .chip-mode.t0{color:var(--gold);}
 
@@ -324,9 +324,28 @@ canvas{display:block;width:100%;}
 .search-history-list{display:flex;align-items:center;gap:8px;flex:1;min-width:0;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:thin;}
 .search-history .chip{flex:none;cursor:pointer;white-space:nowrap;}
 .search-history .chip .x{margin-left:3px;}
+.watch-search-wrap{flex:1 1 360px;}
+.watch-hold-conditions{border-color:rgba(240,183,63,.3);}
+.watch-condition-grid{grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:8px;}
+.watch-condition{border:1px dashed var(--line2);border-radius:9px;padding:8px 10px;background:rgba(9,13,20,.42);font-size:12px;line-height:1.55;}
+.watch-condition b{display:block;margin-bottom:2px;color:var(--text);}
+.watch-condition span{color:var(--muted);}
+.watch-condition.up{border-color:rgba(255,77,94,.42);}
+.watch-condition.gold{border-color:rgba(240,183,63,.38);}
+.watch-condition.blue{border-color:rgba(74,158,255,.35);}
+.watch-condition.orange{border-color:rgba(255,145,48,.42);}
+.watch-condition.down{border-color:rgba(18,196,106,.4);}
+.wm-mini-wrap{position:relative;}
+.wm-mini-wrap canvas{touch-action:none;}
+.wm-cross{font-size:11.5px;color:var(--gold);min-height:18px;margin-top:2px;}
+.wm-hold{padding:8px 9px;border-radius:8px;border:1px solid rgba(240,183,63,.22);background:rgba(240,183,63,.055);font-size:12px;line-height:1.65;color:var(--muted);}
+.wm-hold b{color:var(--text);}
 @media (max-width:760px){
   .search-wrap{flex:1 1 200px;min-width:0;}
   #btnLoad{flex:none;}
+  .chip{padding:6px 9px;min-height:36px;}
+  .chip .x{width:28px;height:28px;font-size:19px;margin:-5px -7px -5px 2px;}
+  .watch-condition-grid{grid-template-columns:1fr;}
 }
 .suggest{
   position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:80;
@@ -936,19 +955,18 @@ body.side-collapsed .side-foot span{display:none;}
     <a href="#sec-market"><svg class="nav-ico" aria-hidden="true"><use href="#ni-market"></use></svg><span>① A股大盘</span></a>
     <a href="#sec-auction"><svg class="nav-ico" aria-hidden="true"><use href="#ni-auction"></use></svg><span>② 早盘竞价选股</span></a>
     <a href="#sec-watch"><svg class="nav-ico" aria-hidden="true"><use href="#ni-watch"></use></svg><span>③ 自选股</span></a>
-    <a href="#sec-holdings"><svg class="nav-ico" aria-hidden="true"><use href="#ni-holding"></use></svg><span>④ 持仓交易计划</span></a>
-    <a href="#sec-kline"><svg class="nav-ico" aria-hidden="true"><use href="#ni-kline"></use></svg><span>⑤ K线 · 买卖分析</span></a>
-    <a href="#sec-global"><svg class="nav-ico" aria-hidden="true"><use href="#ni-global"></use></svg><span>⑥ 全球市场</span></a>
-    <a href="#sec-flow"><svg class="nav-ico" aria-hidden="true"><use href="#ni-flow"></use></svg><span>⑦ 资金流向</span></a>
-    <a href="#sec-dragon"><svg class="nav-ico" aria-hidden="true"><use href="#ni-hot"></use></svg><span>⑧ 热点·龙虎榜·异动</span></a>
-    <a href="#sec-rank"><svg class="nav-ico" aria-hidden="true"><use href="#ni-rank"></use></svg><span>⑨ 每日排行榜</span></a>
-    <a href="#sec-zt"><svg class="nav-ico" aria-hidden="true"><use href="#ni-ladder"></use></svg><span>⑩ 连板股</span></a>
-    <a href="#sec-pick"><svg class="nav-ico" aria-hidden="true"><use href="#ni-pick"></use></svg><span>⑪ 选股推荐</span></a>
-    <a href="#sec-review"><svg class="nav-ico" aria-hidden="true"><use href="#ni-review"></use></svg><span>⑫ 每日复盘</span></a>
-    <a href="#sec-etf"><svg class="nav-ico" aria-hidden="true"><use href="#ni-etf"></use></svg><span>⑬ ETF 专区</span></a>
-    <a href="#sec-method"><svg class="nav-ico" aria-hidden="true"><use href="#ni-method"></use></svg><span>⑭ 交易方法</span></a>
-    <a href="#sec-calendar"><svg class="nav-ico" aria-hidden="true"><use href="#ni-calendar"></use></svg><span>⑮ 财经日历</span></a>
-    <a href="#sec-risk"><svg class="nav-ico" aria-hidden="true"><use href="#ni-risk"></use></svg><span>⑯ 风险提示</span></a>
+    <a href="#sec-kline"><svg class="nav-ico" aria-hidden="true"><use href="#ni-kline"></use></svg><span>④ K线 · 买卖分析</span></a>
+    <a href="#sec-global"><svg class="nav-ico" aria-hidden="true"><use href="#ni-global"></use></svg><span>⑤ 全球市场</span></a>
+    <a href="#sec-flow"><svg class="nav-ico" aria-hidden="true"><use href="#ni-flow"></use></svg><span>⑥ 资金流向</span></a>
+    <a href="#sec-dragon"><svg class="nav-ico" aria-hidden="true"><use href="#ni-hot"></use></svg><span>⑦ 热点·龙虎榜·异动</span></a>
+    <a href="#sec-rank"><svg class="nav-ico" aria-hidden="true"><use href="#ni-rank"></use></svg><span>⑧ 每日排行榜</span></a>
+    <a href="#sec-zt"><svg class="nav-ico" aria-hidden="true"><use href="#ni-ladder"></use></svg><span>⑨ 连板股</span></a>
+    <a href="#sec-pick"><svg class="nav-ico" aria-hidden="true"><use href="#ni-pick"></use></svg><span>⑩ 选股推荐</span></a>
+    <a href="#sec-review"><svg class="nav-ico" aria-hidden="true"><use href="#ni-review"></use></svg><span>⑪ 每日复盘</span></a>
+    <a href="#sec-etf"><svg class="nav-ico" aria-hidden="true"><use href="#ni-etf"></use></svg><span>⑫ ETF 专区</span></a>
+    <a href="#sec-method"><svg class="nav-ico" aria-hidden="true"><use href="#ni-method"></use></svg><span>⑬ 交易方法</span></a>
+    <a href="#sec-calendar"><svg class="nav-ico" aria-hidden="true"><use href="#ni-calendar"></use></svg><span>⑭ 财经日历</span></a>
+    <a href="#sec-risk"><svg class="nav-ico" aria-hidden="true"><use href="#ni-risk"></use></svg><span>⑮ 风险提示</span></a>
   </nav>
   <div class="side-foot"><i></i><span>实时行情 · 盘面决策</span></div>
 </aside>
@@ -962,7 +980,7 @@ body.side-collapsed .side-foot span{display:none;}
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
       <div>
-        <span class="page-eyebrow">2026-10-27 · 竞价增强版</span>
+        <span class="page-eyebrow">2026-10-28 · 自选条件版</span>
         <strong id="currentSectionTitle">① A股大盘</strong>
       </div>
     </div>
@@ -994,25 +1012,25 @@ body.side-collapsed .side-foot span{display:none;}
         <div class="card">
           <div class="card-head"><div class="card-title">怎么用这一页</div><div class="card-sub">三个高频动作</div></div>
           <div class="list">
-<div class="li"><span class="dot gold"></span><span><b>搜标的（⑤）</b>：搜索框支持中文名（贵州茅台）、拼音首字母（gzmt）、代码片段（5103）、主题＋品种（白酒ETF / 券商ETF）；下拉里点一下就能出 K 线与买卖分析。</span></div>
-<div class="li"><span class="dot blue"></span><span><b>最近搜索</b>：⑤ 搜索框下方保留最近 10 个标的；点标签重新载入，点 × 删除单个，右侧「清空」全部清除。历史保存在本机浏览器。</span></div>
-<div class="li"><span class="dot blue"></span><span><b>点表格行＝载入</b>：⑨排行榜、⑧热点龙虎榜、⑩连板梯队、⑬ETF 榜、③自选股，点任意一行都会把它载入⑤，K线与买卖分析会在同一页同步生成。</span></div>
-<div class="li"><span class="dot gold"></span><span><b>①指数分时随点随换</b>：①A股大盘 的 8 张指数卡片，点任意一张就把下面那张分时图切成它；右上角「<b>载入 K 线图分析</b>」会把当前这个指数送进 ⑤ 做日线技术分析。</span></div>
-<div class="li"><span class="dot gold"></span><span><b>早盘竞价选股（②）</b>：结合上一交易日涨停梯队、今日竞价高开幅度、量比、封板质量与板块共振，给出可试仓、观察和放弃名单；表格中的股票可直接载入⑤看K线与买卖结论。</span></div>
-<div class="li"><span class="dot blue"></span><span><b>未来30天财经日历（⑮）</b>：按日期、星期列出国内外重要事件，标注确认/预计/待官宣、催化板块和个股观察；点个股标签可直接载入⑤的日线K线。</span></div>
-<div class="li"><span class="dot gold"></span><span><b>持仓交易计划（④）</b>：录入股票、买入成本和可选数量，页面会显示当日分时与近期日K，并结合盈亏、分时均价、均线、MACD、RSI给出买入、加仓、减仓、止损和次日竞价剧本。</span></div>
-            <div class="li"><span class="dot orange"></span><span><b>看图</b>：在 ⑤ K 线主图上移动鼠标（手机按住拖动）会出现十字光标与浮层：日期、开高低收、涨跌幅、量额、MA5/10/20/60、BOLL 上中下轨、MACD、KDJ、RSI、量比与当日综合评分。</span></div>
-<div class="li"><span class="dot gold"></span><span><b>自选</b>：⑤ 图上方有「＋加入自选／－移出自选」；③ 自选页每行、每张卡片都能单独移除，并带当日分时图与今日点评。</span></div>
-<div class="li"><span class="dot blue"></span><span><b>亚太也能看图</b>：⑥全球市场 的「亚太市场 · 大盘情况」左侧是专门的分时图；点右侧表格任意一行，或者点「看K线分析」，就会在 ⑤ 载入它的 K 线并生成完整技术分析。</span></div>
-<div class="li"><span class="dot gold"></span><span><b>分时的三个附加指标</b>：⑤ 切到「分时」后，主图自动标注分时顶 / 底，下面多出 <b>MACDFS</b> 与<b>大单金额</b>面板，鼠标移动时三块图十字线同步。</span></div>
+<div class="li"><span class="dot gold"></span><span><b>搜标的（④）</b>：搜索框支持中文名（贵州茅台）、拼音首字母（gzmt）、代码片段（5103）、主题＋品种（白酒ETF / 券商ETF）；下拉里点一下就能出 K 线与买卖分析。</span></div>
+<div class="li"><span class="dot blue"></span><span><b>最近搜索</b>：④ 搜索框下方保留最近 10 个标的；点标签重新载入，点 × 删除单个，右侧「清空」全部清除。历史保存在本机浏览器。</span></div>
+<div class="li"><span class="dot blue"></span><span><b>点表格行＝载入</b>：⑧排行榜、⑦热点龙虎榜、⑨连板梯队、⑫ETF 榜、③自选股，点任意一行都会把它载入④，K线与买卖分析会在同一页同步生成。</span></div>
+<div class="li"><span class="dot gold"></span><span><b>①指数分时随点随换</b>：①A股大盘 的 8 张指数卡片，点任意一张就把下面那张分时图切成它；右上角「<b>载入 K 线图分析</b>」会把当前这个指数送进 ④ 做日线技术分析。</span></div>
+<div class="li"><span class="dot gold"></span><span><b>早盘竞价选股（②）</b>：结合上一交易日涨停梯队、今日竞价高开幅度、量比、封板质量与板块共振，给出可试仓、观察和放弃名单；表格中的股票可直接载入④看K线与买卖结论。</span></div>
+<div class="li"><span class="dot blue"></span><span><b>未来30天财经日历（⑭）</b>：按日期、星期列出国内外重要事件，标注确认/预计/待官宣、催化板块和个股观察；点个股标签可直接载入④的日线K线。</span></div>
+<div class="li"><span class="dot gold"></span><span><b>自选持有条件（③）</b>：自选搜索支持代码、中文名和拼音首字母；每只自选会结合当日分时与近期趋势显示“若已持有”的动作，并把次日高开、平开、低开时的处理条件放在同一页。</span></div>
+            <div class="li"><span class="dot orange"></span><span><b>看图</b>：在 ④ K 线主图上移动鼠标（手机按住拖动）会出现十字光标与浮层：日期、开高低收、涨跌幅、量额、MA5/10/20/60、BOLL 上中下轨、MACD、KDJ、RSI、量比与当日综合评分。</span></div>
+<div class="li"><span class="dot gold"></span><span><b>自选</b>：④ 图上方有「＋加入自选／－移出自选」；③ 自选页每行、每张卡片都能单独移除，并带可滑动分时十字线、今日点评和持有判断。</span></div>
+<div class="li"><span class="dot blue"></span><span><b>亚太也能看图</b>：⑤全球市场 的「亚太市场 · 大盘情况」左侧是专门的分时图；点右侧表格任意一行，或者点「看K线分析」，就会在 ④ 载入它的 K 线并生成完整技术分析。</span></div>
+<div class="li"><span class="dot gold"></span><span><b>分时的三个附加指标</b>：④ 切到「分时」后，主图自动标注分时顶 / 底，下面多出 <b>MACDFS</b> 与<b>大单金额</b>面板，鼠标移动时三块图十字线同步。</span></div>
           </div>
         </div>
         <div class="card">
           <div class="card-head"><div class="card-title">数据源与口径</div><div class="card-sub">看到「已降级」时看这里</div></div>
           <div class="list">
 <div class="li"><span class="dot blue"></span><span><b>数据源</b>：腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（龙虎榜 / 涨停池 / 每分钟大单资金流 / 7×24 快讯）、东财 push2 或 CNBC（亚太指数行情 / 分时 / K线）。顶部状态依次为<b>正常 / 待连接 / 已降级 / 异常</b>。</span></div>
-<div class="li"><span class="dot orange"></span><span><b>已降级</b>：可能出现在两个地方。①「东财·涨停池」——该域名在当前网络被拦截时，⑩ 连板股与②早盘竞价会自动改用「全市场快照＋日线」本地推算；⑥全球市场在亚太接口不可达时会退回腾讯口径。两处都会明确标注当前口径。</span></div>
-<div class="li"><span class="dot gray"></span><span><b>美股也能看分时</b>：⑤ 顶部周期切到「分时」即可看美股个股与美股指数的当日分时；公开接口不提供美股个股的历史K线，所以日线技术分析仍只对A股 / ETF / 港股 / 美股指数开放。</span></div>
+<div class="li"><span class="dot orange"></span><span><b>已降级</b>：可能出现在两个地方。①「东财·涨停池」——该域名在当前网络被拦截时，⑨ 连板股与②早盘竞价会自动改用「全市场快照＋日线」本地推算；⑤全球市场在亚太接口不可达时会退回腾讯口径。两处都会明确标注当前口径。</span></div>
+<div class="li"><span class="dot gray"></span><span><b>美股也能看分时</b>：④ 顶部周期切到「分时」即可看美股个股与美股指数的当日分时；公开接口不提供美股个股的历史K线，所以日线技术分析仍只对A股 / ETF / 港股 / 美股指数开放。</span></div>
             <div class="li"><span class="dot gold"></span><span><b>ETF 的 T+0 / T+1</b>：名称后的标签是交易规则备注——T+0＝当天买当天能卖（债券、货币、黄金/商品、跨境类 ETF）；T+1＝次日才能卖（境内股票型 ETF）。按代码段＋名称关键词推定，个别产品以券商与基金公告为准。</span></div>
             <div class="li"><span class="dot gray"></span><span><b>非交易时段</b>：显示最近一个交易日的收盘数据；所有指标、评分、买卖建议都是按固定规则计算，不预测涨跌，也不构成投资建议。</span></div>
           </div>
@@ -1242,89 +1260,10 @@ body.side-collapsed .side-foot span{display:none;}
   <div class="hint" id="auctionSourceNote" style="margin-top:8px;">数据口径：上一交易日涨停梯队来自东方财富涨停池；竞价与量比来自腾讯行情快照。接口不可用时自动降级，并在顶部标明。</div>
 </section>
 
-  <!-- ===================== ④ 持仓交易计划 ===================== -->
-  <section class="panel" id="sec-holdings">
-    <div class="panel-head">
-      <h2><span class="num">④</span>持仓交易计划</h2>
-      <span class="tag gold">成本 · 当日分时 · K线 · 买卖策略</span>
-      <div class="spacer"></div>
-      <span class="hint" id="holdingStatus">录入持仓后自动生成诊断</span>
-      <button class="btn sm" id="btnHoldingRefresh">刷新诊断</button>
-    </div>
-
-    <div class="holding-add-bar">
-      <div class="search-wrap">
-        <input class="input" id="holdingCodeInput" autocomplete="off" spellcheck="false" placeholder="股票名称 / 代码，如：贵州茅台、600519" />
-      </div>
-      <input class="input" id="holdingCostInput" inputmode="decimal" placeholder="买入成本" style="width:120px;" />
-      <input class="input" id="holdingQtyInput" inputmode="numeric" placeholder="数量（可选）" style="width:125px;" />
-      <button class="btn primary" id="btnAddHolding">录入持仓</button>
-    </div>
-    <div class="hint" style="margin:0 0 12px;">同一个代码再次录入会更新成本；持仓只保存在当前浏览器的本机存储中。</div>
-
-    <div class="advice neutral" id="holdingOverview" style="margin-bottom:12px;">
-      <div class="big" id="holdingOverviewTitle">尚未选择持仓</div>
-      <div class="muted" id="holdingOverviewSub" style="margin-top:4px;">录入你已经买入的股票和成本，系统会把当日分时、近期K线与你的盈亏结合起来给计划。</div>
-      <div class="list" id="holdingOverviewList" style="margin-top:7px;"></div>
-    </div>
-
-    <div class="grid g2" style="margin-bottom:12px;align-items:start;">
-      <div class="card holding-chart-card">
-        <div class="card-head">
-          <div class="card-title" id="holdingChartName">持仓走势</div>
-          <div class="card-sub" id="holdingChartMeta">分时 / 日K</div>
-          <div class="spacer"></div>
-          <div class="segs" id="holdingChartSegs">
-            <button data-hold-mode="minute" class="on">当日分时</button>
-            <button data-hold-mode="day">日K线</button>
-          </div>
-          <button class="btn sm" id="btnHoldingFullKline">完整K线分析</button>
-        </div>
-        <canvas id="holdingChart" height="320"></canvas>
-        <div class="tip" id="holdingChartTip"></div>
-        <div class="hint" id="holdingChartHint" style="margin-top:6px;">选中持仓后显示当日分时；可切换近期日K线。</div>
-      </div>
-      <div class="grid" style="gap:12px;">
-        <div class="card">
-          <div class="card-head"><div class="card-title">当日分时诊断</div><div class="card-sub" id="holdingTodayTag">--</div></div>
-          <div class="list" id="holdingToday"></div>
-        </div>
-        <div class="card">
-          <div class="card-head"><div class="card-title">近期技术与趋势</div><div class="card-sub">日线均线 / MACD / RSI / 板块不替代盘面</div></div>
-          <div class="list" id="holdingRecent"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom:12px;">
-      <div class="card-head">
-        <div class="card-title">当前持仓</div>
-        <div class="card-sub">点击持仓行切换走势图；成本用于盈亏和止损计算</div>
-      </div>
-      <div class="tbl-wrap" style="max-height:none;"><table class="tbl" id="holdingTable"></table></div>
-    </div>
-
-    <div class="grid g3" style="margin-bottom:12px;">
-      <div class="card">
-        <div class="card-head"><div class="card-title">买入 / 加仓条件</div><div class="card-sub">只加确认，不摊亏损</div></div>
-        <div class="list" id="holdingBuyPlan"></div>
-      </div>
-      <div class="card">
-        <div class="card-head"><div class="card-title">卖出 / 减仓条件</div><div class="card-sub">结合成本和当日走势</div></div>
-        <div class="list" id="holdingSellPlan"></div>
-      </div>
-      <div class="card">
-        <div class="card-head"><div class="card-title">次日竞价剧本</div><div class="card-sub">高开 / 平开 / 低开分开处理</div></div>
-        <div class="list" id="holdingNextPlan"></div>
-      </div>
-    </div>
-    <div class="hint">策略为规则化盘面参考，不构成投资建议。没有持仓时可先录入成本；不填数量也能生成价格与仓位建议。</div>
-  </section>
-
-<!-- ===================== ⑤ K线技术面板 ===================== -->
+<!-- ===================== ④ K线技术面板 ===================== -->
   <section class="panel" id="sec-kline">
     <div class="panel-head">
-<h2><span class="num">⑤</span>K线技术面板</h2>
+<h2><span class="num">④</span>K线技术面板</h2>
       <span class="tag gold" id="klStockTag">--</span>
       <span class="tag blue" id="klTypeTag" style="display:none;">--</span>
       <span class="tag blue">分时 / 日线 / 周线 / 月线</span>
@@ -1419,7 +1358,7 @@ body.side-collapsed .side-foot span{display:none;}
     <div class="analysis-divider"><span>技术面买卖分析</span><i></i></div>
   <div id="sec-analyze" class="analysis-block">
     <div class="panel-head analysis-head">
-<h3><span class="num">05A</span>技术面买卖分析（基于实时行情计算）</h3>
+<h3><span class="num">04A</span>技术面买卖分析（基于实时行情计算）</h3>
       <span class="tag gold" id="analyzeStockTag">--</span>
       <span class="tag blue" id="analyzeTypeTag" style="display:none;">--</span>
       <span class="hint">趋势 / BOLL / MACD / KDJ / RSI / 支撑压力 / 仓位节奏</span>
@@ -1505,7 +1444,7 @@ body.side-collapsed .side-foot span{display:none;}
 <!-- ===================== ⑥ 全球市场 ===================== -->
   <section class="panel" id="sec-global">
     <div class="panel-head">
-<h2><span class="num">⑥</span>全球市场参考</h2>
+<h2><span class="num">⑤</span>全球市场参考</h2>
       <span class="tag blue">美股 · 港股 · 亚太 · 国际商品</span>
       <span class="tag gold">点击指数卡片 → 载入K线并分析</span>
       <div class="spacer"></div>
@@ -1590,7 +1529,7 @@ body.side-collapsed .side-foot span{display:none;}
 <!-- ===================== ⑦ 资金流向 ===================== -->
   <section class="panel" id="sec-flow">
     <div class="panel-head">
-<h2><span class="num">⑦</span>资金流向（每日流入 / 流出）</h2>
+<h2><span class="num">⑥</span>资金流向（每日流入 / 流出）</h2>
       <span class="tag blue">主动买卖盘口径</span>
       <span class="tag orange">样本估算，非交易所口径</span>
       <div class="spacer"></div>
@@ -1617,7 +1556,7 @@ body.side-collapsed .side-foot span{display:none;}
 <!-- ===================== ⑧ 热点板块 · 龙虎榜 · 个股异动 ===================== -->
   <section class="panel" id="sec-dragon">
     <div class="panel-head">
-<h2><span class="num">⑧</span>热点板块 · 龙虎榜 · 个股异动</h2>
+<h2><span class="num">⑦</span>热点板块 · 龙虎榜 · 个股异动</h2>
       <span class="tag gold">点击任意个股可载入K线与分析</span>
       <div class="spacer"></div>
       <span class="hint" id="hotHint">--</span>
@@ -1666,7 +1605,7 @@ body.side-collapsed .side-foot span{display:none;}
 <!-- ===================== ⑨ 每日排行榜 ===================== -->
   <section class="panel" id="sec-rank">
     <div class="panel-head">
-<h2><span class="num">⑨</span>每日排行榜（全市场实时）</h2>
+<h2><span class="num">⑧</span>每日排行榜（全市场实时）</h2>
       <span class="tag blue">涨幅 · 跌幅 · 成交额 · 换手 · 行业 · 概念</span>
       <div class="spacer"></div>
       <span class="hint" id="rankHint">--</span>
@@ -1684,7 +1623,7 @@ body.side-collapsed .side-foot span{display:none;}
 <!-- ===================== ⑩ 连板股 · 涨停梯队 ===================== -->
   <section class="panel" id="sec-zt">
     <div class="panel-head">
-<h2><span class="num">⑩</span>连板股 · 涨停梯队</h2>
+<h2><span class="num">⑨</span>连板股 · 涨停梯队</h2>
       <span class="tag red">连板高度</span>
       <span class="tag gold">封板资金</span>
       <span class="tag blue">晋级率 / 炸板率</span>
@@ -1734,7 +1673,7 @@ body.side-collapsed .side-foot span{display:none;}
 <!-- ===================== ⑪ 选股推荐 ===================== -->
   <section class="panel" id="sec-pick">
     <div class="panel-head">
-<h2><span class="num">⑪</span>选股推荐 · 能不能买</h2>
+<h2><span class="num">⑩</span>选股推荐 · 能不能买</h2>
       <span class="tag orange">规则判定 · 非荐股</span>
       <span class="tag blue">给出理由、买入时机、止损与盈亏比</span>
       <div class="spacer"></div>
@@ -1779,7 +1718,7 @@ body.side-collapsed .side-foot span{display:none;}
 <!-- ===================== ⑫ 每日复盘 ===================== -->
   <section class="panel" id="sec-review">
     <div class="panel-head">
-<h2><span class="num">⑫</span>每日复盘</h2>
+<h2><span class="num">⑪</span>每日复盘</h2>
       <span class="tag blue">基于实时全市场数据自动生成</span>
     </div>
     <div class="grid g2">
@@ -1813,7 +1752,10 @@ body.side-collapsed .side-foot span{display:none;}
       <button class="btn" id="btnBatch">批量查看（全套指标快照）</button>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
-      <input class="input" id="watchInput" placeholder="输入股票 / ETF 名称或代码，如 贵州茅台 / gzmt / 510300" />
+      <div class="search-wrap watch-search-wrap">
+        <input class="input" id="watchInput" autocomplete="off" spellcheck="false" placeholder="输入代码 / 中文名 / 拼音，如 600519 / 贵州茅台 / gzmt" />
+        <div class="suggest" id="watchSuggestBox"></div>
+      </div>
       <button class="btn primary" id="btnAddWatch">添加自选</button>
       <span class="hint">共 <b id="watchCount">0</b> 只 · 自选列表保存在浏览器本地（localStorage）</span>
     </div>
@@ -1825,6 +1767,19 @@ body.side-collapsed .side-foot span{display:none;}
     <div class="hint" id="watchSyncHint" style="margin-bottom:12px;">
       自选股只存在各自浏览器的本地存储里——电脑打开的是本地文件、手机打开的是局域网或托管网址，属于不同站点，所以默认不会自动同步。
       点「生成同步码」复制一串短码，到另一台设备粘进上面的框点「导入」即可合并；也可以把带 <b>#watch=</b> 的网址存成书签，打开就自动带上。
+    </div>
+    <div class="card watch-hold-conditions" style="margin-bottom:12px;">
+      <div class="card-head">
+        <div class="card-title">如果持有这只票：当日与次日竞价条件</div>
+        <div class="card-sub">每只自选卡片会结合当日分时和近期趋势给出对应动作</div>
+      </div>
+      <div class="grid watch-condition-grid">
+        <div class="watch-condition up"><b>次日高开 +3% 以上</b><span>冲高不涨停先卖 50%–70%，剩余破开盘价或均价线走。</span></div>
+        <div class="watch-condition gold"><b>高开 +1.5%～+3%</b><span>10 分钟不继续走强先卖一半，跌破开盘价再减。</span></div>
+        <div class="watch-condition blue"><b>平开 / 小幅低开</b><span>5–15 分钟翻红并站上均价可留，否则退出。</span></div>
+        <div class="watch-condition orange"><b>低开 -2% 以上</b><span>不补仓、不摊低成本；反弹无力直接减仓。</span></div>
+        <div class="watch-condition down"><b>任何情况跌破 -3%</b><span>按硬止损执行，不把短线单拖成中线。</span></div>
+      </div>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;" id="watchChips"></div>
     <div class="tbl-wrap" style="max-height:none;">
@@ -1845,7 +1800,7 @@ body.side-collapsed .side-foot span{display:none;}
 <!-- ===================== ⑭ ETF / 场内基金专区 ===================== -->
   <section class="panel" id="sec-etf">
     <div class="panel-head">
-<h2><span class="num">⑬</span>ETF / 场内基金专区</h2>
+<h2><span class="num">⑫</span>ETF / 场内基金专区</h2>
       <span class="tag gold">K线 · 买卖分析 全支持</span>
       <span class="tag blue" id="etfCountTag">--</span>
       <div class="spacer"></div>
@@ -1909,7 +1864,7 @@ body.side-collapsed .side-foot span{display:none;}
 
 <!-- ===================== ⑮ 交易方法 ===================== -->
   <details class="panel" id="sec-method">
-<summary><span class="num">⑭</span>交易方法专栏（点击展开 · 6 套常用技术战法）</summary>
+<summary><span class="num">⑬</span>交易方法专栏（点击展开 · 6 套常用技术战法）</summary>
     <div class="grid g3" style="margin-top:12px;">
       <div class="card method-card">
         <div class="m-title">① MACD：水上做多，水下不重仓</div>
@@ -1965,7 +1920,7 @@ body.side-collapsed .side-foot span{display:none;}
 <!-- ===================== ⑯ 未来30天财经日历 ===================== -->
 <section class="panel" id="sec-calendar">
 <div class="panel-head">
-<h2><span class="num">⑮</span>未来30天财经日历</h2>
+<h2><span class="num">⑭</span>未来30天财经日历</h2>
 <span class="tag gold" id="calRangeTag">--</span>
 <span class="tag blue">日期 · 星期 · 事件 · 催化板块 · 个股观察</span>
 <div class="spacer"></div>
@@ -8802,6 +8757,72 @@ async function runSuggest(q) {
   }
 }
 
+const WATCH_SEARCH = { timer: null, seq: 0, items: [], on: -1, q: '' };
+
+function hideWatchSuggest() {
+  const box = $('watchSuggestBox');
+  if (box) box.classList.remove('show');
+  clearTimeout(WATCH_SEARCH.timer);
+  WATCH_SEARCH.seq++;
+  WATCH_SEARCH.items = [];
+  WATCH_SEARCH.on = -1;
+}
+
+function renderWatchSuggest(items, key, loading) {
+  const box = $('watchSuggestBox');
+  if (!box) return;
+  WATCH_SEARCH.items = items;
+  WATCH_SEARCH.on = items.length ? 0 : -1;
+  WATCH_SEARCH.q = key;
+  let html = '<div class="sg-head">找到 ' + items.length + ' 个可能对应标的' + (loading ? ' · 正在联网补全…' : '') + ' · ↑↓选择，回车添加</div>';
+  if (!items.length) html += '<div class="sg-empty">没有匹配项，试试完整 6 位代码、中文简称或拼音首字母。</div>';
+  else items.forEach((it, i) => { html += suggestRowHtml(it, key, i === 0); });
+  box.innerHTML = html;
+  box.classList.add('show');
+}
+
+async function runWatchSuggest(query) {
+  const key = String(query || '').trim();
+  if (!key) { hideWatchSuggest(); return; }
+  const local = searchLocal(key, 8);
+  renderWatchSuggest(local, key, true);
+  const seq = ++WATCH_SEARCH.seq;
+  try {
+    let remote = await searchRemote(key);
+    if (!remote.length) {
+      const pq = parseSearchQuery(key);
+      if (pq.theme && pq.theme !== key) remote = await searchRemote(pq.theme);
+    }
+    if (seq !== WATCH_SEARCH.seq) return;
+    renderWatchSuggest(mergeSuggest(local, remote), key, false);
+  } catch (e) {
+    if (seq !== WATCH_SEARCH.seq) return;
+    renderWatchSuggest(local, key, false);
+  }
+}
+
+function moveWatchSuggest(delta) {
+  const box = $('watchSuggestBox');
+  if (!box || !WATCH_SEARCH.items.length) return;
+  const rows = box.querySelectorAll('.sg-item');
+  if (!rows.length) return;
+  WATCH_SEARCH.on = (WATCH_SEARCH.on + delta + rows.length) % rows.length;
+  Array.prototype.forEach.call(rows, (el, i) => el.classList.toggle('on', i === WATCH_SEARCH.on));
+  if (rows[WATCH_SEARCH.on] && rows[WATCH_SEARCH.on].scrollIntoView) rows[WATCH_SEARCH.on].scrollIntoView({ block: 'nearest' });
+}
+
+function pickWatchSuggest(el) {
+  if (!el) return;
+  const code = el.getAttribute('data-code');
+  const name = el.getAttribute('data-name') || '';
+  if (!code) return;
+  if (name) rememberName(code, name);
+  addWatch(code);
+  const input = $('watchInput');
+  if (input) input.value = '';
+  hideWatchSuggest();
+}
+
 function moveSuggest(delta) {
   const box = $('suggestBox');
   if (!box || !SEARCH.items.length) return;
@@ -8988,11 +9009,10 @@ function buildEtfChips() {
    点表格行跳到别的模块时也会自动切过去；宽屏完全不受影响（.mob 不会被加上）。 */
 
 const MOB_SECTIONS = [
-['sec-market', '① 大盘'], ['sec-auction', '② 竞价'], ['sec-watch', '③ 自选'], ['sec-holdings', '④ 持仓'],
-['sec-kline', '⑤ K线'], ['sec-global', '⑥ 全球'], ['sec-flow', '⑦ 资金'], ['sec-dragon', '⑧ 热点'],
-['sec-rank', '⑨ 排行'], ['sec-zt', '⑩ 连板'], ['sec-pick', '⑪ 选股'], ['sec-review', '⑫ 复盘'],
-['sec-etf', '⑬ ETF'], ['sec-method', '⑭ 方法'], ['sec-calendar', '⑮ 日历'],
-['sec-risk', '⑯ 风险']
+['sec-market', '① 大盘'], ['sec-auction', '② 竞价'], ['sec-watch', '③ 自选'], ['sec-kline', '④ K线'],
+['sec-global', '⑤ 全球'], ['sec-flow', '⑥ 资金'], ['sec-dragon', '⑦ 热点'], ['sec-rank', '⑧ 排行'],
+['sec-zt', '⑨ 连板'], ['sec-pick', '⑩ 选股'], ['sec-review', '⑪ 复盘'], ['sec-etf', '⑫ ETF'],
+['sec-method', '⑬ 方法'], ['sec-calendar', '⑭ 日历'], ['sec-risk', '⑮ 风险']
 ];
 let ACTIVE_SECTION = 'sec-market';
 const SIDE_COLLAPSE_KEY = 'apanel_side_collapsed_v1';
@@ -9053,7 +9073,7 @@ function setupSidebar() {
     if (window.matchMedia('(min-width:1025px)').matches) setSidebarOpen(false);
   }, { passive: true });
   let initial = location.hash ? location.hash.slice(1) : ACTIVE_SECTION;
-  if (initial === 'sec-strategy') initial = 'sec-holdings';
+  if (initial === 'sec-strategy' || initial === 'sec-holdings') initial = 'sec-watch';
   if (initial === 'sec-cloud') initial = 'sec-auction';
   if (!$(initial)) initial = ACTIVE_SECTION;
   activateSection(initial, true);
@@ -9066,7 +9086,7 @@ function isMobile() {
 /** 切到某个分类页；侧栏点击、表格跳转和手机端共用同一套切页逻辑 */
 function activateSection(id, noScroll) {
   if (!id) return;
-  if (id === 'sec-strategy') id = 'sec-holdings';
+  if (id === 'sec-strategy' || id === 'sec-holdings') id = 'sec-watch';
   if (id === 'sec-analyze') id = 'sec-kline';
   if (id === 'sec-cloud') id = 'sec-auction';
   ACTIVE_SECTION = id;
@@ -9086,7 +9106,6 @@ function refreshMobSection(id) {
   try {
     if (id === 'sec-market') { renderMarket(); renderIndexMinute(true); }
     else if (id === 'sec-auction') { renderAuction(); }
-    else if (id === 'sec-holdings') { renderHoldings(true); }
     else if (id === 'sec-kline') { renderKlineHead(); renderKlinePanel(true); renderAnalyze(); }
     else if (id === 'sec-global') { renderGlobalGrid(); renderGlobalSummary(); renderAsiaCard(); }
     else if (id === 'sec-flow') { renderFlow(); }
@@ -11146,7 +11165,7 @@ del.title = has ? '把当前标的从③自选股里删除' : '当前标的不�
 }
 
 /** 迷你当日分时图：价格线 + 分时均价 + 昨收基准（红涨绿跌） */
-function drawWatchMinute(cv, m, quote) {
+function drawWatchMinute(cv, m, quote, activeIndex) {
   const box = setupCanvas(cv, 104);
   const ctx = box.ctx, W = box.w, H = box.h;
   ctx.clearRect(0, 0, W, H);
@@ -11208,6 +11227,25 @@ function drawWatchMinute(cv, m, quote) {
   ctx.fillStyle = col;
   ctx.fillText((m && m.date ? String(m.date).slice(4) + ' ' : '') + String(last.time || ''), padL + plotW, 11);
   ctx.textAlign = 'left';
+  const ai = Number.isInteger(activeIndex) ? clamp(activeIndex, 0, pts.length - 1) : -1;
+  if (ai >= 0) {
+    const p = pts[ai];
+    const x = xOf(ai), y = yOf(p.price);
+    ctx.save();
+    ctx.setLineDash([3, 3]);
+    ctx.strokeStyle = 'rgba(240,183,63,.72)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, padT + plotH); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + plotW, y); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2);
+    ctx.fillStyle = '#f0b73f'; ctx.fill();
+    ctx.font = '10px Consolas,Menlo,monospace';
+    ctx.textAlign = x > W - 58 ? 'right' : 'left';
+    ctx.fillStyle = '#f0b73f';
+    ctx.fillText(String(p.time || ''), x + (x > W - 58 ? -4 : 4), padT + plotH - 3);
+    ctx.restore();
+  }
 }
 
 /** 今日分析评价：一句话讲清「今天发生了什么 + 现在该怎么做」 */
@@ -11234,7 +11272,7 @@ function todayReview(code, candles, quote) {
   return { a: a, sig: sig, bv: bv, plan: plan, sc: sc, st: st, tone: bv.tone, text: bits.join('、') + '。' + tail };
 }
 
-const WATCHP = { at: 0, loading: false };
+const WATCHP = { at: 0, loading: false, items: [], active: {} };
 
 /** 自选页：为每只自选股抓当日分时 + 日线，画出分时图并给出今日点评 */
 async function loadWatchPanel(force) {
@@ -11287,11 +11325,93 @@ box.innerHTML = '<div class="card"><div class="hint">自选列表为空：在④
   }
 }
 
+function watchMinuteAt(it, idx) {
+  const pts = it.minute && it.minute.points || [];
+  const p = pts[clamp(idx, 0, Math.max(0, pts.length - 1))];
+  const prev = it.quote && Number(it.quote.prevClose) > 0 ? Number(it.quote.prevClose) : pts[0] && pts[0].price;
+  if (!p) return null;
+  return {
+    time: p.time || '--', price: p.price, avg: p.avg, volume: p.volume,
+    chgPct: prev > 0 ? (p.price / prev - 1) * 100 : NaN
+  };
+}
+
+function watchHoldingCondition(it, rev) {
+  if (!rev) return { action: '数据不足，暂不以持有视角操作', next: '次日竞价条件需等待日线和分时数据。', tone: 'gray' };
+  const a = rev.a;
+  const lastP = it.minute && it.minute.points && it.minute.points[it.minute.points.length - 1];
+  const price = it.quote && Number(it.quote.price) > 0 ? Number(it.quote.price) : a.price;
+  const vwap = lastP && Number(lastP.avg) > 0 ? Number(lastP.avg) : NaN;
+  const aboveVwap = Number.isFinite(vwap) && price >= vwap;
+  let action = '持有观察';
+  let tone = 'gold';
+  if (Number.isFinite(vwap) && !aboveVwap && (rev.bv.tone === 'down' || a.score < 0)) {
+    action = '若已持有：先减仓，反弹不过分时均价继续退出';
+    tone = 'orange';
+  } else if (a.rsi >= 75 && price >= a.ma20) {
+    action = '若已持有：高位只持筹不加仓，冲高兑现一部分';
+    tone = 'red';
+  } else if (aboveVwap && a.score >= 20 && price >= a.ma20) {
+    action = '若已持有：趋势仍强，可持有；回踩均价不破再考虑加仓';
+    tone = 'green';
+  } else if (aboveVwap) {
+    action = '若已持有：可持有观察，跌破分时均价先减仓';
+  } else {
+    action = '若已持有：暂不加仓，跌破支撑或均价走弱先减仓';
+    tone = 'orange';
+  }
+  const next = '次日竞价：高开 +3%以上分批止盈；+1.5%～+3%不强先卖半；平开 15 分钟不翻红退出；低开 -2%以上止损。';
+  return { action: action, next: next, tone: tone };
+}
+
+function bindWatchMinuteHover(it) {
+  const cv = $('wmcv-' + it.code);
+  if (!cv || !it.minute || !it.minute.points || !it.minute.points.length) return;
+  const update = (clientX) => {
+    const r = cv.getBoundingClientRect();
+    const ratio = clamp((clientX - r.left) / Math.max(1, r.width), 0, 1);
+    WATCHP.active[it.code] = Math.round(ratio * (it.minute.points.length - 1));
+    drawWatchMinute(cv, it.minute, it.quote, WATCHP.active[it.code]);
+    const p = watchMinuteAt(it, WATCHP.active[it.code]);
+    const label = $('wmcross-' + it.code);
+    if (p && label) label.innerHTML = '<b>' + esc(p.time) + '</b> · 价格 ' + fmtP(p.price) +
+      ' · <span class="' + pctCls(p.chgPct) + '">' + sign(p.chgPct) + '%</span> · 均价 ' + fmtP(p.avg) +
+      ' · 分钟量 ' + fmtVol(p.volume);
+  };
+  cv.addEventListener('pointerdown', (ev) => {
+    try { cv.setPointerCapture(ev.pointerId); } catch (e) { /* ignore */ }
+    update(ev.clientX);
+  });
+  cv.addEventListener('touchstart', (ev) => {
+    if (ev.touches && ev.touches[0]) update(ev.touches[0].clientX);
+  }, { passive: true });
+  cv.addEventListener('touchmove', (ev) => {
+    if (ev.touches && ev.touches[0]) update(ev.touches[0].clientX);
+  }, { passive: true });
+  cv.addEventListener('pointermove', (ev) => {
+    if (ev.pointerType === 'mouse' || ev.buttons) update(ev.clientX);
+  });
+  cv.addEventListener('mousemove', (ev) => update(ev.clientX));
+  cv.addEventListener('pointerleave', (ev) => {
+    if (ev.pointerType !== 'mouse') return;
+    delete WATCHP.active[it.code];
+    drawWatchMinute(cv, it.minute, it.quote);
+    const label = $('wmcross-' + it.code);
+    if (label) label.textContent = '手指按住分时图左右滑动查看分钟数据';
+  });
+  cv.addEventListener('mouseleave', () => {
+    delete WATCHP.active[it.code];
+    drawWatchMinute(cv, it.minute, it.quote);
+    const label = $('wmcross-' + it.code);
+    if (label) label.textContent = '手指按住分时图左右滑动查看分钟数据';
+  });
+}
+
 /** 窗口尺寸变化后重画自选页的分时缩略图（避免拉伸模糊） */
 function redrawWatchPanel() {
   (WATCHP.items || []).forEach((it) => {
     const cv = $('wmcv-' + it.code);
-    if (cv) drawWatchMinute(cv, it.minute, it.quote);
+    if (cv) drawWatchMinute(cv, it.minute, it.quote, WATCHP.active[it.code]);
   });
 }
 
@@ -11303,6 +11423,7 @@ function renderWatchPanel(items) {
     const q = it.quote;
     const cls = q ? pctCls(q.chgPct) : 'flat';
     const rev = it.review;
+    const holding = watchHoldingCondition(it, rev);
     const tags = [];
     if (rev) {
       tags.push('<span class="tag ' + rev.st.cls + '">评分 ' + rev.sc.total + ' · ' + esc(rev.st.label) + '</span>');
@@ -11317,9 +11438,11 @@ function renderWatchPanel(items) {
         fundModeTag(it.code, it.name) +
         (q ? '<span class="wm-price ' + cls + '">' + fmtP(q.price) + '</span><span class="chg ' + cls + '">' + sign(q.chgPct) + '%</span>' : '') +
       '</div>' +
-      '<canvas id="wmcv-' + esc(it.code) + '" height="104"></canvas>' +
+      '<div class="wm-mini-wrap"><canvas id="wmcv-' + esc(it.code) + '" height="104"></canvas></div>' +
+      '<div class="wm-cross" id="wmcross-' + esc(it.code) + '">手指按住分时图左右滑动查看分钟数据</div>' +
       (tags.length ? '<div class="wm-tags">' + tags.join('') + '</div>' : '') +
       '<div class="wm-line">' + (rev ? rev.text : '技术评价：' + esc(it.klineErr || '数据不足')) + '</div>' +
+      '<div class="wm-hold"><b>持有判断：</b>' + esc(holding.action) + '<br><span class="dim">' + esc(holding.next) + '</span></div>' +
       '<div class="wm-line dim">分时：' + (it.minute ? ('交易日 ' + esc(it.minute.date || '--') + ' · ' + it.minute.points.length + ' 个分钟点') : esc(it.minuteErr || '未取到')) + '</div>' +
       '<div class="wm-actions">' +
         '<button class="btn sm" data-act="load" data-code="' + esc(it.code) + '">看K线</button>' +
@@ -11329,7 +11452,8 @@ function renderWatchPanel(items) {
   }).join('');
   items.forEach((it) => {
     const cv = $('wmcv-' + it.code);
-    if (cv) drawWatchMinute(cv, it.minute, it.quote);
+    if (cv) drawWatchMinute(cv, it.minute, it.quote, WATCHP.active[it.code]);
+    bindWatchMinuteHover(it);
   });
   if (tag) tag.textContent = items.length + ' 只 · ' + nowHms();
   if (hint) hint.textContent = '分时：腾讯财经（每分钟一点）· 点评：按日线规则实时计算 · 更新 ' + nowHms();
@@ -11685,25 +11809,6 @@ if ($('btnClearHistory')) $('btnClearHistory').addEventListener('click', clearSe
   if ($('btnAuctionScan')) $('btnAuctionScan').addEventListener('click', () => {
     auctionEnsure(true).catch(() => {});
   });
-  if ($('btnAddHolding')) $('btnAddHolding').addEventListener('click', () => {
-    holdingAddFromForm().catch((e) => { const s = $('holdingStatus'); if (s) s.innerHTML = '<span class="orange">录入失败：' + esc(e.message) + '</span>'; });
-  });
-  ['holdingCodeInput', 'holdingCostInput', 'holdingQtyInput'].forEach((id) => {
-    if ($(id)) $(id).addEventListener('keydown', (ev) => {
-      if (ev.key === 'Enter') { ev.preventDefault(); if ($('btnAddHolding')) $('btnAddHolding').click(); }
-    });
-  });
-  if ($('btnHoldingRefresh')) $('btnHoldingRefresh').addEventListener('click', () => { renderHoldings(true).catch(() => {}); });
-  if ($('holdingChartSegs')) $('holdingChartSegs').addEventListener('click', (ev) => {
-    const btn = ev.target.closest('[data-hold-mode]');
-    if (!btn) return;
-    HOLDINGS.mode = btn.getAttribute('data-hold-mode') || 'minute';
-    holdingRenderChart();
-  });
-  if ($('btnHoldingFullKline')) $('btnHoldingFullKline').addEventListener('click', () => {
-    const h = holdingSelected();
-    if (h) loadCode(h.code, { name: h.name, period: 'day', scrollTo: 'sec-kline' });
-  });
   /* ---- 亚太市场：看K线分析（把分时图上当前这个指数载入 ③） ---- */
   if ($('asiaMinKline')) {
     $('asiaMinKline').addEventListener('click', () => {
@@ -11778,9 +11883,43 @@ swRenderNews(SW.newsMatches);
     }
     box.value = '';
     box.placeholder = '输入股票 / ETF 名称或代码，如 贵州茅台 / gzmt / 510300';
+    hideWatchSuggest();
     addWatch(code);
   });
-  $('watchInput').addEventListener('keydown', (ev) => { if (ev.key === 'Enter') $('btnAddWatch').click(); });
+  const watchInput = $('watchInput');
+  if (watchInput) {
+    watchInput.addEventListener('input', () => {
+      if (!DATA.etf && !DATA.etfJob) loadEtfData(false).catch(() => {});
+      clearTimeout(WATCH_SEARCH.timer);
+      WATCH_SEARCH.timer = setTimeout(() => runWatchSuggest(watchInput.value), 180);
+    });
+    watchInput.addEventListener('focus', () => {
+      if (watchInput.value.trim()) runWatchSuggest(watchInput.value);
+      if (!DATA.etf && !DATA.etfJob) loadEtfData(false).catch(() => {});
+    });
+    watchInput.addEventListener('keydown', (ev) => {
+      if (ev.key === 'ArrowDown') { ev.preventDefault(); moveWatchSuggest(1); return; }
+      if (ev.key === 'ArrowUp') { ev.preventDefault(); moveWatchSuggest(-1); return; }
+      if (ev.key === 'Escape') { hideWatchSuggest(); return; }
+      if (ev.key === 'Enter') {
+        ev.preventDefault();
+        const box = $('watchSuggestBox');
+        const rows = box ? box.querySelectorAll('.sg-item') : [];
+        if (rows.length && WATCH_SEARCH.on >= 0 && WATCH_SEARCH.q === watchInput.value.trim()) {
+          pickWatchSuggest(rows[WATCH_SEARCH.on]);
+          return;
+        }
+        $('btnAddWatch').click();
+      }
+    });
+  }
+  if ($('watchSuggestBox')) $('watchSuggestBox').addEventListener('click', (ev) => {
+    const item = ev.target.closest('.sg-item[data-code]');
+    if (!item) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    pickWatchSuggest(item);
+  });
   $('btnBatch').addEventListener('click', watchBatch);
   /* ---- 自选股跨设备同步 ---- */
   if ($('btnWatchSyncOut')) {
@@ -11814,13 +11953,10 @@ swRenderNews(SW.newsMatches);
   }
 
   document.addEventListener('click', (ev) => {
-    const holdRemove = ev.target.closest('[data-hold-remove]');
-    if (holdRemove) { ev.preventDefault(); ev.stopPropagation(); holdingRemove(holdRemove.getAttribute('data-hold-remove')); return; }
-    const holdRow = ev.target.closest('[data-holding-code]');
-    if (holdRow) { holdingSelect(holdRow.getAttribute('data-holding-code'), true); return; }
     const sg = ev.target.closest('.sg-item[data-code]');
     if (sg) { pickSuggestEl(sg); return; }
     if (!ev.target.closest('.search-wrap')) hideSuggest();
+    if (!ev.target.closest('.watch-search-wrap')) hideWatchSuggest();
     /* 侧栏分类 = 直接切换页面 */
     const mobLink = ev.target.closest('#mainNav a[href^="#sec-"]');
     if (mobLink) {
@@ -12017,7 +12153,6 @@ function renderQuoteDependents() {
   renderForecast();
   renderWatch();
   renderKlineHead();
-  if (HOLDINGS.list.length) holdingRenderTable();
   updateLastUpdate();
 }
 
@@ -12114,8 +12249,6 @@ renderCalendar();
   importWatchFromUrl();
   loadMarketIndex();
   setupSidebar();
-  holdingLoadState();
-  holdingRenderTable();
   try { SW.cat = JSON.parse(localStorage.getItem('apanel_sw_cat') || '{}') || {}; } catch (e) { SW.cat = {}; }
   bindEvents();
   bindHover();
@@ -12135,7 +12268,6 @@ renderCalendar();
   renderLHB();
 /* ② 早盘竞价 / ⑨ 连板股 / ⑬ ETF 专区：进入页面时再触发加载，先保留首屏性能 */
   lazySection('sec-auction', () => auctionEnsure(false));
-  lazySection('sec-holdings', () => renderHoldings(true));
   lazySection('sec-zt', () => loadZtData(false));
   lazySection('sec-etf', () => loadEtfData(false));
   lazySection('sec-watch', () => loadWatchPanel(false));
