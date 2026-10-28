@@ -983,7 +983,7 @@ body.side-collapsed .side-foot span{display:none;}
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
       <div>
-        <span class="page-eyebrow">2026-10-29 · 全球市场前移版</span>
+        <span class="page-eyebrow">2026-10-29 · 分时三源修复版</span>
         <strong id="currentSectionTitle">① A股大盘</strong>
       </div>
     </div>
@@ -1031,7 +1031,7 @@ body.side-collapsed .side-foot span{display:none;}
         <div class="card">
           <div class="card-head"><div class="card-title">数据源与口径</div><div class="card-sub">看到「已降级」时看这里</div></div>
           <div class="list">
-<div class="li"><span class="dot blue"></span><span><b>数据源</b>：腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（分时备用源 / 龙虎榜 / 涨停池 / 每分钟大单资金流 / 7×24 快讯）、东财 push2 或 CNBC（亚太指数行情 / 分时 / K线）。顶部状态依次为<b>正常 / 待连接 / 已降级 / 异常</b>。</span></div>
+<div class="li"><span class="dot blue"></span><span><b>数据源</b>：腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块及分时备用源）、东方财富（分时备用源 / 龙虎榜 / 涨停池 / 每分钟大单资金流 / 7×24 快讯）、东财 push2 或 CNBC（亚太指数行情 / 分时 / K线）。顶部状态依次为<b>正常 / 待连接 / 已降级 / 异常</b>。</span></div>
 <div class="li"><span class="dot orange"></span><span><b>已降级</b>：可能出现在两个地方。①「东财·涨停池」——该域名在当前网络被拦截时，⑨ 连板股与③早盘竞价会自动改用「全市场快照＋日线」本地推算；②全球市场在亚太接口不可达时会退回腾讯口径。两处都会明确标注当前口径。</span></div>
 <div class="li"><span class="dot gray"></span><span><b>美股也能看分时</b>：⑤ 顶部周期切到「分时」即可看美股个股与美股指数的当日分时；公开接口不提供美股个股的历史K线，所以日线技术分析仍只对A股 / ETF / 港股 / 美股指数开放。</span></div>
             <div class="li"><span class="dot gold"></span><span><b>ETF 的 T+0 / T+1</b>：名称后的标签是交易规则备注——T+0＝当天买当天能卖（债券、货币、黄金/商品、跨境类 ETF）；T+1＝次日才能卖（境内股票型 ETF）。按代码段＋名称关键词推定，个别产品以券商与基金公告为准。</span></div>
@@ -1994,7 +1994,7 @@ body.side-collapsed .side-foot span{display:none;}
       <li>所有技术指标均存在<b>滞后性</b>，指标信号可能失真、出现骗线（假金叉/假死叉/假突破）。</li>
       <li>突发消息、政策变化、地缘冲突、外围市场大幅波动，均可能直接打破既有技术形态。</li>
       <li>方向概率推演仅为技术模型的推演结果，<b>不能保证准确</b>，历史规律不代表未来表现。</li>
-<li>本页行情数据来自腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块）、东方财富（分时备用源 / 涨停池 / 连板 / 龙虎榜 / 7×24 快讯）以及东方财富 push2 或 CNBC（亚太指数）的<b>公开接口</b>。腾讯分钟接口被 WAF 拦截时，A股 / ETF / 指数分时会自动切换东方财富备用源；免费接口仍可能随时调整或不可用，请以券商交易软件为准。</li>
+<li>本页行情数据来自腾讯财经（行情 / K线 / 分时 / 中文搜索）、新浪财经（全市场A股、场内ETF、板块及分时备用源）、东方财富（分时备用源 / 涨停池 / 连板 / 龙虎榜 / 7×24 快讯）以及东方财富 push2 或 CNBC（亚太指数）的<b>公开接口</b>。腾讯分钟接口被 WAF 拦截时，A股 / ETF / 指数分时会依次尝试新浪和东方财富备用源；免费接口仍可能随时调整或不可用，请以券商交易软件为准。</li>
       <li>「<b>大单金额</b>」为东方财富资金流口径（按单笔成交额分档的钱），每分钟净额由该分钟的<b>累计值做差</b>得到，与交易所逐笔成交口径、各券商软件的主力资金统计<b>会有差异</b>；该口径只覆盖 A股 / ETF / 北交所 / 指数，港股与美股、亚太指数没有对应数据（页面会退化为「每分钟成交额」并明确标注）。</li>
       <li>「<b>分时顶底</b>」是按分时价格序列的局部极值规则标注的（前后若干分钟都不超过它），「顶 / 底背离」是用分时 MACD 的 DIF 与相邻两个极值点比较得出的，属于<b>规则化标注</b>，不是预测，也不代表后续一定反转。</li>
       <li>ETF / 场内基金与个股的规则不同（T+0 或 T+1、涨跌幅 ±10% 或 ±20%、有折溢价），本页已按品种自动套用相应口径，但<b>折溢价率、跟踪指数、成分股</b>仍需自行在基金页面核对。</li>
@@ -3386,7 +3386,7 @@ const DATA = {
 const SRC_LABEL = {
   quote: '腾讯·行情',
   kline: '腾讯·K线',
-  minute: '腾讯·分时',
+  minute: '分时·多源',
   search: '腾讯·中文搜索',
   list: '新浪·全市场',
   etf: '新浪·场内基金',
@@ -3847,7 +3847,24 @@ async function fetchEastMinute(code) {
   const url = API.emMinute + '?secid=' + secid +
     '&fields1=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13' +
     '&fields2=f51,f52,f53,f54,f55,f56,f57,f58&iscr=0&ndays=1&ut=' + EM_FLOW_UT;
-  const json = await fetchJsonpCb(url, 15000, 'cb');
+  let json = null;
+  /* 东财普通 JSON 通常比 JSONP 更稳；部分浏览器会拦截带 cb 参数的脚本地址 */
+  try {
+    const ctl = typeof AbortController === 'function' ? new AbortController() : null;
+    const timer = ctl ? setTimeout(() => ctl.abort(), 9000) : null;
+    try {
+      const r = await fetch(url + '&_=' + Date.now(), ctl ? { cache: 'no-store', signal: ctl.signal } : { cache: 'no-store' });
+      if (!r.ok) throw new Error('东财 HTTP ' + r.status);
+      json = await r.json();
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  } catch (e) {
+    json = null;
+  }
+  if (!json || !json.data || !json.data.trends) {
+    json = await fetchJsonpCb(url, 9000, 'cb');
+  }
   const data = json && json.data;
   const rows = data && data.trends;
   if (!Array.isArray(rows) || rows.length < 5) throw new Error('东方财富分时无数据（' + code + '）');
@@ -3874,6 +3891,55 @@ async function fetchEastMinute(code) {
     code: code, points: points, date: date,
     prevClose: data && Number.isFinite(toNum(data.preClose)) ? toNum(data.preClose) : NaN,
     src: 'eastmoney'
+  };
+}
+
+/** 新浪分时兜底：腾讯 WAF + 东财不可达时仍可返回 A股 / ETF 分钟线 */
+async function fetchSinaMinute(code) {
+  if (!/^(sh|sz)\d{6}$/.test(String(code || ''))) throw new Error('该标的没有新浪分时数据');
+  const url = 'https://quotes.sina.cn/cn/api/openapi.php/CN_MinlineService.getMinlineData?symbol=' + encodeURIComponent(code);
+  let json = null;
+  try {
+    const ctl = typeof AbortController === 'function' ? new AbortController() : null;
+    const timer = ctl ? setTimeout(() => ctl.abort(), 9000) : null;
+    try {
+      const r = await fetch(url + '&_=' + Date.now(), ctl ? { cache: 'no-store', signal: ctl.signal } : { cache: 'no-store' });
+      if (!r.ok) throw new Error('新浪 HTTP ' + r.status);
+      json = await r.json();
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  } catch (e) {
+    json = null;
+  }
+  if (!json || !json.result || !Array.isArray(json.result.data)) {
+    json = await fetchJsonpCb(url, 9000, 'callback');
+  }
+  const rows = json && json.result && json.result.data;
+  if (!Array.isArray(rows) || rows.length < 5) throw new Error('新浪分时无数据（' + code + '）');
+  const points = rows.map((r) => {
+    const price = toNum(r.p);
+    const avg = toNum(r.avg_p);
+    return {
+      time: String(r.m || '').slice(0, 5),
+      price: price,
+      volume: toNum(r.v) || 0,
+      amount: NaN,
+      avg: Number.isFinite(avg) ? avg : price
+    };
+  }).filter((p) => Number.isFinite(p.price) && p.price > 0);
+  if (points.length < 5) throw new Error('新浪分时点太少（' + code + '）');
+  points.sort((a, b) => minuteSlot(a.time, marketOf(code)) - minuteSlot(b.time, marketOf(code)));
+  const q = DATA.quotes[code];
+  const qtime = String((q && q.time) || '');
+  const date = /^\d{8}/.test(qtime) ? qtime.slice(0, 8) : '';
+  srcMark('minute', true, '新浪备用分时 ' + points.length + ' 点');
+  return {
+    code: code,
+    points: points,
+    date: date,
+    prevClose: q && Number.isFinite(q.prevClose) ? q.prevClose : NaN,
+    src: 'sina'
   };
 }
 
@@ -3904,18 +3970,22 @@ async function fetchMinute(code) {
       const r = await fetch(ep + '?code=' + code + '&_=' + Date.now());
       json = await r.json();
     } catch (e2) {
-      try { return await fetchEastMinute(code); } catch (e3) {
-        srcMark('minute', false, '分时接口请求失败');
-        throw new Error('分时接口请求失败：腾讯与东方财富备用源均不可用');
+      try { return await fetchSinaMinute(code); } catch (e3) {
+        try { return await fetchEastMinute(code); } catch (e4) {
+          srcMark('minute', false, '分时接口请求失败');
+          throw new Error('分时接口请求失败：腾讯、新浪、东方财富均不可用');
+        }
       }
     }
   }
   const node = json && json.data && json.data[code];
   const raw = node && node.data && node.data.data ? node.data.data : null;
   if (!raw || !raw.length) {
-    try { return await fetchEastMinute(code); } catch (e) {
-      srcMark('minute', false, '无分时数据');
-      throw new Error('无分时数据（' + code + '）');
+    try { return await fetchSinaMinute(code); } catch (e) {
+      try { return await fetchEastMinute(code); } catch (e2) {
+        srcMark('minute', false, '无分时数据');
+        throw new Error('无分时数据（' + code + '）');
+      }
     }
   }
   const points = [];
@@ -4918,7 +4988,8 @@ async function selectAsiaMinute(code) {
         (q && Number.isFinite(q.prevClose) ? '<span><i style="background:#8c9cb6"></i>昨收 ' + fmtP(q.prevClose) + '</span>' : '');
     }
     if (hint) {
-      const minuteSource = asiaDefOf(code) ? (m.src === 'eastmoney' ? '东方财富备用源' : 'CNBC') : '腾讯';
+      const minuteSource = asiaDefOf(code) ? (m.src === 'eastmoney' ? '东方财富备用源' : 'CNBC')
+        : (m.src === 'eastmoney' ? '东方财富备用源' : (m.src === 'sina' ? '新浪备用源' : '腾讯'));
       hint.textContent = (m.date ? '交易日 ' + m.date + ' · ' : '') + '共 ' + m.points.length + ' 个分钟点 · ' +
         sessionRangeText(code) + ' · 数据源 ' + minuteSource + (asiaDefOf(code) ? '（延迟 ≥15 分钟）' : '') +
         ' · 图上移动鼠标（手机按住拖动）看每分钟价格 / 涨跌 / 均价 · 更新 ' + nowHms();
@@ -7716,8 +7787,8 @@ async function renderKlinePanel(keepActive) {
       $('klLegend').innerHTML = '<span><i style="background:#ff4d5e"></i>价格</span><span><i style="background:#f0b73f"></i>分时均价</span>' +
         (Number.isFinite(base) ? '<span><i style="background:#8c9cb6"></i>昨收 ' + fmtP(base) + '</span>' : '');
       $('klHint').innerHTML = '分时数据为每个分钟的成交价与累计成交量（' +
-        (asiaDefOf(code) ? 'CNBC，延迟 ≥15 分钟' : (m.src === 'eastmoney' ? '东方财富备用源' : '腾讯财经')) + '）· ' +
-        (m.date ? '交易日 ' + m.date : '') + ' · 共 ' + m.points.length + ' 点 · ' + esc(sessionRangeText(code)) + ' · ' +
+        (asiaDefOf(code) ? 'CNBC，延迟 ≥15 分钟' : (m.src === 'eastmoney' ? '东方财富备用源' : (m.src === 'sina' ? '新浪备用源' : '腾讯财经'))) + '）' +
+        (m.date ? ' · 交易日 ' + m.date : '') + ' · 共 ' + m.points.length + ' 点 · ' + esc(sessionRangeText(code)) + ' · ' +
         minuteExtremeText(res, m) + ' · 更新 ' + nowHms();
     } catch (e) {
       chartError(cv, '分时数据获取失败：' + e.message);
@@ -11795,7 +11866,9 @@ function renderWatchPanel(items) {
     bindWatchMinuteHover(it);
   });
   if (tag) tag.textContent = items.length + ' 只 · ' + nowHms();
-  if (hint) hint.textContent = '分时：腾讯财经（每分钟一点）· 点评：按日线规则实时计算 · 更新 ' + nowHms();
+  const srcs = Array.from(new Set(items.map((it) => it.minute && it.minute.src).filter(Boolean)));
+  const srcText = srcs.map((x) => x === 'eastmoney' ? '东方财富备用源' : x === 'sina' ? '新浪备用源' : '腾讯财经').join(' / ') || '分时源暂不可用';
+  if (hint) hint.textContent = '分时：' + srcText + '（每分钟一点）· 点评：按日线规则实时计算 · 更新 ' + nowHms();
 }
 
 /* ---------------- 交互 ---------------- */
