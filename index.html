@@ -1683,6 +1683,7 @@ body.side-collapsed .side-foot span{display:none;}
       <span class="hint">候选池</span>
       <select class="input" id="scanPool" style="min-width:190px;">
         <option value="amount" selected>成交额榜（主流资金）</option>
+        <option value="limitup">涨停 / 连板股（次日接力）</option>
         <option value="etf">ETF 成交额榜（场内基金）</option>
         <option value="up">涨幅榜（强势股）</option>
         <option value="turnover">换手率榜（活跃股）</option>
@@ -5627,6 +5628,7 @@ async function watchBatch() {
 
 const POOL_META = {
   amount: { name: '成交额榜', note: '按当日成交额排序，代表主流资金关注度' },
+  limitup: { name: '涨停 / 连板股', note: '结合市场情绪、连板高度、封板质量与炸板率判断次日接力' },
   up: { name: '涨幅榜', note: '按当日涨幅排序，已剔除涨停附近（无法买入）的个股' },
   turnover: { name: '换手率榜', note: '按换手率排序，代表当日交易最活跃的个股' },
   down: { name: '跌幅榜', note: '按当日跌幅排序，已剔除跌停附近个股，适合找超跌反弹' },
@@ -5649,6 +5651,22 @@ function buildScanPool(mode, size) {
         const code = x.symbol || normalizeCode(x.code);
         return { symbol: code, code: dispCode(code), name: x.name };
       }).filter((x) => klineCapable(x.symbol));
+  }
+  if (mode === 'limitup') {
+    const rows = (ZT.data && ZT.data.zt) || [];
+    return rows.map((x) => {
+      const code = ztCode(x);
+      return {
+        symbol: code, code: dispCode(code), name: x.n || codeName(code),
+        zt: {
+          height: Math.max(1, Number(x.lbc) || 1),
+          firstTime: Number(x.fbt),
+          breaks: Math.max(0, Number(x.zbc) || 0),
+          sealAmount: Number(x.fund) || 0,
+          sector: x.hybk || '其他'
+        }
+      };
+    }).filter((x) => x.symbol && klineCapable(x.symbol) && !/ST/i.test(x.name)).slice(0, size);
   }
   if (!DATA.snapshot) return [];
   const valid = DATA.snapshot.list.filter((x) =>
@@ -6034,6 +6052,56 @@ function stratTags(sig, score) {
 
 const ymdText = (d) => (d instanceof Date ? (d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate())) : String(d || ''));
 
+function limitScanMarketContext() {
+  const d = ZT.data || {};
+  const zt = d.zt || [], zb = d.zb || [], yzt = d.yzt || [];
+  const maxHeight = zt.reduce((m, x) => Math.max(m, Number(x.lbc) || 1), 0);
+  const yztLimit = yzt.filter((x) => Number(x.zdp) >= limitPct(ztCode(x), x.n) * 0.95).length;
+  const promote = yzt.length ? yztLimit / yzt.length : NaN;
+  const breakRate = (zt.length + zb.length) ? zb.length / (zt.length + zb.length) : NaN;
+  let stage = '分化';
+  if (maxHeight <= 3 && ((Number.isFinite(promote) && promote < .18) || breakRate > .45)) stage = '冰点 / 退潮';
+  else if (maxHeight >= 5) stage = '高潮 / 高位';
+  else if (maxHeight >= 3 && (!Number.isFinite(promote) || promote >= .3)) stage = '发酵';
+  return { maxHeight: maxHeight, promote: promote, breakRate: breakRate, stage: stage, local: !!d.local };
+}
+
+function limitNextDayDecision(row, sig, bv, plan, market) {
+  const z = row.zt || {};
+  const height = Math.max(1, Number(z.height) || 1);
+  const breaks = Math.max(0, Number(z.breaks) || 0);
+  const firstTime = Number(z.firstTime);
+  let score = 50;
+  const reasons = [], rejects = [];
+  if (height <= 3) { score += 8; reasons.push(height + '板梯队适中'); }
+  else if (height === 4) { score += 3; reasons.push('4板需看高标是否继续晋级'); }
+  else { score -= 10; rejects.push(height + '板以上只持筹，不新开仓'); }
+  if (firstTime <= 92600) { score += 8; reasons.push('竞价/早盘硬板'); }
+  else if (firstTime <= 100000) { score += 4; reasons.push('上午封板'); }
+  else if (firstTime > 143000) { score -= 10; rejects.push('尾盘板资金决心不足'); }
+  score -= Math.min(24, breaks * 6);
+  if (breaks >= 3) rejects.push('炸板 ' + breaks + ' 次');
+  else if (breaks > 0) reasons.push('开板 ' + breaks + ' 次');
+  if (sig.vol.ratio != null) {
+    if (sig.vol.ratio >= 1.1) { score += 5; reasons.push('量比 ' + fmt(sig.vol.ratio, 2)); }
+    else if (sig.vol.ratio < .8) { score -= 6; rejects.push('缩量'); }
+  }
+  score += clamp((bv.good.length - bv.bad.length) * 2, -8, 8);
+  if (plan.riskLevel === '高') { score -= 6; rejects.push('技术风险高'); }
+  if (market.stage === '冰点 / 退潮') { score -= 12; rejects.push('市场处于' + market.stage); }
+  else if (market.stage === '高潮 / 高位') { score -= 6; rejects.push('市场处于' + market.stage); }
+  else if (market.stage === '发酵') { score += 6; reasons.push('连板梯队仍在发酵'); }
+  if (bv.tone === 'down') rejects.push('技术面转弱');
+  score = Math.round(clamp(score, 0, 100));
+  const status = rejects.length ? (score >= 50 ? '只观察' : '次日回避') : score >= 68 ? '次日候选' : '等竞价确认';
+  const tone = status === '次日候选' ? 'red' : status === '次日回避' ? 'green' : 'gold';
+  return {
+    score: score, status: status, tone: tone, height: height, breaks: breaks,
+    firstTime: firstTime, reasons: reasons, rejects: rejects,
+    condition: '次日 09:25：竞价 -2%～+5%，高标不低开超过 -3%；09:30–10:00 站上开盘价和分时均价后再考虑小仓买入。高开 >5% 不追，低开 <-2% 放弃。'
+  };
+}
+
 /* ---------------- 扫描 ---------------- */
 
 async function runScan() {
@@ -6042,12 +6110,17 @@ async function runScan() {
   const mode = $('scanPool').value || 'amount';
   const scanMode = ($('scanMode') && $('scanMode').value) || 'stable';
   const meta = POOL_META[mode] || POOL_META.amount;
-  if (mode !== 'watch' && mode !== 'etf' && !DATA.snapshot) { $('scanText').textContent = '全市场数据未就绪，请稍候…'; return; }
+  if (mode === 'limitup') {
+    $('scanText').textContent = '正在读取涨停与连板梯队…';
+    try { await loadZtData(false); } catch (e) { /* 下面会显示空池原因 */ }
+  }
+  if (mode !== 'watch' && mode !== 'etf' && mode !== 'limitup' && !DATA.snapshot) { $('scanText').textContent = '全市场数据未就绪，请稍候…'; return; }
   if (mode === 'etf' && !DATA.etf) loadEtfData(false).catch(() => {});
   const pool = buildScanPool(mode, size);
   if (!pool.length) {
 $('scanText').textContent = mode === 'watch' ? '自选股为空，请先在③添加自选股' 
       : mode === 'etf' ? 'ETF 行情正在加载中，请等 10 秒左右再点一次「开始扫描」'
+        : mode === 'limitup' ? '涨停池暂无可分析数据，请到⑨连板股页刷新后重试'
         : '候选池为空，请稍后重试';
     return;
   }
@@ -6061,6 +6134,7 @@ $('scanText').textContent = mode === 'watch' ? '自选股为空，请先在③�
   $('recoBadgeLine').innerHTML = '<span class="dot-live load"></span> 正在抓取 ' + pool.length + ' 只候选股的日线并逐只计算…';
 
   const list = [], skipped = [];
+  const limitMarket = mode === 'limitup' ? limitScanMarketContext() : null;
   const queue = pool.slice();
   let done = 0;
   const worker = async () => {
@@ -6076,14 +6150,19 @@ $('scanText').textContent = mode === 'watch' ? '自选股为空，请先在③�
         const bv = buyVerdict(sig);
         const plan = buildBuyPlan(candles, ind, sig, bv, code);
         const score = scoreStock(candles, ind, { divergence: detectDivergence(candles, ind.hist) });
-        const why = scanMode === 'stable' ? stableRejectReason(sig, bv, plan) : null;
+        const nextBuy = mode === 'limitup' ? limitNextDayDecision(x, sig, bv, plan, limitMarket) : null;
+        const limitReject = nextBuy && nextBuy.status === '次日回避' ? (nextBuy.rejects[0] || '连板与市场条件不支持') : null;
+        const why = scanMode === 'stable'
+          ? (mode === 'limitup' ? limitReject : stableRejectReason(sig, bv, plan))
+          : null;
         if (why) {
           skipped.push({ code: code, name: x.name, why: why });
         } else {
           list.push({
             code: code, name: (DATA.quotes[code] && DATA.quotes[code].name) || x.name || dispCode(code),
             price: sig.close, pct: sig.pct, score: score, bv: bv, plan: plan, sig: sig,
-            edge: bv.good.length - bv.bad.length, strats: stratTags(sig, score)
+            edge: bv.good.length - bv.bad.length, strats: stratTags(sig, score),
+            zt: x.zt || null, nextBuy: nextBuy
           });
         }
       } catch (e) {
@@ -6105,16 +6184,19 @@ $('scanText').textContent = mode === 'watch' ? '自选股为空，请先在③�
   list.sort((a, b) => {
     const ra = (a.plan.rr != null && a.plan.rr > 0) ? Math.min(a.plan.rr, 4) : 1;
     const rb = (b.plan.rr != null && b.plan.rr > 0) ? Math.min(b.plan.rr, 4) : 1;
-    const sa = a.score + a.edge * 10 + (scanMode === 'stable' ? ra * 3 : 0);
-    const sb = b.score + b.edge * 10 + (scanMode === 'stable' ? rb * 3 : 0);
+    const na = a.nextBuy ? a.nextBuy.score * 0.7 : 0;
+    const nb = b.nextBuy ? b.nextBuy.score * 0.7 : 0;
+    const sa = a.score + a.edge * 10 + (scanMode === 'stable' ? ra * 3 : 0) + na;
+    const sb = b.score + b.edge * 10 + (scanMode === 'stable' ? rb * 3 : 0) + nb;
     return sb - sa;
   });
-  UI.reco = { list: list, skipped: skipped, time: nowHms(), mode: scanMode, pool: meta };
+  UI.reco = { list: list, skipped: skipped, time: nowHms(), mode: scanMode, pool: meta, poolKey: mode, limitMarket: limitMarket };
   UI.scanning = false;
   btn.disabled = false; btn.textContent = '重新扫描';
   $('scanText').textContent = '扫描完成：' + pool.length + ' 只候选，列出 ' + list.length + ' 只';
   $('pickHint').textContent = '候选池：' + meta.name + ' ' + pool.length + ' 只 · ' +
     (scanMode === 'stable' ? '稳健模式（已过滤 ' + skipped.length + ' 只不合条件）' : '激进模式（有信号就列出）') + ' · ' + UI.reco.time;
+  if (limitMarket) $('pickHint').textContent += ' · ' + limitMarket.stage + ' · 最高 ' + limitMarket.maxHeight + ' 板';
   renderReco();
 }
 
@@ -6130,12 +6212,24 @@ function renderReco() {
   if (!reco) { $('recoTable').innerHTML = ''; return; }
   let up = 0, mid = 0, down = 0;
   reco.list.forEach((r) => { if (r.bv.tone === 'up') up++; else if (r.bv.tone === 'down') down++; else mid++; });
+  const nextCounts = { candidate: 0, watch: 0, avoid: 0 };
+  reco.list.forEach((r) => {
+    if (!r.nextBuy) return;
+    if (r.nextBuy.status === '次日候选') nextCounts.candidate++;
+    else if (r.nextBuy.status === '次日回避') nextCounts.avoid++;
+    else nextCounts.watch++;
+  });
   $('recoBadgeLine').innerHTML =
     '扫了 <b>' + reco.list.length + '</b> 只 · ' +
-    '<span class="tag red">可以买 ' + up + '</span> ' +
-    '<span class="tag gray">观望 ' + mid + '</span> ' +
-    '<span class="tag green">不建议买 ' + down + '</span>' +
+    (reco.poolKey === 'limitup'
+      ? '<span class="tag red">次日候选 ' + nextCounts.candidate + '</span> ' +
+        '<span class="tag gold">只观察 ' + nextCounts.watch + '</span> ' +
+        '<span class="tag green">次日回避 ' + nextCounts.avoid + '</span>'
+      : '<span class="tag red">可以买 ' + up + '</span> ' +
+        '<span class="tag gray">观望 ' + mid + '</span> ' +
+        '<span class="tag green">不建议买 ' + down + '</span>') +
     (reco.mode === 'stable' && reco.skipped.length ? ' · 稳健模式已剔除 ' + reco.skipped.length + ' 只' : '') +
+    (reco.limitMarket ? ' · ' + esc(reco.limitMarket.stage) + ' · 最高 ' + reco.limitMarket.maxHeight + ' 板' : '') +
     ' · ' + reco.time + ' · 点击任意一行看理由与买入时机';
 
   if (!reco.list.length) {
@@ -6146,15 +6240,19 @@ function renderReco() {
     $('recoTable').innerHTML = '<tbody><tr><td>' +
       '<div class="err-box" style="margin:2px 0 8px;"><b>结论：这一批 ' + reco.skipped.length +
       ' 只里没有一只满足买入条件 → 现在都不建议买。</b><br>' +
-      '稳健模式的门槛是「收盘站上 MA20 + MA20 向上 + 不放量下跌 + 盈亏比 ≥1.5」，' +
-      '普跌行情里绝大多数个股都过不了这一关，这本身就是“空仓等待”的信号。</div>' +
+      (reco.poolKey === 'limitup'
+        ? '涨停池按「市场情绪 + 连板高度 + 封板时间 + 炸板次数 + 量能 + 技术面」过滤。高位股、尾盘板、炸板过多或市场退潮时，宁可次日空仓。'
+        : '稳健模式的门槛是「收盘站上 MA20 + MA20 向上 + 不放量下跌 + 盈亏比 ≥1.5」，普跌行情里绝大多数个股都过不了这一关，这本身就是“空仓等待”的信号。') +
+      '</div>' +
       '<div class="hint">被挡住的理由分布：' +
       top.map((k) => '<span class="tag gray">' + esc(k) + ' × ' + cnt[k] + '</span>').join(' ') + '</div>' +
       '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">' +
       '<button class="btn primary" id="btnRecoAggressive">改用「激进」模式重扫（把信号不足的也列出来）</button>' +
       '</div></td></tr></tbody>';
   } else {
-    let h = '<thead><tr><th>#</th><th>名称</th><th>现价</th><th>涨跌</th><th>信号分</th><th>结论</th>' +
+    const zMode = reco.poolKey === 'limitup';
+    let h = '<thead><tr><th>#</th><th>名称</th><th>现价</th><th>涨跌</th><th>信号分</th>' +
+      (zMode ? '<th>连板 / 封板</th><th>次日买点判断</th>' : '') + '<th>结论</th>' +
       '<th>进场区间</th><th>风险</th><th>止损</th><th>盈亏比</th><th>关键理由（支持 / 反对）</th></tr></thead><tbody>';
     reco.list.forEach((r, i) => {
       const pl = r.plan;
@@ -6169,7 +6267,9 @@ function renderReco() {
         '<td class="mono">' + fmtP(r.price) + '</td>' +
         '<td class="mono ' + pctCls(r.pct) + '">' + sign(r.pct) + '%</td>' +
         '<td class="mono"><b>' + r.score + '</b></td>' +
-        '<td>' + recoToneTag(r.bv) +
+        (zMode && r.zt ? '<td class="mono">' + r.zt.height + '板 · ' + (Number.isFinite(r.zt.firstTime) ? ztTime(r.zt.firstTime) : '--') + ' · 炸' + r.zt.breaks + '</td>' : '') +
+        (zMode && r.nextBuy ? '<td><span class="tag ' + r.nextBuy.tone + '">' + esc(r.nextBuy.status) + ' · ' + r.nextBuy.score + '</span><br><span class="dim">' + esc((r.nextBuy.rejects[0] || r.nextBuy.reasons[0] || '等待竞价确认')) + '</span></td>' : '') +
+        '<td>' + (zMode && r.nextBuy ? '<span class="tag ' + r.nextBuy.tone + '">' + esc(r.nextBuy.status) + '</span>' : recoToneTag(r.bv)) +
           (pl.rr != null && pl.rr < 1.5 ? ' <span class="tag orange">盈亏比不足</span>' : '') +
           (pl.targetPassed ? ' <span class="tag orange">已涨过量度目标</span>' : '') + '</td>' +
         '<td class="mono gold">' + (pl.entryLow != null ? fmtP(pl.entryLow) + '~' + fmtP(pl.entryHigh) : '—') + '</td>' +
@@ -6245,6 +6345,13 @@ function renderRecoDetail(r) {
           (r.strats.length ? ' ' + r.strats.map((t) => '<span class="tag orange">' + esc(t) + '</span>').join(' ') : '') +
         '</div>' +
       '</div>' +
+      (r.nextBuy ? '<div class="advice ' + (r.nextBuy.status === '次日回避' ? 'risk' : r.nextBuy.status === '次日候选' ? 'opp' : 'neutral') + '" style="margin-bottom:12px;">' +
+        '<div class="big">次日是否可买：' + esc(r.nextBuy.status) + '（' + r.nextBuy.score + ' 分）</div>' +
+        '<div class="muted" style="margin-top:4px;">' + esc(r.nextBuy.condition) + '</div>' +
+        '<div class="list" style="margin-top:7px;">' +
+          (r.nextBuy.reasons.length ? '<div class="li"><span class="dot red"></span><span>连板优势：' + esc(r.nextBuy.reasons.join('；')) + '</span></div>' : '') +
+          (r.nextBuy.rejects.length ? '<div class="li"><span class="dot green"></span><span>降级原因：' + esc(r.nextBuy.rejects.join('；')) + '</span></div>' : '') +
+        '</div></div>' : '') +
       '<div class="grid g2">' +
         '<div>' +
           '<div class="grp-title">支持条件（' + bv.good.length + '）</div>' +
