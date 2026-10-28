@@ -629,6 +629,9 @@ table.tbl tbody tr.clickable:hover{background:rgba(240,183,63,.10);}
 .auction-plan{font-size:12px;color:var(--muted);line-height:1.65;margin-top:5px;}
 .auction-recommend-card{border-color:rgba(240,183,63,.42);box-shadow:0 0 0 1px rgba(240,183,63,.08) inset,0 12px 30px rgba(0,0,0,.22);}
 #auctionTracking .auction-pick{border-color:rgba(74,158,255,.28);background:rgba(74,158,255,.055);}
+.zt-next-pool{border-color:rgba(240,183,63,.42);background:linear-gradient(135deg,rgba(240,183,63,.075),rgba(15,22,34,.94));}
+.zt-pick{min-width:0;}
+.zt-pick .mini-note{line-height:1.55;}
 .holding-add-bar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:5px;}
 .holding-add-bar .search-wrap{flex:1 1 300px;}
 .holding-chart-card{min-width:0;}
@@ -1632,6 +1635,20 @@ body.side-collapsed .side-foot span{display:none;}
       <button class="btn" id="btnZt">刷新连板数据</button>
     </div>
     <div class="grid g4" id="ztCards" style="margin-bottom:14px;"></div>
+
+    <div class="card zt-next-pool" style="margin-bottom:14px;">
+      <div class="card-head">
+        <div class="card-title">次日可买涨停股 · 5只稳健观察池</div>
+        <div class="card-sub">按市场情绪、连板质量、封板强度和技术面综合筛选；不是保证盈利</div>
+        <div class="spacer"></div>
+        <span class="tag orange">只做相对稳健</span>
+        <button class="btn sm" id="btnZtNextScan">重新筛选5只</button>
+      </div>
+      <div class="hint" id="ztNextHint" style="margin-bottom:9px;">进入本页或点击按钮后，从当日涨停池筛选最优5只。</div>
+      <div class="grid g5" id="ztNext5"></div>
+      <div class="hint" style="margin-top:9px;">次日硬条件：09:25 竞价在 -1.5%～+4%，最高标不低于 -3%；09:30–10:00 站上开盘价和分时均价后才考虑小仓，任何策略都不能保证盈利。</div>
+    </div>
+
     <div class="grid g2">
       <div class="card">
         <div class="card-head">
@@ -9218,7 +9235,7 @@ function refreshMobSection(id) {
     else if (id === 'sec-flow') { renderFlow(); }
     else if (id === 'sec-dragon') { renderHot(); renderLHB(); renderAnomalyBoards(); }
     else if (id === 'sec-rank') { renderRank(); }
-    else if (id === 'sec-zt') { renderZt(); }
+    else if (id === 'sec-zt') { renderZt(); if (!ZT_NEXT.items.length) loadZtTop5(false).catch(() => {}); }
     else if (id === 'sec-review') { renderReview(); }
     else if (id === 'sec-watch') { renderWatch(); redrawWatchPanel(); }
     else if (id === 'sec-etf') { renderEtf(); }
@@ -10135,6 +10152,7 @@ function lazySection(id, task) {
 /* ---------------- E4. 连板股 · 涨停梯队（东方财富涨停板行情） ---------------- */
 
 const ZT = { at: 0, data: null, loading: false };
+const ZT_NEXT = { at: 0, items: [], loading: false, market: null };
 const AUCTION = { at: 0, data: null, loading: false };
 const AUCTION_PICK_KEY = 'apanel_auction_picks_v1';
 const HOLDING_KEY = 'apanel_holdings_v1';
@@ -10433,6 +10451,128 @@ function renderZt() {
       '③ <b>晋级率</b>＝昨日涨停的票今天还能再涨停的比例，&gt;30% 说明接力资金活跃，&lt;15% 说明高位票开始吃面；<br>' +
       '④ <b>炸板率</b>高（如 &gt;40%）代表盘中封不住、有人借涨停出货，此时追高最危险；<br>' +
       '⑤ <b>封板时间</b>越早（集合竞价一字、9:30 秒板）资金越坚决，尾盘才封的板第二天容易低开。';
+  }
+}
+
+function ztNextQuickScore(x, sectorCount) {
+  const height = Math.max(1, Number(x.lbc) || 1);
+  const first = Number(x.fbt);
+  const breaks = Math.max(0, Number(x.zbc) || 0);
+  let score = 50;
+  if (height === 1) score += 9;
+  else if (height === 2) score += 8;
+  else if (height === 3) score += 4;
+  else if (height === 4) score -= 2;
+  else score -= 14;
+  if (first <= 92600) score += 10;
+  else if (first <= 100000) score += 6;
+  else if (first > 143000) score -= 12;
+  score -= Math.min(24, breaks * 6);
+  if (sectorCount >= 3) score += 7;
+  else if (sectorCount >= 2) score += 3;
+  const turnover = Number(x.hs);
+  if (turnover >= 4 && turnover <= 16) score += 4;
+  else if (turnover > 28) score -= 4;
+  if (Number(x.fund) > 0) score += 3;
+  return clamp(score, 0, 100);
+}
+
+function ztNextLabel(total, nextBuy, market) {
+  if (market.stage === '冰点 / 退潮') return { text: '空仓观察', cls: 'green' };
+  if (nextBuy.status === '次日回避' || total < 55) return { text: '回避', cls: 'green' };
+  if (total >= 75 && nextBuy.rejects.length === 0) return { text: '优先观察', cls: 'red' };
+  if (total >= 66) return { text: '候选观察', cls: 'gold' };
+  return { text: '等竞价确认', cls: 'blue' };
+}
+
+function renderZtTop5() {
+  const host = $('ztNext5');
+  const hint = $('ztNextHint');
+  if (!host) return;
+  if (!ZT_NEXT.items.length) {
+    host.innerHTML = '<div class="card"><div class="muted">暂未筛选出可观察标的。</div></div>';
+    return;
+  }
+  if (hint) hint.innerHTML = '市场阶段 <b>' + esc(ZT_NEXT.market.stage) + '</b> · 最高 <b>' + ZT_NEXT.market.maxHeight +
+    '</b> 板 · 更新 ' + nowHms() + ' · 下列仅代表相对稳健度，不保证盈利。';
+  host.innerHTML = ZT_NEXT.items.map((it, i) => '<div class="pick-card zt-pick">' +
+    '<div class="pick-head"><div class="pick-name">' + (i + 1) + '. ' + esc(it.name) + ' <span class="dim">' + esc(dispCode(it.code)) + '</span></div>' +
+      '<span class="tag ' + it.labelCls + '">' + esc(it.label) + '</span></div>' +
+    '<div class="quote-row"><span class="price">' + fmtP(it.price) + '</span><span class="chg ' + pctCls(it.pct) + '">' + sign(it.pct) + '%</span>' +
+      '<span class="tag gold">稳健度 ' + it.total + '</span></div>' +
+    '<div class="kv"><span>连板 <b>' + it.height + ' 板</b></span><span>首封 <b>' + (Number.isFinite(it.firstTime) ? ztTime(it.firstTime) : '--') + '</b></span>' +
+      '<span>炸板 <b>' + it.breaks + ' 次</b></span><span>板块 <b>' + esc(it.sector || '--') + '</b></span></div>' +
+    '<div class="mini-note"><b>观察理由：</b>' + esc(it.reasons.join('；') || '结构中性，等待竞价确认') + '</div>' +
+    '<div class="mini-note orange"><b>次日条件：</b>09:25 竞价 -1.5%～+4%；高标不低于 -3%；09:30–10:00 站上开盘价和均价后再考虑小仓。</div>' +
+    '<div class="wm-actions"><button class="btn sm primary" data-act="load" data-code="' + esc(it.code) + '">看K线</button>' +
+      '<button class="btn sm" data-act="add" data-code="' + esc(it.code) + '">加入自选</button></div></div>').join('');
+}
+
+async function loadZtTop5(force) {
+  if (ZT_NEXT.loading) return;
+  if (!force && ZT_NEXT.items.length && Date.now() - ZT_NEXT.at < 120000) { renderZtTop5(); return; }
+  ZT_NEXT.loading = true;
+  const hint = $('ztNextHint');
+  const btn = $('btnZtNextScan');
+  if (btn) { btn.disabled = true; btn.textContent = '筛选中…'; }
+  if (hint) hint.textContent = '正在分析涨停池的连板质量与技术面…';
+  try {
+    if (!ZT.data) await loadZtData(false);
+    const d = ZT.data;
+    if (!d || !d.zt || !d.zt.length) throw new Error('暂无可筛选的涨停股');
+    const market = limitScanMarketContext();
+    const sectorCounts = {};
+    d.zt.forEach((x) => { const k = x.hybk || '其他'; sectorCounts[k] = (sectorCounts[k] || 0) + 1; });
+    const pool = d.zt.filter((x) => x.n && !/ST/i.test(x.n) && ztCode(x))
+      .map((x) => ({ x: x, code: ztCode(x), quick: ztNextQuickScore(x, sectorCounts[x.hybk || '其他'] || 1) }))
+      .sort((a, b) => b.quick - a.quick).slice(0, 15);
+    let quotes = {};
+    try { quotes = await fetchQuotes(pool.map((x) => x.code)); Object.assign(DATA.quotes, quotes); } catch (e) { /* K线仍可分析 */ }
+    const list = [];
+    let done = 0;
+    const queue = pool.slice();
+    const worker = async () => {
+      for (;;) {
+        const it = queue.shift();
+        if (!it) return;
+        try {
+          const candles = await getKline(it.code, 'day', 180, 45000);
+          if (candles.length < 30) throw new Error('K线不足');
+          const ind = calcAll(candles);
+          const q = quotes[it.code] || DATA.quotes[it.code] || null;
+          const sig = sigOf(candles, ind, q);
+          const bv = buyVerdict(sig);
+          const plan = buildBuyPlan(candles, ind, sig, bv, it.code);
+          const tech = scoreStock(candles, ind, { divergence: detectDivergence(candles, ind.hist) });
+          const row = { zt: { height: Math.max(1, Number(it.x.lbc) || 1), firstTime: Number(it.x.fbt), breaks: Math.max(0, Number(it.x.zbc) || 0), sealAmount: Number(it.x.fund) || 0, sector: it.x.hybk || '其他' } };
+          const nextBuy = limitNextDayDecision(row, sig, bv, plan, market);
+          const total = Math.round(clamp(it.quick * .4 + nextBuy.score * .4 + clamp(50 + tech * .5, 0, 100) * .2 - (plan.riskLevel === '高' ? 5 : 0), 0, 100));
+          const label = ztNextLabel(total, nextBuy, market);
+          list.push({
+            code: it.code, name: it.x.n || codeName(it.code), price: q && Number(q.price) > 0 ? Number(q.price) : candles[candles.length - 1].close,
+            pct: q && Number.isFinite(q.chgPct) ? q.chgPct : Number(it.x.zdp) || 0,
+            total: total, label: label.text, labelCls: label.cls, height: row.zt.height,
+            firstTime: row.zt.firstTime, breaks: row.zt.breaks, sector: row.zt.sector,
+            reasons: nextBuy.reasons, nextBuy: nextBuy
+          });
+        } catch (e) { /* ignore single failure */ }
+        done++;
+        if (hint) hint.textContent = '正在分析涨停股 ' + done + '/' + pool.length;
+      }
+    };
+    const workers = [];
+    for (let i = 0; i < Math.min(4, queue.length); i++) workers.push(worker());
+    await Promise.all(workers);
+    ZT_NEXT.items = list.sort((a, b) => b.total - a.total).slice(0, 5);
+    ZT_NEXT.market = market;
+    ZT_NEXT.at = Date.now();
+    renderZtTop5();
+  } catch (e) {
+    if (hint) hint.innerHTML = '<span class="orange">筛选失败：' + esc(e.message) + '</span>';
+    if ($('ztNext5')) $('ztNext5').innerHTML = '';
+  } finally {
+    ZT_NEXT.loading = false;
+    if (btn) { btn.disabled = false; btn.textContent = '重新筛选5只'; }
   }
 }
 
@@ -11911,6 +12051,7 @@ if ($('btnClearHistory')) $('btnClearHistory').addEventListener('click', clearSe
     });
   };
   refreshBtn('btnZt', () => loadZtData(true), '刷新连板数据');
+  if ($('btnZtNextScan')) $('btnZtNextScan').addEventListener('click', () => loadZtTop5(true).catch(() => {}));
   refreshBtn('btnEtf', () => loadEtfData(true), '刷新 ETF 行情');
   refreshBtn('btnWatchPanel', () => loadWatchPanel(true), '刷新分时与点评');
   if ($('btnAuctionScan')) $('btnAuctionScan').addEventListener('click', () => {
@@ -12375,7 +12516,7 @@ renderCalendar();
   renderLHB();
 /* ② 早盘竞价 / ⑨ 连板股 / ⑬ ETF 专区：进入页面时再触发加载，先保留首屏性能 */
   lazySection('sec-auction', () => auctionEnsure(false));
-  lazySection('sec-zt', () => loadZtData(false));
+  lazySection('sec-zt', () => loadZtData(false).then(() => loadZtTop5(false)));
   lazySection('sec-etf', () => loadEtfData(false));
   lazySection('sec-watch', () => loadWatchPanel(false));
   syncMobMode();
